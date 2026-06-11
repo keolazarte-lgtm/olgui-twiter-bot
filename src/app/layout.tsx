@@ -14,16 +14,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CollabMatch — Find Your Next Collab Partner",
-  description: "The smartest way for content creators to find collaboration partners. Match by niche, platform, audience size, and collab type.",
-  keywords: ["collab", "creator", "OnlyFans", "Fansly", "content creator", "collaboration", "matching"],
-  authors: [{ name: "CollabMatch" }],
+  title: "TweetBot — Auto-Promo Scheduler",
+  description: "Publicá contenido de promoción en Twitter las 24hs apuntando a horarios extranjeros. Automático, inteligente, sin esfuerzo.",
+  keywords: ["twitter", "auto-post", "scheduler", "promo", "content creator", "onlyfans", "marketing"],
+  authors: [{ name: "TweetBot" }],
   icons: {
     icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
   },
   openGraph: {
-    title: "CollabMatch — Find Your Next Collab Partner",
-    description: "The smartest way for content creators to find collaboration partners.",
+    title: "TweetBot — Auto-Promo Scheduler",
+    description: "Publicá contenido de promoción en Twitter las 24hs. Automático.",
     type: "website",
   },
 };
@@ -34,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="es" className="dark" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >

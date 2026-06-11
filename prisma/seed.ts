@@ -1,101 +1,179 @@
-import { db } from '@/lib/db'
+import { db } from '../src/lib/db'
 
-async function seed() {
-  const creators = [
+async function main() {
+  console.log('🌱 Seeding TweetBot data...')
+
+  // Create default config
+  const existingConfig = await db.tweetConfig.findFirst()
+  if (!existingConfig) {
+    await db.tweetConfig.create({
+      data: {
+        postIntervalHours: 3,
+        isActive: false,
+      },
+    })
+    console.log('✓ Default config created')
+  }
+
+  // Create default schedules for all timezones
+  const defaultSchedules = [
+    // US East
+    { hourUtc: 13, timezone: 'US_East' },
+    { hourUtc: 17, timezone: 'US_East' },
+    { hourUtc: 23, timezone: 'US_East' },
+    { hourUtc: 2, timezone: 'US_East' },
+    // US West
+    { hourUtc: 16, timezone: 'US_West' },
+    { hourUtc: 20, timezone: 'US_West' },
+    { hourUtc: 2, timezone: 'US_West' },
+    { hourUtc: 5, timezone: 'US_West' },
+    // UK
+    { hourUtc: 8, timezone: 'UK' },
+    { hourUtc: 13, timezone: 'UK' },
+    { hourUtc: 19, timezone: 'UK' },
+    { hourUtc: 22, timezone: 'UK' },
+    // Europe
+    { hourUtc: 7, timezone: 'EU' },
+    { hourUtc: 12, timezone: 'EU' },
+    { hourUtc: 18, timezone: 'EU' },
+    { hourUtc: 21, timezone: 'EU' },
+    // Australia
+    { hourUtc: 21, timezone: 'AU' },
+    { hourUtc: 2, timezone: 'AU' },
+    { hourUtc: 8, timezone: 'AU' },
+    { hourUtc: 11, timezone: 'AU' },
+  ]
+
+  const existingSchedules = await db.tweetSchedule.findMany()
+  for (const slot of defaultSchedules) {
+    const exists = existingSchedules.some(s => s.hourUtc === slot.hourUtc && s.timezone === slot.timezone)
+    if (!exists) {
+      await db.tweetSchedule.create({ data: slot })
+    }
+  }
+  console.log('✓ Schedules created')
+
+  // Create sample content
+  const sampleContent = [
     {
-      name: 'Mistress Valentina',
-      username: 'valentina_dom',
-      bio: 'Professional dominatrix & content creator. Specializing in findom, JOI, and custom experiences. 5 years in the industry. Always looking for creative collabs!',
-      niches: 'BDSM,Dominatrix,Findom,Roleplay,Custom Content',
-      platforms: 'OnlyFans,Fansly,Twitter/X,Instagram',
-      followerRange: '50k-100k',
-      collabTypes: 'Shoutout for Shoutout,Content Collab,PPV Bundle Split,Brand Deal Split,Cross Promotion',
-      location: 'Buenos Aires, Argentina',
-      twitter: '@valentina_dom',
-      instagram: '@valentina.domme',
-      isVerified: true,
+      type: 'phrase_hot',
+      text: 'Si te gusta lo prohibido, vas a querer ver todo lo que tengo para ti 🔥 link en bio',
+      status: 'pending',
     },
     {
-      name: 'Luna Rose',
-      username: 'lunarose',
-      bio: 'Lifestyle & fitness creator with a spicy twist. Love doing collabs with like-minded creators. Open to SFS and content exchanges!',
-      niches: 'Fitness,Lifestyle,Petite,Custom Content',
-      platforms: 'OnlyFans,Twitter/X,TikTok,Instagram',
-      followerRange: '10k-50k',
-      collabTypes: 'Shoutout for Shoutout,Content Collab,Cross Promotion,Discount Exchange',
-      location: 'Miami, USA',
-      twitter: '@lunarose_of',
-      instagram: '@lunarose.fit',
-      isVerified: true,
+      type: 'photo_teaser',
+      text: 'Solo un adelanto de lo que viene esta noche... 👀🔥',
+      status: 'pending',
     },
     {
-      name: 'Goddess Nyx',
-      username: 'goddessnyx',
-      bio: 'Findom & fetish content creator. Building an empire one sub at a time. Looking for other dommes to collab and cross-promote.',
-      niches: 'BDSM,Findom,Feet,Dominatrix,Roleplay',
-      platforms: 'OnlyFans,Fansly,Twitter/X',
-      followerRange: '10k-50k',
-      collabTypes: 'Shoutout for Shoutout,PPV Bundle Split,Cross Promotion,Brand Deal Split',
-      location: 'London, UK',
-      twitter: '@goddessnyx_',
-      isVerified: false,
+      type: 'call_to_action',
+      text: 'Nuevo contenido subido 🔥 Entra antes que suba el precio → link en bio',
+      status: 'pending',
     },
     {
-      name: 'KawaiiMia',
-      username: 'kawaiimia',
-      bio: 'Cosplay & gaming content with a naughty side. Anime lover, streamer, and custom content queen. Lets create something amazing together!',
-      niches: 'Cosplay,Gaming,ASMR,Custom Content,Other',
-      platforms: 'OnlyFans,Patreon,Twitter/X,Twitch',
-      followerRange: '5k-10k',
-      collabTypes: 'Content Collab,Shoutout for Shoutout,Live Stream Together,Custom Content Split',
-      location: 'Tokyo, Japan',
-      twitter: '@kawaiimia_of',
-      instagram: '@kawaiimia.cos',
-      isVerified: false,
+      type: 'engagement_bait',
+      text: '¿Te animás a decirme tu fantasía? 😈 La mejor va al DM gratis esta semana',
+      status: 'pending',
     },
     {
-      name: 'Scarlett & Jake',
-      username: 'scarlettandjake',
-      bio: 'Couple content creators. We do it all — from sensual to wild. Open to collabs with other couples or solo creators. Lets make magic!',
-      niches: 'Couple,BDSM,Lifestyle,Roleplay,Custom Content',
-      platforms: 'OnlyFans,Fansly,Twitter/X,Clapper',
-      followerRange: '100k+',
-      collabTypes: 'Content Collab,PPV Bundle Split,Shoutout for Shoutout,Live Stream Together,Brand Deal Split',
-      location: 'LA, USA',
-      twitter: '@scarlettjake_of',
-      isVerified: true,
+      type: 'countdown',
+      text: '⏳ 24 horas para el drop especial. Suscriptores entran primero. Link en bio',
+      status: 'pending',
     },
     {
-      name: 'Barbie Lux',
-      username: 'barbielux',
-      bio: 'Fashion & lifestyle with a boudoir twist. Creating premium aesthetic content. Looking for fashion-forward creators to collab!',
-      niches: 'Fashion,Lifestyle,Art,Cosplay',
-      platforms: 'OnlyFans,Instagram,Twitter/X,Patreon',
-      followerRange: '5k-10k',
-      collabTypes: 'Shoutout for Shoutout,Content Collab,Story Takeover,Cross Promotion',
-      location: 'Milan, Italy',
-      twitter: '@barbielux_of',
-      instagram: '@barbielux.official',
-      isVerified: false,
+      type: 'social_proof',
+      text: '🎉 Ya somos 500+ en la comunidad. Gracias por elegir lo exclusivo 🔥',
+      status: 'pending',
+    },
+    {
+      type: 'phrase_hot',
+      text: 'No te lo van a contar. Lo tenés que ver por vos mismo 😈🔥',
+      status: 'pending',
+    },
+    {
+      type: 'call_to_action',
+      text: 'Solo por hoy: descuento del 50% para los que entren desde acá 👇',
+      status: 'pending',
+    },
+    {
+      type: 'engagement_bait',
+      text: '¿Picante o suave? 😈 Comentá y te mando un preview de lo que elegís',
+      status: 'pending',
+    },
+    {
+      type: 'photo_teaser',
+      text: 'Te muestro solo un pedacito... el resto está adentro 🔒',
+      status: 'pending',
     },
   ]
 
-  for (const creator of creators) {
-    try {
-      await db.creator.create({ data: creator })
-      console.log(`Created: ${creator.name}`)
-    } catch (e: any) {
-      if (e.code === 'P2002') {
-        console.log(`Already exists: ${creator.username}`)
-      } else {
-        console.error(`Error creating ${creator.name}:`, e)
-      }
-    }
+  for (const content of sampleContent) {
+    await db.tweetContent.create({ data: content })
   }
+  console.log('✓ Sample content created')
 
-  console.log('Seed complete!')
+  // Create some sample tweet logs for the history view
+  const sampleLogs = [
+    {
+      text: 'Si te gusta lo prohibido, vas a querer ver todo lo que tengo para ti 🔥 link en bio',
+      zone: 'US_East',
+      status: 'posted',
+      likes: 24,
+      retweets: 3,
+      replies: 8,
+      views: 1250,
+      postedAt: new Date(Date.now() - 3600000 * 6),
+    },
+    {
+      text: '¿Te animás a decirme tu fantasía? 😈 La mejor va al DM gratis esta semana',
+      zone: 'UK',
+      status: 'posted',
+      likes: 45,
+      retweets: 7,
+      replies: 15,
+      views: 2800,
+      postedAt: new Date(Date.now() - 3600000 * 12),
+    },
+    {
+      text: 'Nuevo contenido subido 🔥 Entra antes que suba el precio → link en bio',
+      zone: 'US_West',
+      status: 'posted',
+      likes: 18,
+      retweets: 2,
+      replies: 5,
+      views: 890,
+      postedAt: new Date(Date.now() - 3600000 * 18),
+    },
+    {
+      text: 'Solo un adelanto de lo que viene esta noche... 👀🔥',
+      zone: 'EU',
+      status: 'posted',
+      likes: 32,
+      retweets: 5,
+      replies: 11,
+      views: 1560,
+      postedAt: new Date(Date.now() - 3600000 * 24),
+    },
+    {
+      text: '⏳ 24 horas para el drop especial. Suscriptores entran primero.',
+      zone: 'AU',
+      status: 'posted',
+      likes: 12,
+      retweets: 1,
+      replies: 3,
+      views: 420,
+      postedAt: new Date(Date.now() - 3600000 * 30),
+    },
+  ]
+
+  for (const log of sampleLogs) {
+    await db.tweetLog.create({ data: log })
+  }
+  console.log('✓ Sample tweet logs created')
+
+  console.log('✅ Seed complete!')
 }
 
-seed()
+main()
   .catch(console.error)
-  .finally(() => process.exit())
+  .finally(() => db.$disconnect())
