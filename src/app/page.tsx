@@ -3,10 +3,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Twitter, Upload, Clock, Image, FileText, Settings, Activity,
+  Twitter, Upload, Clock, ImageIcon, FileText, Settings, Activity,
   Play, Pause, Trash2, Plus, Zap, Globe, TrendingUp, Heart,
   Repeat2, MessageCircle, Eye, Check, X, AlertCircle, Loader2,
-  Calendar, BarChart3, RefreshCw, ExternalLink, Shield
+  Calendar, BarChart3, RefreshCw, ExternalLink, Shield, Crop
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -32,6 +32,10 @@ import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
 import { useToast } from '@/hooks/use-toast'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import dynamic from 'next/dynamic'
+
+// Dynamic import PhotoEditor to avoid SSR issues with canvas
+const PhotoEditor = dynamic(() => import('@/components/PhotoEditor'), { ssr: false })
 
 // ─── Types ───────────────────────────────────────────────────
 interface TweetContent {
@@ -309,7 +313,7 @@ export default function TweetBotApp() {
         <div className="max-w-5xl mx-auto flex items-center justify-around py-2 px-2">
           {[
             { id: 'dashboard', icon: Activity, label: 'Panel' },
-            { id: 'content', icon: Image, label: 'Contenido' },
+            { id: 'content', icon: ImageIcon, label: 'Contenido' },
             { id: 'schedule', icon: Clock, label: 'Horarios' },
             { id: 'history', icon: BarChart3, label: 'Historial' },
             { id: 'settings', icon: Settings, label: 'Config' },
@@ -590,6 +594,8 @@ function ContentTab({ contents, onRefresh }: { contents: TweetContent[]; onRefre
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [editingImageSrc, setEditingImageSrc] = useState<string | null>(null)
+  const [editedBlob, setEditedBlob] = useState<Blob | null>(null)
   const { toast } = useToast()
 
   const pendingContent = contents.filter(c => c.status === 'pending')
@@ -599,9 +605,31 @@ function ContentTab({ contents, onRefresh }: { contents: TweetContent[]; onRefre
     const file = e.target.files?.[0]
     if (file) {
       setSelectedFile(file)
+      setEditedBlob(null)
+      // Open photo editor directly
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setEditingImageSrc(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleEditorApply = (blob: Blob) => {
+    setEditedBlob(blob)
+    setEditingImageSrc(null)
+    const url = URL.createObjectURL(blob)
+    setPreviewUrl(url)
+    const editedFile = new File([blob], 'edited-photo.jpg', { type: 'image/jpeg' })
+    setSelectedFile(editedFile)
+  }
+
+  const handleEditorCancel = () => {
+    setEditingImageSrc(null)
+    if (selectedFile && !editedBlob) {
       const reader = new FileReader()
       reader.onloadend = () => setPreviewUrl(reader.result as string)
-      reader.readAsDataURL(file)
+      reader.readAsDataURL(selectedFile)
     }
   }
 
@@ -630,6 +658,7 @@ function ContentTab({ contents, onRefresh }: { contents: TweetContent[]; onRefre
         setUploadText('')
         setSelectedFile(null)
         setPreviewUrl(null)
+        setEditedBlob(null)
         setShowUpload(false)
         onRefresh()
       } else {
@@ -746,14 +775,30 @@ function ContentTab({ contents, onRefresh }: { contents: TweetContent[]; onRefre
                   {previewUrl ? (
                     <div className="relative rounded-lg overflow-hidden border border-white/10">
                       <img src={previewUrl} alt="Preview" className="w-full h-48 object-cover" />
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        className="absolute top-2 right-2 h-7 w-7 p-0"
-                        onClick={() => { setSelectedFile(null); setPreviewUrl(null) }}
-                      >
-                        <X className="w-3 h-3" />
-                      </Button>
+                      <div className="absolute top-2 right-2 flex gap-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-7 px-2 bg-black/60 border-white/20 text-white hover:bg-black/80"
+                          onClick={() => { setEditingImageSrc(previewUrl) }}
+                        >
+                          <Crop className="w-3 h-3 mr-1" />
+                          Editar
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="h-7 w-7 p-0"
+                          onClick={() => { setSelectedFile(null); setPreviewUrl(null); setEditedBlob(null) }}
+                        >
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </div>
+                      {editedBlob && (
+                        <Badge className="absolute bottom-2 left-2 bg-sky-500/20 text-sky-400 border-sky-500/30 text-[10px]">
+                          Foto editada ✓
+                        </Badge>
+                      )}
                     </div>
                   ) : (
                     <button
@@ -761,7 +806,7 @@ function ContentTab({ contents, onRefresh }: { contents: TweetContent[]; onRefre
                       className="w-full h-24 rounded-lg border-2 border-dashed border-white/10 hover:border-sky-500/40 transition-colors flex flex-col items-center justify-center gap-2 text-white/30 hover:text-white/50"
                     >
                       <Upload className="w-6 h-6" />
-                      <span className="text-xs">Tocá para subir imagen</span>
+                      <span className="text-xs">Tocá para subir y editar imagen</span>
                     </button>
                   )}
                 </div>
@@ -778,7 +823,7 @@ function ContentTab({ contents, onRefresh }: { contents: TweetContent[]; onRefre
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => { setShowUpload(false); setSelectedFile(null); setPreviewUrl(null); setUploadText('') }}
+                    onClick={() => { setShowUpload(false); setSelectedFile(null); setPreviewUrl(null); setEditedBlob(null); setUploadText('') }}
                     className="border-white/10 text-white/60"
                   >
                     Cancelar
@@ -801,7 +846,7 @@ function ContentTab({ contents, onRefresh }: { contents: TweetContent[]; onRefre
         {pendingContent.length === 0 ? (
           <Card className="bg-white/[0.02] border-white/5">
             <CardContent className="p-8 text-center">
-              <Image className="w-10 h-10 text-white/10 mx-auto mb-3" />
+              <ImageIcon className="w-10 h-10 text-white/10 mx-auto mb-3" />
               <p className="text-white/30 text-sm">No hay contenido pendiente</p>
               <p className="text-white/20 text-xs mt-1">Tocá "Agregar" para empezar a cargar</p>
             </CardContent>
@@ -835,9 +880,20 @@ function ContentTab({ contents, onRefresh }: { contents: TweetContent[]; onRefre
           </div>
         </div>
       )}
+
+      {/* Photo Editor Overlay */}
+      {editingImageSrc && (
+        <PhotoEditor
+          imageSrc={editingImageSrc}
+          onApply={handleEditorApply}
+          onCancel={handleEditorCancel}
+        />
+      )}
     </div>
   )
 }
+
+// ─── Content Card ────────────────────────────────────────────
 
 function ContentCard({ item, onDelete }: { item: TweetContent; onDelete: (id: string) => void }) {
   return (
