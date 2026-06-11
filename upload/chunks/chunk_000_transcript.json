@@ -1,0 +1,14 @@
+{
+  "created": 1781201752,
+  "id": "20260612021551b169e2a49e274b6b",
+  "request_id": "20260612021551b169e2a49e274b6b",
+  "text": "我不知道怎么说，但是没有空间，所以我就喝了点酒，然后就没事了。我得解释一下个人问题，但同样的事情，Instagram的摄影室就是那种正式的房间，我每次去都听不清他们在说什么，就那样过去了。",
+  "usage": {
+    "completion_tokens": 50,
+    "prompt_tokens": 375,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 425
+  }
+}
