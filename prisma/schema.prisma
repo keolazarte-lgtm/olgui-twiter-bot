@@ -36,3 +36,53 @@ model WaitlistEntry {
   niche     String?
   createdAt DateTime @default(now())
 }
+
+// ─── TweetBot Models ─────────────────────────────────────────
+
+model TweetContent {
+  id        String   @id @default(cuid())
+  type      String   // "photo_teaser", "phrase_hot", "call_to_action", "countdown", "engagement_bait", "social_proof"
+  text      String   // caption or full text
+  mediaUrl  String?  // image path if photo
+  status    String   @default("pending") // "pending", "scheduled", "posted", "paused"
+  postedAt  DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TweetSchedule {
+  id        String   @id @default(cuid())
+  hourUtc   Int      // 0-23 UTC hour to post
+  timezone  String   // "US_East", "US_West", "UK", "EU", "AU", "ASIA"
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TweetLog {
+  id          String   @id @default(cuid())
+  contentId   String?
+  tweetId     String?  // Twitter's tweet ID after posting
+  text        String
+  mediaUrl    String?
+  zone        String   // timezone it targeted
+  postedAt    DateTime @default(now())
+  likes       Int      @default(0)
+  retweets    Int      @default(0)
+  replies     Int      @default(0)
+  views       Int      @default(0)
+  status      String   @default("posted") // "posted", "failed"
+  errorMsg    String?
+}
+
+model TweetConfig {
+  id              String   @id @default(cuid())
+  apiKey          String?
+  apiSecret       String?
+  accessToken     String?
+  accessTokenSecret String?
+  postIntervalHours Int    @default(3) // hours between tweets
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
