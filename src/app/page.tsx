@@ -774,8 +774,17 @@ function ContentTab({ contents, onRefresh }: { contents: TweetContent[]; onRefre
                   />
                   {previewUrl ? (
                     <div className="relative rounded-lg overflow-hidden border border-white/10">
-                      <img src={previewUrl} alt="Preview" className="w-full h-48 object-cover" />
+                      <img src={previewUrl} alt="Preview" className="w-full h-48 object-contain bg-black/50" />
                       <div className="absolute top-2 right-2 flex gap-1">
+                        <a
+                          href={previewUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="h-7 px-2 bg-black/60 border border-white/20 text-white hover:bg-black/80 rounded-md flex items-center text-xs"
+                        >
+                          <Eye className="w-3 h-3 mr-1" />
+                          Ver
+                        </a>
                         <Button
                           size="sm"
                           variant="outline"
