@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Creator {
+  id            String   @id @default(cuid())
+  name          String
+  username      String   @unique
+  bio           String
+  niches        String   // comma-separated: "BDSM,fitness,lifestyle"
+  platforms     String   // comma-separated: "OnlyFans,Fansly,Twitter"
+  followerRange String   // "1k-5k", "5k-10k", "10k-50k", "50k-100k", "100k+"
+  collabTypes   String   // comma-separated: "shoutout,content,ppv_bundle,custom_split"
+  location      String?
+  twitter       String?
+  instagram     String?
+  onlyfans      String?
+  fansly        String?
+  website       String?
+  avatarUrl     String?
+  isVerified    Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model WaitlistEntry {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  niche     String?
+  createdAt DateTime @default(now())
+}
