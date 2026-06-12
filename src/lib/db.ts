@@ -11,16 +11,20 @@ function createPrismaClient() {
 
   // If using Turso (cloud), use the libsql adapter
   if (databaseUrl.startsWith('libsql://') || databaseUrl.startsWith('http://') || databaseUrl.startsWith('https://')) {
-    const libsql = createClient({
-      url: databaseUrl,
-      authToken: process.env.TURSO_AUTH_TOKEN || '',
-    })
-    const adapter = new PrismaLibSql(libsql)
-    return new PrismaClient({ adapter, log: ['query'] })
+    try {
+      const libsql = createClient({
+        url: databaseUrl,
+        authToken: process.env.TURSO_AUTH_TOKEN || '',
+      })
+      const adapter = new PrismaLibSql(libsql)
+      return new PrismaClient({ adapter, log: ['error'] })
+    } catch (error) {
+      console.error('Failed to create Turso client, falling back:', error)
+    }
   }
 
   // Local SQLite - standard Prisma
-  return new PrismaClient({ log: ['query'] })
+  return new PrismaClient({ log: ['error'] })
 }
 
 export const db = globalForPrisma.prisma ?? createPrismaClient()

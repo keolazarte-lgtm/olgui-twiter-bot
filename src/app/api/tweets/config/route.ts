@@ -12,7 +12,8 @@ export async function GET() {
     return NextResponse.json(config)
   } catch (error) {
     console.error('Error fetching config:', error)
-    return NextResponse.json({ error: 'Failed to fetch config' }, { status: 500 })
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    return NextResponse.json({ error: 'Failed to fetch config', detail: message }, { status: 500 })
   }
 }
 
@@ -40,6 +41,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json(updated)
   } catch (error) {
     console.error('Error updating config:', error)
-    return NextResponse.json({ error: 'Failed to update config' }, { status: 500 })
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    return NextResponse.json({ error: 'Failed to update config', detail: message }, { status: 500 })
   }
 }
