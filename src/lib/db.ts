@@ -10,7 +10,9 @@ function createPrismaClient() {
   const databaseUrl = process.env.DATABASE_URL || ''
   const tursoToken = process.env.TURSO_AUTH_TOKEN || ''
 
-  // If using Turso (cloud), use the libsql adapter
+  // CRITICAL: PrismaClient always validates DATABASE_URL, even with an adapter.
+  // When using Turso (libsql://), we need to set a valid dummy URL for Prisma's
+  // internal validation, then use the adapter for actual connections.
   if (databaseUrl.startsWith('libsql://') || databaseUrl.startsWith('http://') || databaseUrl.startsWith('https://')) {
     console.log('[DB] Connecting to Turso:', databaseUrl.substring(0, 30) + '...')
     try {
@@ -19,15 +21,26 @@ function createPrismaClient() {
         authToken: tursoToken,
       })
       const adapter = new PrismaLibSql(libsql)
-      return new PrismaClient({ adapter, log: ['error'] })
+
+      // Override DATABASE_URL with a valid format for Prisma's internal validation
+      // The adapter will handle the actual connection
+      const originalUrl = process.env.DATABASE_URL
+      process.env.DATABASE_URL = 'file:./tmp/turso-dummy.db'
+      const client = new PrismaClient({ adapter, log: ['error'] })
+      // Restore original URL
+      process.env.DATABASE_URL = originalUrl
+
+      return client
     } catch (error) {
-      console.error('[DB] Turso adapter failed, falling back:', error)
+      console.error('[DB] Turso adapter failed:', error)
     }
   }
 
   // Local SQLite - standard Prisma
-  const localUrl = databaseUrl || 'file:./db/custom.db'
-  console.log('[DB] Using local SQLite:', localUrl)
+  if (!process.env.DATABASE_URL) {
+    process.env.DATABASE_URL = 'file:./db/custom.db'
+  }
+  console.log('[DB] Using local SQLite')
   return new PrismaClient({ log: ['error'] })
 }
 
