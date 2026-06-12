@@ -1,26 +1,20 @@
-# Work Log
-
 ---
 Task ID: 1
-Agent: Main Z
-Task: Build Twitter Auto-Promo Scheduler for Olgui
+Agent: Main Agent
+Task: Fix Vercel deployment - API routes returning 500 errors
 
 Work Log:
-- Replaced CollabMatch page.tsx with complete TweetBot Auto-Promo Scheduler UI
-- Built 5-tab mobile-first dashboard: Panel, Contenido, Horarios, Historial, Config
-- Updated layout.tsx with TweetBot metadata (title, description, keywords, lang="es")
-- Added PATCH route to /api/tweets/content for content status updates (rotation)
-- Updated DELETE route to also remove uploaded files from disk
-- Added mkdir recursive for uploads directory
-- Pushed Prisma schema and seeded with sample data:
-  - 10 sample content items (Spanish) with 6 content types
-  - 20 default schedule slots across 5 timezones (US East, US West, UK, EU, AU)
-  - 5 sample tweet logs with engagement data
-  - Default config (inactive, 3h interval)
-- Verified all API endpoints return data correctly
-- Browser verification: all 4 tabs render correctly, no JS errors, responsive layout works
+- Diagnosed error: `URL_INVALID: The URL 'undefined' is not in a valid format` from Prisma
+- Root cause: Prisma adapter for Turso doesn't work in Vercel serverless - PrismaClient always validates DATABASE_URL internally
+- Attempted fix 1: Override process.env.DATABASE_URL before PrismaClient init → didn't work in serverless
+- Attempted fix 2: Set DATABASE_URL=file:./db/custom.db for prisma generate → build worked but runtime still failed
+- Final fix: Created src/lib/turso.ts with direct libsql client for production, bypassing Prisma entirely
+- All API routes updated to check isTurso() and use appropriate client
+- Prisma still used for local dev (SQLite), libsql for production (Turso)
+- Verified all 4 API endpoints work on Vercel: config, content, schedule, log
 
 Stage Summary:
-- TweetBot Auto-Promo Scheduler is live at localhost:3000
-- Features: content upload (photos + text), smart scheduling (5 foreign timezones), tweet history with engagement stats, API key configuration, auto-rotation of posted content
-- Pending: User needs to add Twitter API keys from developer.twitter.com for actual posting
+- Vercel deployment fully working: https://olgui-twiter-bot.vercel.app/
+- All API endpoints returning 200 with correct data
+- Twitter API keys loaded from Turso
+- App is now accessible online for Olgui
