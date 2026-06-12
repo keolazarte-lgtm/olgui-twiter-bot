@@ -190,9 +190,23 @@ export async function postTweet(
     if (!response.ok) {
       const errorText = await response.text()
       console.error('Tweet post error:', errorText)
+      
+      // Parse Twitter error for user-friendly messages
+      let userFriendlyError = `Twitter API error ${response.status}`
+      try {
+        const errorJson = JSON.parse(errorText)
+        if (errorJson.title === 'CreditsDepleted') {
+          userFriendlyError = 'Sin créditos de Twitter. Cargá créditos en https://console.x.com ($5 = ~333 tweets)'
+        } else if (errorJson.detail) {
+          userFriendlyError = errorJson.detail
+        } else if (errorJson.title) {
+          userFriendlyError = errorJson.title
+        }
+      } catch { /* keep default */ }
+
       return {
         success: false,
-        error: `Twitter API error: ${response.status} - ${errorText}`,
+        error: userFriendlyError,
       }
     }
 
