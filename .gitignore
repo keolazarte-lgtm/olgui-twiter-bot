@@ -50,5 +50,10 @@ test
 prompt
 
 server.log
+
+# Local database & uploads (use Turso + Vercel Blob in production)
+/db/
+/public/uploads/
+
 # Skills directory
 /skills/
