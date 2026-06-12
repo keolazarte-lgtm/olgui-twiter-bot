@@ -1,4 +1,5 @@
 import { db } from '@/lib/db'
+import { isTurso, tursoGetContentById, tursoUpdateContent, tursoCreateLog } from '@/lib/turso'
 import { getTwitterConfig, postTweet } from '@/lib/twitter'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -13,7 +14,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Get the content
-    const content = await db.tweetContent.findUnique({ where: { id: contentId } })
+    let content
+    if (isTurso()) {
+      content = await tursoGetContentById(contentId)
+    } else {
+      content = await db.tweetContent.findUnique({ where: { id: contentId } })
+    }
+
     if (!content) {
       return NextResponse.json({ error: 'Content not found' }, { status: 404 })
     }
@@ -28,8 +35,8 @@ export async function POST(request: NextRequest) {
     const result = await postTweet(twitterConfig, content.text, content.mediaUrl || undefined)
 
     // Log the attempt
-    await db.tweetLog.create({
-      data: {
+    if (isTurso()) {
+      await tursoCreateLog({
         contentId: content.id,
         tweetId: result.tweetId || null,
         text: content.text,
@@ -37,15 +44,31 @@ export async function POST(request: NextRequest) {
         zone: 'manual',
         status: result.success ? 'posted' : 'failed',
         errorMsg: result.error || null,
-      },
-    })
+      })
+    } else {
+      await db.tweetLog.create({
+        data: {
+          contentId: content.id,
+          tweetId: result.tweetId || null,
+          text: content.text,
+          mediaUrl: content.mediaUrl,
+          zone: 'manual',
+          status: result.success ? 'posted' : 'failed',
+          errorMsg: result.error || null,
+        },
+      })
+    }
 
     // Update content status
     if (result.success) {
-      await db.tweetContent.update({
-        where: { id: content.id },
-        data: { status: 'posted', postedAt: new Date() },
-      })
+      if (isTurso()) {
+        await tursoUpdateContent(content.id, { status: 'posted' })
+      } else {
+        await db.tweetContent.update({
+          where: { id: content.id },
+          data: { status: 'posted', postedAt: new Date() },
+        })
+      }
     }
 
     return NextResponse.json({

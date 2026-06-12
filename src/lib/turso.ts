@@ -291,3 +291,103 @@ export async function tursoCreateLog(data: {
            data.mediaUrl || null, data.zone, data.status, data.errorMsg || null]
   })
 }
+
+// ─── Additional Turso queries for post/cron routes ──────────
+
+/** Get a single content item by ID */
+export async function tursoGetContentById(id: string) {
+  const client = getTursoClient()
+  if (!client) return null
+
+  const result = await client.execute({ sql: 'SELECT * FROM TweetContent WHERE id = ?', args: [id] })
+  if (result.rows.length === 0) return null
+
+  const row = result.rows[0]
+  return {
+    id: row.id as string,
+    type: row.type as string,
+    text: row.text as string,
+    mediaUrl: row.mediaUrl as string | null,
+    status: row.status as string,
+    postedAt: row.postedAt as string | null,
+    createdAt: row.createdAt as string,
+    updatedAt: row.updatedAt as string,
+  }
+}
+
+/** Get the next pending content (oldest first) */
+export async function tursoGetNextPending() {
+  const client = getTursoClient()
+  if (!client) return null
+
+  const result = await client.execute("SELECT * FROM TweetContent WHERE status = 'pending' ORDER BY createdAt ASC LIMIT 1")
+  if (result.rows.length === 0) return null
+
+  const row = result.rows[0]
+  return {
+    id: row.id as string,
+    type: row.type as string,
+    text: row.text as string,
+    mediaUrl: row.mediaUrl as string | null,
+    status: row.status as string,
+    postedAt: row.postedAt as string | null,
+    createdAt: row.createdAt as string,
+    updatedAt: row.updatedAt as string,
+  }
+}
+
+/** Reset all posted content back to pending (rotation) */
+export async function tursoResetPostedContent() {
+  const client = getTursoClient()
+  if (!client) return
+
+  await client.execute("UPDATE TweetContent SET status = 'pending', postedAt = NULL, updatedAt = CURRENT_TIMESTAMP WHERE status = 'posted'")
+}
+
+/** Get the most recent log entry */
+export async function tursoGetLastLog() {
+  const client = getTursoClient()
+  if (!client) return null
+
+  const result = await client.execute('SELECT * FROM TweetLog ORDER BY postedAt DESC LIMIT 1')
+  if (result.rows.length === 0) return null
+
+  const row = result.rows[0]
+  return {
+    id: row.id as string,
+    contentId: row.contentId as string | null,
+    tweetId: row.tweetId as string | null,
+    text: row.text as string,
+    mediaUrl: row.mediaUrl as string | null,
+    zone: row.zone as string,
+    postedAt: row.postedAt as string,
+    likes: row.likes as number,
+    retweets: row.retweets as number,
+    replies: row.replies as number,
+    views: row.views as number,
+    status: row.status as string,
+    errorMsg: row.errorMsg as string | null,
+  }
+}
+
+/** Get active schedule for a specific UTC hour */
+export async function tursoGetActiveScheduleByHour(hourUtc: number) {
+  const client = getTursoClient()
+  if (!client) return null
+
+  const result = await client.execute({
+    sql: 'SELECT * FROM TweetSchedule WHERE hourUtc = ? AND isActive = 1 LIMIT 1',
+    args: [hourUtc]
+  })
+  if (result.rows.length === 0) return null
+
+  const row = result.rows[0]
+  return {
+    id: row.id as string,
+    hourUtc: row.hourUtc as number,
+    timezone: row.timezone as string,
+    isActive: Boolean(row.isActive),
+    createdAt: row.createdAt as string,
+    updatedAt: row.updatedAt as string,
+  }
+}
