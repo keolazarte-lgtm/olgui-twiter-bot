@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "TweetBot — Auto-Promo Scheduler",
-  description: "Publicá contenido de promoción en Twitter las 24hs apuntando a horarios extranjeros. Automático, inteligente, sin esfuerzo.",
+  description: "Publica contenido de promocion en Twitter las 24hs apuntando a horarios extranjeros. Automatico, inteligente, sin esfuerzo.",
   keywords: ["twitter", "auto-post", "scheduler", "promo", "content creator", "onlyfans", "marketing"],
   authors: [{ name: "TweetBot" }],
   icons: {
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "TweetBot — Auto-Promo Scheduler",
-    description: "Publicá contenido de promoción en Twitter las 24hs. Automático.",
+    description: "Publica contenido de promocion en Twitter las 24hs. Automatico.",
     type: "website",
   },
 };
@@ -38,7 +38,10 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dancing+Script:wght@700&family=Lobster&family=Oswald:wght@700&family=Pacifico&family=Permanent+Marker&family=Press+Start+2P&family=Russo+One&family=Shadows+Into+Light&family=Staatliches&display=swap" rel="stylesheet" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dancing+Script:wght@400;700&family=Lobster&family=Oswald:wght@400;700&family=Pacifico&family=Permanent+Marker&family=Press+Start+2P&family=Russo+One&family=Shadows+Into+Light&family=Staatliches&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}

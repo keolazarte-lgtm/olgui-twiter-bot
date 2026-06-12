@@ -5,19 +5,12 @@ import Cropper, { Area } from 'react-easy-crop'
 import {
   Crop, Type, Droplets, Sun, RotateCcw, Check, X, Plus,
   Trash2, Palette, Bold, Italic, Underline,
-  AlignLeft, AlignCenter, AlignRight, Eye, Download
+  AlignLeft, AlignCenter, AlignRight, Eye, Download,
+  Sparkles, Move, ChevronDown, Layers
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
-import { Badge } from '@/components/ui/badge'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 
 // ─── Types ───────────────────────────────────────────────────
 interface TextLayer {
@@ -50,30 +43,30 @@ interface PhotoEditorProps {
 
 // ─── Constants ───────────────────────────────────────────────
 const FONTS = [
-  { value: 'Impact', label: 'Impact', css: 'Impact, "Arial Black", sans-serif' },
-  { value: 'Bebas Neue', label: 'BEBAS NEUE', css: '"Bebas Neue", Impact, sans-serif' },
+  { value: 'Impact', label: 'IMPACT', css: 'Impact, "Arial Black", sans-serif' },
+  { value: 'BebasNeue', label: 'BEBAS', css: '"Bebas Neue", Impact, sans-serif' },
   { value: 'Lobster', label: 'Lobster', css: 'Lobster, cursive' },
   { value: 'Pacifico', label: 'Pacifico', css: 'Pacifico, cursive' },
-  { value: 'Permanent Marker', label: 'PERMANENT', css: '"Permanent Marker", cursive' },
+  { value: 'PermanentMarker', label: 'MARKER', css: '"Permanent Marker", cursive' },
   { value: 'Oswald', label: 'Oswald', css: 'Oswald, sans-serif' },
-  { value: 'Russo One', label: 'Russo One', css: '"Russo One", sans-serif' },
-  { value: 'Staatliches', label: 'Staatliches', css: 'Staatliches, sans-serif' },
-  { value: 'Dancing Script', label: 'Dancing', css: '"Dancing Script", cursive' },
-  { value: 'Shadows Into Light', label: 'Shadows', css: '"Shadows Into Light", cursive' },
-  { value: 'Press Start 2P', label: 'PIXEL', css: '"Press Start 2P", monospace' },
+  { value: 'RussoOne', label: 'Russo', css: '"Russo One", sans-serif' },
+  { value: 'Staatliches', label: 'Staat.', css: 'Staatliches, sans-serif' },
+  { value: 'DancingScript', label: 'Dancing', css: '"Dancing Script", cursive' },
+  { value: 'ShadowsIntoLight', label: 'Shadows', css: '"Shadows Into Light", cursive' },
+  { value: 'PressStart2P', label: 'PIXEL', css: '"Press Start 2P", monospace' },
   { value: 'Arial', label: 'Arial', css: 'Arial, Helvetica, sans-serif' },
   { value: 'Georgia', label: 'Georgia', css: 'Georgia, serif' },
   { value: 'Verdana', label: 'Verdana', css: 'Verdana, sans-serif' },
-  { value: 'Courier New', label: 'Courier', css: '"Courier New", monospace' },
+  { value: 'CourierNew', label: 'Courier', css: '"Courier New", monospace' },
 ]
 
 const CROP_PRESETS = [
-  { value: '16/9', label: '16:9 Twitter', ratio: 16 / 9 },
-  { value: '1/1', label: '1:1 Cuadrado', ratio: 1 },
-  { value: '4/5', label: '4:5 Instagram', ratio: 4 / 5 },
-  { value: '9/16', label: '9:16 Story', ratio: 9 / 16 },
-  { value: '3/4', label: '3:4 Retrato', ratio: 3 / 4 },
-  { value: 'free', label: 'Libre', ratio: undefined },
+  { value: '16/9', label: '16:9', sublabel: 'Twitter', ratio: 16 / 9 },
+  { value: '1/1', label: '1:1', sublabel: 'Square', ratio: 1 },
+  { value: '4/5', label: '4:5', sublabel: 'IG Post', ratio: 4 / 5 },
+  { value: '9/16', label: '9:16', sublabel: 'Story', ratio: 9 / 16 },
+  { value: '3/4', label: '3:4', sublabel: 'Portrait', ratio: 3 / 4 },
+  { value: 'free', label: 'Free', sublabel: 'Libre', ratio: undefined },
 ]
 
 const COLORS = [
@@ -82,13 +75,12 @@ const COLORS = [
   '#00CED1', '#FF1493',
 ]
 
-// ─── Helper: crop image ─────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────
 async function getCroppedImg(imageSrc: string, pixelCrop: Area): Promise<HTMLCanvasElement> {
   const image = new Image()
   image.crossOrigin = 'anonymous'
   image.src = imageSrc
   await new Promise(r => { image.onload = r })
-
   const canvas = document.createElement('canvas')
   canvas.width = pixelCrop.width
   canvas.height = pixelCrop.height
@@ -97,7 +89,6 @@ async function getCroppedImg(imageSrc: string, pixelCrop: Area): Promise<HTMLCan
   return canvas
 }
 
-// Helper: get pointer position
 function getPointerPos(e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent, rect: DOMRect) {
   let clientX: number, clientY: number
   if ('touches' in e) {
@@ -114,7 +105,6 @@ function getPointerPos(e: React.MouseEvent | React.TouchEvent | MouseEvent | Tou
   }
 }
 
-// Helper: pixelate a region of a canvas (circular)
 function pixelateCircle(ctx: CanvasRenderingContext2D, cx: number, cy: number, radius: number, pixelSize: number) {
   const x0 = Math.max(0, Math.floor(cx - radius))
   const y0 = Math.max(0, Math.floor(cy - radius))
@@ -151,7 +141,7 @@ function pixelateCircle(ctx: CanvasRenderingContext2D, cx: number, cy: number, r
   ctx.restore()
 }
 
-// ─── Main Editor Component ───────────────────────────────────
+// ─── Main Component ──────────────────────────────────────────
 export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditorProps) {
   const [activeTool, setActiveTool] = useState<'crop' | 'text' | 'blur' | 'adjust'>('crop')
   const [cropPreset, setCropPreset] = useState('16/9')
@@ -165,6 +155,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
   const [newText, setNewText] = useState('')
   const [draggingText, setDraggingText] = useState<string | null>(null)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+  const [showFontPicker, setShowFontPicker] = useState(false)
 
   // Blur paint
   const [blurStrokes, setBlurStrokes] = useState<BlurStroke[]>([])
@@ -182,28 +173,23 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
 
-  // Fonts loaded
-  const [fontsLoaded, setFontsLoaded] = useState(false)
-
   // Refs
   const imageContainerRef = useRef<HTMLDivElement>(null)
-  const previewCanvasRef = useRef<HTMLCanvasElement>(null)
+  const blurCanvasRef = useRef<HTMLCanvasElement>(null)
   const originalImageRef = useRef<HTMLImageElement | null>(null)
-  const lastPaintedPoint = useRef<number>(0)
+  const fontPickerRef = useRef<HTMLDivElement>(null)
 
   const selectedText = textLayers.find(t => t.id === selectedTextId)
 
   // ─── Load fonts ────────────────────────────────────────────
   useEffect(() => {
     document.fonts.ready.then(() => {
-      setFontsLoaded(true)
+      // Force re-render by triggering a no-op state change
+      setTextLayers(prev => [...prev])
     })
-    // Fallback timeout
-    const t = setTimeout(() => setFontsLoaded(true), 3000)
-    return () => clearTimeout(t)
   }, [])
 
-  // ─── Load original image for blur canvas ──────────────────
+  // ─── Load original image ───────────────────────────────────
   useEffect(() => {
     const img = new Image()
     img.crossOrigin = 'anonymous'
@@ -211,30 +197,27 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
     img.src = imageSrc
   }, [imageSrc])
 
-  // ─── Render blur preview in real-time on canvas ───────────
+  // ─── Render blur preview ───────────────────────────────────
   const renderBlurPreview = useCallback(() => {
-    const canvas = previewCanvasRef.current
+    const canvas = blurCanvasRef.current
     const container = imageContainerRef.current
     const img = originalImageRef.current
     if (!canvas || !container || !img) return
 
-    const imgEl = container.querySelector('img')
+    const imgEl = container.querySelector('[data-img-base]') as HTMLElement
     if (!imgEl) return
 
-    const w = imgEl.clientWidth
-    const h = imgEl.clientHeight
+    const w = imgEl.offsetWidth
+    const h = imgEl.offsetHeight
     if (w === 0 || h === 0) return
 
-    // Only re-render if size changed
-    if (canvas.width !== w || canvas.height !== h) {
-      canvas.width = w
-      canvas.height = h
-    }
+    canvas.width = w
+    canvas.height = h
 
     const ctx = canvas.getContext('2d')!
     ctx.clearRect(0, 0, w, h)
 
-    // Draw the image on the preview canvas
+    // Draw image with filters
     ctx.filter = [
       `brightness(${brightness}%)`,
       `contrast(${contrast}%)`,
@@ -243,10 +226,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
     ctx.drawImage(img, 0, 0, w, h)
     ctx.filter = 'none'
 
-    // Apply all blur strokes as pixelation
-    const scaleX = img.naturalWidth / w
-    const scaleY = img.naturalHeight / h
-
+    // Apply blur strokes
     const allStrokes = [...blurStrokes]
     if (isPaintingBlur && currentStrokePoints.length > 0) {
       allStrokes.push({
@@ -259,18 +239,31 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
 
     for (const stroke of allStrokes) {
       const pixelSize = Math.max(3, stroke.intensity)
-      for (const point of stroke.points) {
+      // Interpolate points for smoother strokes
+      for (let i = 0; i < stroke.points.length; i++) {
+        const point = stroke.points[i]
         const px = point.x / 100 * w
         const py = point.y / 100 * h
         const radius = stroke.brushSize / 100 * w / 2
-
-        // Pixelate a circular region
         pixelateCircle(ctx, px, py, radius, pixelSize)
+      }
+      // Also interpolate between consecutive points for continuous stroke
+      for (let i = 1; i < stroke.points.length; i++) {
+        const prev = stroke.points[i - 1]
+        const curr = stroke.points[i]
+        const dist = Math.sqrt((curr.x - prev.x) ** 2 + (curr.y - prev.y) ** 2)
+        const steps = Math.max(1, Math.floor(dist / 0.5))
+        for (let s = 1; s < steps; s++) {
+          const t = s / steps
+          const interpX = (prev.x + (curr.x - prev.x) * t) / 100 * w
+          const interpY = (prev.y + (curr.y - prev.y) * t) / 100 * h
+          const radius = stroke.brushSize / 100 * w / 2
+          pixelateCircle(ctx, interpX, interpY, radius, pixelSize)
+        }
       }
     }
   }, [blurStrokes, isPaintingBlur, currentStrokePoints, blurBrushSize, blurIntensity, brightness, contrast, saturate])
 
-  // Re-render blur preview when strokes change
   useEffect(() => {
     if (activeTool === 'blur' || blurStrokes.length > 0) {
       renderBlurPreview()
@@ -335,7 +328,6 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
     if (activeTool === 'blur') {
       setIsPaintingBlur(true)
       setCurrentStrokePoints([pos])
-      lastPaintedPoint.current = 0
       e.preventDefault()
     }
   }
@@ -407,9 +399,21 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
     }
   }, [draggingText, dragOffset, updateTextLayer, isPaintingBlur, currentStrokePoints, blurBrushSize, blurIntensity])
 
+  // Close font picker on outside click
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (fontPickerRef.current && !fontPickerRef.current.contains(e.target as Node)) {
+        setShowFontPicker(false)
+      }
+    }
+    if (showFontPicker) {
+      document.addEventListener('mousedown', handleClick)
+      return () => document.removeEventListener('mousedown', handleClick)
+    }
+  }, [showFontPicker])
+
   // ─── FULL render ──────────────────────────────────────────
   const renderFinalImage = async (): Promise<Blob> => {
-    // Wait for fonts to be ready
     await document.fonts.ready
 
     const image = new Image()
@@ -419,7 +423,6 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
 
     let sourceCanvas: HTMLCanvasElement
 
-    // Step 1: Crop
     if (croppedAreaPixels && croppedAreaPixels.width > 0 && croppedAreaPixels.height > 0) {
       sourceCanvas = await getCroppedImg(imageSrc, croppedAreaPixels)
     } else {
@@ -429,7 +432,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
       sourceCanvas.getContext('2d')!.drawImage(image, 0, 0)
     }
 
-    // Step 2: Adjustments
+    // Adjustments
     const adjustedCanvas = document.createElement('canvas')
     adjustedCanvas.width = sourceCanvas.width
     adjustedCanvas.height = sourceCanvas.height
@@ -438,7 +441,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
     adjustedCtx.drawImage(sourceCanvas, 0, 0)
     adjustedCtx.filter = 'none'
 
-    // Step 3: Blur strokes (pixelate)
+    // Blur
     const blurCanvas = document.createElement('canvas')
     blurCanvas.width = adjustedCanvas.width
     blurCanvas.height = adjustedCanvas.height
@@ -447,15 +450,29 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
 
     for (const stroke of blurStrokes) {
       const pixelSize = Math.max(3, stroke.intensity)
-      for (const point of stroke.points) {
+      for (let i = 0; i < stroke.points.length; i++) {
+        const point = stroke.points[i]
         const px = point.x / 100 * blurCanvas.width
         const py = point.y / 100 * blurCanvas.height
         const radius = stroke.brushSize / 100 * blurCanvas.width / 2
         pixelateCircle(blurCtx, px, py, radius, pixelSize)
       }
+      for (let i = 1; i < stroke.points.length; i++) {
+        const prev = stroke.points[i - 1]
+        const curr = stroke.points[i]
+        const dist = Math.sqrt((curr.x - prev.x) ** 2 + (curr.y - prev.y) ** 2)
+        const steps = Math.max(1, Math.floor(dist / 0.5))
+        for (let s = 1; s < steps; s++) {
+          const t = s / steps
+          const interpX = (prev.x + (curr.x - prev.x) * t) / 100 * blurCanvas.width
+          const interpY = (prev.y + (curr.y - prev.y) * t) / 100 * blurCanvas.height
+          const radius = stroke.brushSize / 100 * blurCanvas.width / 2
+          pixelateCircle(blurCtx, interpX, interpY, radius, pixelSize)
+        }
+      }
     }
 
-    // Step 4: Text layers
+    // Text
     for (const layer of textLayers) {
       const x = layer.x / 100 * blurCanvas.width
       const y = layer.y / 100 * blurCanvas.height
@@ -515,71 +532,77 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
 
   const previewFilter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%)`
   const cropRatio = CROP_PRESETS.find(p => p.value === cropPreset)?.ratio
+  const hasBlur = blurStrokes.length > 0 || isPaintingBlur
 
-  // ─── Preview modal ───────────────────────────────────────
+  // ─── Preview Modal ────────────────────────────────────────
   if (previewUrl) {
     return (
-      <div className="fixed inset-0 z-[200] bg-black flex flex-col">
-        <div className="flex items-center justify-between px-4 py-3 bg-zinc-900 border-b border-white/10">
-          <h2 className="text-white font-bold text-sm">Vista Previa Final</h2>
+      <div className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex flex-col">
+        <div className="flex items-center justify-between px-5 py-3 bg-gradient-to-r from-zinc-900/90 to-zinc-800/90 border-b border-white/5">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center">
+              <Eye className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <h2 className="text-white font-bold text-sm">Vista Previa</h2>
+              <p className="text-white/30 text-[10px]">Asi se va a ver publicada</p>
+            </div>
+          </div>
           <div className="flex items-center gap-2">
-            <Button size="sm" variant="outline" className="border-white/10 text-white/60 h-8" onClick={() => { URL.revokeObjectURL(previewUrl); setPreviewUrl(null) }}>
-              <X className="w-4 h-4 mr-1" />Volver
+            <Button size="sm" variant="ghost" className="text-white/50 hover:text-white hover:bg-white/5 h-9" onClick={() => { URL.revokeObjectURL(previewUrl); setPreviewUrl(null) }}>
+              <X className="w-4 h-4 mr-1.5" />Volver
             </Button>
-            <a href={previewUrl} download="foto-editada.jpg" className="inline-flex items-center h-8 px-3 rounded-md bg-white/10 border border-white/20 text-white/60 text-xs hover:bg-white/20">
-              <Download className="w-3.5 h-3.5 mr-1" />Descargar
+            <a href={previewUrl} download="foto-editada.jpg" className="inline-flex items-center h-9 px-4 rounded-xl bg-white/5 border border-white/10 text-white/70 text-xs hover:bg-white/10 transition-all">
+              <Download className="w-3.5 h-3.5 mr-1.5" />Descargar
             </a>
-            <Button size="sm" onClick={handleApply} className="bg-gradient-to-r from-sky-500 to-blue-600 text-white border-0 h-8">
-              <Check className="w-4 h-4 mr-1" />Confirmar
+            <Button size="sm" onClick={handleApply} className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white border-0 h-9 px-5 rounded-xl shadow-lg shadow-sky-500/20">
+              <Check className="w-4 h-4 mr-1.5" />Confirmar
             </Button>
           </div>
         </div>
-        <div className="flex-1 flex items-center justify-center p-4 overflow-auto">
-          <img src={previewUrl} alt="Preview" className="max-w-full max-h-full object-contain rounded-lg" />
-        </div>
-        <div className="bg-zinc-900 border-t border-white/10 px-4 py-2 flex items-center justify-between">
-          <p className="text-white/40 text-xs">Asi se va a ver la imagen publicada.</p>
-          <div className="flex items-center gap-2">
-            {textLayers.length > 0 && <Badge className="bg-sky-500/10 text-sky-400 border-sky-500/20 text-[10px]">{textLayers.length} textos</Badge>}
-            {blurStrokes.length > 0 && <Badge className="bg-rose-500/10 text-rose-400 border-rose-500/20 text-[10px]">{blurStrokes.length} blur</Badge>}
-            {(brightness !== 100 || contrast !== 100 || saturate !== 100) && <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-[10px]">ajustes</Badge>}
-          </div>
+        <div className="flex-1 flex items-center justify-center p-6 overflow-auto">
+          <img src={previewUrl} alt="Preview" className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl" />
         </div>
       </div>
     )
   }
 
-  // Check if we should show blur canvas (when blur strokes exist or tool is active)
-  const showBlurCanvas = blurStrokes.length > 0 || isPaintingBlur
-
+  // ─── Main Editor ──────────────────────────────────────────
   return (
-    <div className="fixed inset-0 z-[100] bg-black flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between px-3 py-2 bg-zinc-900 border-b border-white/10 shrink-0">
-        <div className="flex items-center gap-2">
-          <h2 className="text-white font-bold text-sm">Editor de Foto</h2>
-          <Badge className="bg-sky-500/10 text-sky-400 border-sky-500/20 text-[10px]">
-            {activeTool === 'crop' ? 'Recorte' : activeTool === 'text' ? 'Texto' : activeTool === 'blur' ? 'Blur' : 'Ajustes'}
-          </Badge>
+    <div className="fixed inset-0 z-[100] bg-black flex flex-col select-none">
+      {/* ─── Header ─── */}
+      <div className="flex items-center justify-between px-4 py-2.5 bg-gradient-to-r from-zinc-900 via-zinc-900 to-zinc-800 border-b border-white/5 shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
+            <Sparkles className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h2 className="text-white font-bold text-sm leading-tight">Photo Editor</h2>
+            <p className="text-white/25 text-[10px]">
+              {textLayers.length > 0 && `${textLayers.length} textos `}
+              {blurStrokes.length > 0 && `${blurStrokes.length} blur `}
+              {(brightness !== 100 || contrast !== 100 || saturate !== 100) && 'ajustes'}
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button size="sm" variant="outline" className="border-white/10 text-white/60 h-8 text-xs" onClick={onCancel}>
-            <X className="w-3.5 h-3.5 mr-1" />X
+          <Button size="sm" variant="ghost" className="text-white/40 hover:text-white hover:bg-white/5 h-9 w-9 p-0 rounded-xl" onClick={onCancel}>
+            <X className="w-4 h-4" />
           </Button>
-          <Button size="sm" variant="outline" className="border-sky-500/30 text-sky-400 h-8 text-xs hover:bg-sky-500/10" onClick={handlePreview} disabled={isProcessing}>
-            {isProcessing ? <div className="w-3.5 h-3.5 border-2 border-sky-400/30 border-t-sky-400 rounded-full animate-spin mr-1" /> : <Eye className="w-3.5 h-3.5 mr-1" />}
-            Preview
+          <Button size="sm" variant="ghost" className="text-sky-400 hover:text-sky-300 hover:bg-sky-500/10 h-9 px-4 rounded-xl gap-1.5" onClick={handlePreview} disabled={isProcessing}>
+            {isProcessing ? <div className="w-4 h-4 border-2 border-sky-400/30 border-t-sky-400 rounded-full animate-spin" /> : <Eye className="w-4 h-4" />}
+            <span className="text-xs font-medium">Preview</span>
           </Button>
-          <Button size="sm" onClick={handleApply} disabled={isProcessing} className="bg-gradient-to-r from-sky-500 to-blue-600 text-white border-0 h-8 text-xs">
-            {isProcessing ? <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-1" /> : <Check className="w-3.5 h-3.5 mr-1" />}
-            Guardar
+          <Button size="sm" onClick={handleApply} disabled={isProcessing} className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white border-0 h-9 px-5 rounded-xl shadow-lg shadow-sky-500/20 gap-1.5">
+            {isProcessing ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Check className="w-4 h-4" />}
+            <span className="text-xs font-medium">Guardar</span>
           </Button>
         </div>
       </div>
 
-      {/* Main Editor Area */}
+      {/* ─── Canvas Area ─── */}
       <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-        <div className="flex-1 relative overflow-hidden bg-zinc-950 min-h-0">
+        <div className="flex-1 relative overflow-hidden bg-zinc-950 min-h-0" style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(56,189,248,0.03) 0%, transparent 70%)' }}>
           {activeTool === 'crop' ? (
             <Cropper
               image={imageSrc}
@@ -592,7 +615,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
               style={{ containerStyle: { filter: previewFilter } }}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center p-2 min-h-0">
+            <div className="w-full h-full flex items-center justify-center p-3 min-h-0">
               <div
                 ref={imageContainerRef}
                 className="relative inline-block max-w-full max-h-full"
@@ -602,44 +625,56 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                 onTouchStart={handleCanvasPointerDown}
                 onTouchMove={handleCanvasPointerMove}
                 onTouchEnd={handleCanvasPointerUp}
-                style={{ cursor: activeTool === 'blur' ? 'crosshair' : activeTool === 'text' ? 'default' : 'default' }}
+                style={{ cursor: activeTool === 'blur' ? 'crosshair' : 'default' }}
               >
-                {/* Base image - hidden when blur canvas is showing to avoid double-render */}
+                {/* Base image (spacers - always visible but may be hidden visually) */}
                 <img
+                  data-img-base
                   src={imageSrc}
                   alt="Edit"
-                  className="max-w-full max-h-[55vh] object-contain select-none"
-                  style={{ filter: showBlurCanvas ? 'none' : previewFilter, visibility: showBlurCanvas ? 'hidden' : 'visible' }}
+                  className="max-w-full max-h-[55vh] object-contain select-none rounded-lg"
+                  style={{ filter: hasBlur ? 'none' : previewFilter, visibility: hasBlur ? 'hidden' : 'visible' }}
                   draggable={false}
                 />
 
-                {/* Blur preview canvas - shows actual pixelated image in real-time */}
+                {/* Blur canvas overlay - shows actual pixelated preview */}
                 <canvas
-                  ref={previewCanvasRef}
-                  className="absolute top-0 left-0 w-full h-full"
+                  ref={blurCanvasRef}
+                  className="absolute top-0 left-0 rounded-lg"
                   style={{
-                    display: showBlurCanvas ? 'block' : 'none',
+                    display: hasBlur ? 'block' : 'none',
                     pointerEvents: 'none',
+                    width: '100%',
+                    height: '100%',
                   }}
                 />
 
-                {/* When no blur, show the regular image with filters */}
-                {!showBlurCanvas && (
+                {/* When no blur, show the filtered image overlay */}
+                {!hasBlur && (
                   <img
                     src={imageSrc}
                     alt="EditFiltered"
-                    className="absolute top-0 left-0 max-w-full max-h-[55vh] object-contain select-none pointer-events-none"
+                    className="absolute top-0 left-0 max-w-full max-h-[55vh] object-contain select-none pointer-events-none rounded-lg"
                     style={{ filter: previewFilter }}
                     draggable={false}
                   />
+                )}
+
+                {/* Brush size cursor indicator for blur */}
+                {activeTool === 'blur' && (
+                  <div className="absolute top-2 right-2 z-30 bg-black/60 backdrop-blur-sm rounded-lg px-2 py-1 pointer-events-none">
+                    <span className="text-white/50 text-[10px]">Pincel: {blurBrushSize}% | Blur: {blurIntensity}px</span>
+                  </div>
                 )}
 
                 {/* Text layers overlay */}
                 {textLayers.map(layer => (
                   <div
                     key={layer.id}
-                    className={`absolute cursor-move select-none touch-none z-20 ${
-                      selectedTextId === layer.id ? 'ring-2 ring-sky-400 ring-offset-1 ring-offset-transparent' : ''
+                    className={`absolute cursor-move select-none touch-none z-20 transition-shadow duration-150 ${
+                      selectedTextId === layer.id
+                        ? 'drop-shadow-[0_0_8px_rgba(56,189,248,0.5)]'
+                        : ''
                     }`}
                     style={{
                       left: `${layer.x}%`,
@@ -649,6 +684,10 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                     onMouseDown={e => { if (activeTool === 'text') handleTextPointerDown(e, layer.id) }}
                     onTouchStart={e => { if (activeTool === 'text') handleTextPointerDown(e, layer.id) }}
                   >
+                    {/* Selection indicator */}
+                    {selectedTextId === layer.id && (
+                      <div className="absolute -inset-2 border-2 border-sky-400/60 rounded-md pointer-events-none" style={{ borderStyle: 'dashed' }} />
+                    )}
                     <span
                       style={{
                         fontSize: `${layer.fontSize}px`,
@@ -661,6 +700,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                         paintOrder: 'stroke fill',
                         whiteSpace: 'pre-wrap',
                         textShadow: layer.stroke ? `3px 3px 6px ${layer.strokeColor}80` : undefined,
+                        lineHeight: 1.1,
                       }}
                     >
                       {layer.text}
@@ -672,138 +712,253 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
           )}
         </div>
 
-        {/* Tool Controls */}
-        <div className="bg-zinc-900 border-t border-white/10 max-h-[35vh] overflow-y-auto shrink-0">
+        {/* ─── Tool Controls Panel ─── */}
+        <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 border-t border-white/5 max-h-[40vh] overflow-y-auto shrink-0" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
+
+          {/* CROP CONTROLS */}
           {activeTool === 'crop' && (
-            <div className="p-3 space-y-3">
+            <div className="p-4 space-y-4">
               <div>
-                <label className="text-white/50 text-xs mb-2 block">Formato</label>
+                <label className="text-white/40 text-[10px] uppercase tracking-wider mb-2 block font-medium">Formato</label>
                 <div className="flex flex-wrap gap-2">
                   {CROP_PRESETS.map(preset => (
                     <button key={preset.value} onClick={() => setCropPreset(preset.value)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${cropPreset === preset.value ? 'bg-sky-500/20 border border-sky-500/40 text-white' : 'bg-white/5 border border-white/10 text-white/50 hover:bg-white/10'}`}>
-                      {preset.label}
+                      className={`px-3 py-2 rounded-xl text-xs font-medium transition-all flex flex-col items-center min-w-[60px] ${
+                        cropPreset === preset.value
+                          ? 'bg-sky-500/15 border border-sky-500/30 text-sky-300 shadow-sm shadow-sky-500/10'
+                          : 'bg-white/[0.03] border border-white/[0.06] text-white/40 hover:bg-white/[0.06] hover:text-white/60'
+                      }`}>
+                      <span className="font-bold">{preset.label}</span>
+                      <span className="text-[9px] opacity-60">{preset.sublabel}</span>
                     </button>
                   ))}
                 </div>
               </div>
               <div>
-                <label className="text-white/50 text-xs mb-2 block">Zoom: {Math.round(zoom * 100)}%</label>
+                <label className="text-white/40 text-[10px] uppercase tracking-wider mb-2 block font-medium">Zoom: {Math.round(zoom * 100)}%</label>
                 <Slider value={[zoom]} onValueChange={([v]) => setZoom(v)} min={1} max={3} step={0.1} className="w-full" />
               </div>
             </div>
           )}
 
+          {/* TEXT CONTROLS */}
           {activeTool === 'text' && (
-            <div className="p-3 space-y-3">
+            <div className="p-4 space-y-3">
+              {/* Add text input */}
               <div className="flex gap-2">
-                <Input value={newText} onChange={e => setNewText(e.target.value)} onKeyDown={e => e.key === 'Enter' && addTextLayer()}
-                  placeholder="Escribí tu texto acá..."
-                  className="bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-sky-500 text-sm" />
-                <Button onClick={addTextLayer} disabled={!newText.trim()} className="bg-sky-500 hover:bg-sky-600 text-white border-0 shrink-0">
+                <div className="flex-1 relative">
+                  <Input
+                    value={newText}
+                    onChange={e => setNewText(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && addTextLayer()}
+                    placeholder="Escribi tu texto aca..."
+                    className="bg-white/[0.04] border-white/[0.08] text-white placeholder:text-white/20 focus:border-sky-500/50 focus:bg-white/[0.06] text-sm rounded-xl h-10 pr-10"
+                  />
+                  {newText && (
+                    <button onClick={() => setNewText('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/20 hover:text-white/40">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+                <Button onClick={addTextLayer} disabled={!newText.trim()} className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white border-0 shrink-0 h-10 w-10 rounded-xl shadow-lg shadow-sky-500/20">
                   <Plus className="w-4 h-4" />
                 </Button>
               </div>
 
+              {/* Selected text editing panel */}
               {selectedText && (
-                <div className="space-y-3 p-3 bg-white/[0.03] rounded-lg border border-sky-500/20">
+                <div className="space-y-3 p-4 bg-white/[0.02] rounded-2xl border border-white/[0.06]">
                   <div className="flex items-center justify-between">
-                    <span className="text-white/50 text-xs">Editando texto</span>
-                    <Button size="sm" variant="ghost" className="text-red-400 h-6 w-6 p-0" onClick={() => removeTextLayer(selectedText.id)}>
-                      <Trash2 className="w-3 h-3" />
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 rounded-md bg-sky-500/20 flex items-center justify-center">
+                        <Type className="w-3 h-3 text-sky-400" />
+                      </div>
+                      <span className="text-white/50 text-xs font-medium">Editando texto</span>
+                    </div>
+                    <Button size="sm" variant="ghost" className="text-red-400/60 hover:text-red-400 hover:bg-red-500/10 h-7 w-7 p-0 rounded-lg" onClick={() => removeTextLayer(selectedText.id)}>
+                      <Trash2 className="w-3.5 h-3.5" />
                     </Button>
                   </div>
 
-                  {/* Font - with real font preview */}
-                  <div>
-                    <label className="text-white/40 text-[10px] mb-1 block">Fuente</label>
-                    <Select value={selectedText.fontFamily} onValueChange={v => updateTextLayer(selectedText.id, { fontFamily: v })}>
-                      <SelectTrigger className="bg-white/5 border-white/10 text-white h-9 text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-zinc-900 border-white/10 max-h-[200px]">
-                        {FONTS.map(f => (
-                          <SelectItem key={f.value} value={f.value}>
-                            <span style={{ fontFamily: f.css, fontSize: '14px', fontWeight: 'bold' }}>{f.label}</span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  {/* ─── FONT PICKER (Custom - No Dropdown) ─── */}
+                  <div className="relative" ref={fontPickerRef}>
+                    <label className="text-white/30 text-[10px] uppercase tracking-wider mb-1.5 block font-medium">Fuente</label>
+                    <button
+                      onClick={() => setShowFontPicker(!showFontPicker)}
+                      className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.06] hover:border-white/[0.12] transition-all"
+                    >
+                      <span
+                        className="text-white text-sm"
+                        style={{
+                          fontFamily: FONTS.find(f => f.value === selectedText.fontFamily)?.css || selectedText.fontFamily,
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {FONTS.find(f => f.value === selectedText.fontFamily)?.label || selectedText.fontFamily}
+                      </span>
+                      <ChevronDown className={`w-4 h-4 text-white/30 transition-transform ${showFontPicker ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {/* Font picker panel - slides up, not a portal/dropdown */}
+                    {showFontPicker && (
+                      <div className="absolute bottom-full left-0 right-0 mb-2 bg-zinc-900/98 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden z-50" style={{ maxHeight: '220px' }}>
+                        <div className="p-2 overflow-y-auto" style={{ maxHeight: '210px', scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
+                          {FONTS.map(f => (
+                            <button
+                              key={f.value}
+                              onClick={() => {
+                                updateTextLayer(selectedText.id, { fontFamily: f.value })
+                                setShowFontPicker(false)
+                              }}
+                              className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center gap-3 ${
+                                selectedText.fontFamily === f.value
+                                  ? 'bg-sky-500/15 text-sky-300'
+                                  : 'text-white/70 hover:bg-white/[0.05] hover:text-white'
+                              }`}
+                            >
+                              <span
+                                className="text-base"
+                                style={{
+                                  fontFamily: f.css,
+                                  fontWeight: 'bold',
+                                  minWidth: '60px',
+                                }}
+                              >
+                                {f.label}
+                              </span>
+                              <span className="text-[10px] text-white/20">{f.value.replace(/([A-Z])/g, ' $1').trim()}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Font size */}
                   <div>
-                    <label className="text-white/40 text-[10px] mb-1 block">Tamaño: {selectedText.fontSize}px</label>
+                    <label className="text-white/30 text-[10px] uppercase tracking-wider mb-1.5 block font-medium">Tamano: {selectedText.fontSize}px</label>
                     <Slider value={[selectedText.fontSize]} onValueChange={([v]) => updateTextLayer(selectedText.id, { fontSize: v })} min={12} max={100} step={1} />
                   </div>
 
-                  {/* Style */}
-                  <div className="flex gap-1 flex-wrap">
-                    <button onClick={() => updateTextLayer(selectedText.id, { bold: !selectedText.bold })}
-                      className={`w-8 h-8 rounded flex items-center justify-center ${selectedText.bold ? 'bg-sky-500/20 text-sky-400' : 'bg-white/5 text-white/40'}`}>
-                      <Bold className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => updateTextLayer(selectedText.id, { italic: !selectedText.italic })}
-                      className={`w-8 h-8 rounded flex items-center justify-center ${selectedText.italic ? 'bg-sky-500/20 text-sky-400' : 'bg-white/5 text-white/40'}`}>
-                      <Italic className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => updateTextLayer(selectedText.id, { stroke: !selectedText.stroke })}
-                      className={`w-8 h-8 rounded flex items-center justify-center ${selectedText.stroke ? 'bg-sky-500/20 text-sky-400' : 'bg-white/5 text-white/40'}`}>
-                      <Underline className="w-4 h-4" />
-                    </button>
-                    <div className="w-px bg-white/10 mx-1" />
-                    <button onClick={() => updateTextLayer(selectedText.id, { align: 'left' })}
-                      className={`w-8 h-8 rounded flex items-center justify-center ${selectedText.align === 'left' ? 'bg-sky-500/20 text-sky-400' : 'bg-white/5 text-white/40'}`}>
-                      <AlignLeft className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => updateTextLayer(selectedText.id, { align: 'center' })}
-                      className={`w-8 h-8 rounded flex items-center justify-center ${selectedText.align === 'center' ? 'bg-sky-500/20 text-sky-400' : 'bg-white/5 text-white/40'}`}>
-                      <AlignCenter className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => updateTextLayer(selectedText.id, { align: 'right' })}
-                      className={`w-8 h-8 rounded flex items-center justify-center ${selectedText.align === 'right' ? 'bg-sky-500/20 text-sky-400' : 'bg-white/5 text-white/40'}`}>
-                      <AlignRight className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  {/* Colors */}
+                  {/* Style buttons */}
                   <div>
-                    <label className="text-white/40 text-[10px] mb-1 block flex items-center gap-1"><Palette className="w-3 h-3" /> Color</label>
-                    <div className="flex flex-wrap gap-1.5">
-                      {COLORS.map(c => (
-                        <button key={c} onClick={() => updateTextLayer(selectedText.id, { color: c })}
-                          className={`w-6 h-6 rounded-full border-2 transition-all ${selectedText.color === c ? 'border-white scale-125' : 'border-white/20'}`}
-                          style={{ backgroundColor: c }} />
+                    <label className="text-white/30 text-[10px] uppercase tracking-wider mb-1.5 block font-medium">Estilo</label>
+                    <div className="flex gap-1.5">
+                      {[
+                        { key: 'bold' as const, icon: Bold, active: selectedText.bold },
+                        { key: 'italic' as const, icon: Italic, active: selectedText.italic },
+                        { key: 'stroke' as const, icon: Underline, active: selectedText.stroke },
+                      ].map(btn => (
+                        <button
+                          key={btn.key}
+                          onClick={() => updateTextLayer(selectedText.id, { [btn.key]: !btn.active })}
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                            btn.active
+                              ? 'bg-sky-500/15 text-sky-400 border border-sky-500/30 shadow-sm shadow-sky-500/10'
+                              : 'bg-white/[0.03] text-white/30 border border-white/[0.06] hover:bg-white/[0.06] hover:text-white/50'
+                          }`}
+                        >
+                          <btn.icon className="w-4 h-4" />
+                        </button>
+                      ))}
+                      <div className="w-px bg-white/[0.06] mx-1 self-stretch" />
+                      {[
+                        { key: 'left' as const, icon: AlignLeft, active: selectedText.align === 'left' },
+                        { key: 'center' as const, icon: AlignCenter, active: selectedText.align === 'center' },
+                        { key: 'right' as const, icon: AlignRight, active: selectedText.align === 'right' },
+                      ].map(btn => (
+                        <button
+                          key={btn.key}
+                          onClick={() => updateTextLayer(selectedText.id, { align: btn.key })}
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                            btn.active
+                              ? 'bg-sky-500/15 text-sky-400 border border-sky-500/30 shadow-sm shadow-sky-500/10'
+                              : 'bg-white/[0.03] text-white/30 border border-white/[0.06] hover:bg-white/[0.06] hover:text-white/50'
+                          }`}
+                        >
+                          <btn.icon className="w-4 h-4" />
+                        </button>
                       ))}
                     </div>
                   </div>
 
+                  {/* Colors */}
+                  <div>
+                    <label className="text-white/30 text-[10px] uppercase tracking-wider mb-1.5 block font-medium flex items-center gap-1.5">
+                      <Palette className="w-3 h-3" /> Color
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {COLORS.map(c => (
+                        <button key={c} onClick={() => updateTextLayer(selectedText.id, { color: c })}
+                          className={`w-7 h-7 rounded-lg transition-all border-2 ${
+                            selectedText.color === c
+                              ? 'border-white scale-110 shadow-lg'
+                              : 'border-white/10 hover:border-white/30 hover:scale-105'
+                          }`}
+                          style={{ backgroundColor: c, boxShadow: selectedText.color === c ? `0 0 12px ${c}40` : undefined }} />
+                      ))}
+                      {/* Custom color input */}
+                      <label className="w-7 h-7 rounded-lg border-2 border-dashed border-white/10 hover:border-white/30 flex items-center justify-center cursor-pointer transition-all hover:scale-105 overflow-hidden relative">
+                        <Plus className="w-3 h-3 text-white/30" />
+                        <input
+                          type="color"
+                          value={selectedText.color}
+                          onChange={e => updateTextLayer(selectedText.id, { color: e.target.value })}
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Stroke color */}
                   {selectedText.stroke && (
                     <div>
-                      <label className="text-white/40 text-[10px] mb-1 block">Contorno</label>
-                      <div className="flex flex-wrap gap-1.5">
+                      <label className="text-white/30 text-[10px] uppercase tracking-wider mb-1.5 block font-medium">Contorno</label>
+                      <div className="flex flex-wrap gap-2">
                         {COLORS.map(c => (
                           <button key={c} onClick={() => updateTextLayer(selectedText.id, { strokeColor: c })}
-                            className={`w-6 h-6 rounded-full border-2 transition-all ${selectedText.strokeColor === c ? 'border-white scale-125' : 'border-white/20'}`}
+                            className={`w-7 h-7 rounded-lg transition-all border-2 ${
+                              selectedText.strokeColor === c
+                                ? 'border-white scale-110 shadow-lg'
+                                : 'border-white/10 hover:border-white/30 hover:scale-105'
+                            }`}
                             style={{ backgroundColor: c }} />
                         ))}
+                        <label className="w-7 h-7 rounded-lg border-2 border-dashed border-white/10 hover:border-white/30 flex items-center justify-center cursor-pointer transition-all hover:scale-105 overflow-hidden relative">
+                          <Plus className="w-3 h-3 text-white/30" />
+                          <input
+                            type="color"
+                            value={selectedText.strokeColor}
+                            onChange={e => updateTextLayer(selectedText.id, { strokeColor: e.target.value })}
+                            className="absolute inset-0 opacity-0 cursor-pointer"
+                          />
+                        </label>
                       </div>
                     </div>
                   )}
 
-                  <p className="text-white/30 text-[10px] text-center">Arrastrá el texto en la imagen para moverlo</p>
+                  <div className="flex items-center gap-2 pt-1">
+                    <Move className="w-3 h-3 text-white/20" />
+                    <p className="text-white/20 text-[10px]">Arrastra el texto en la imagen para moverlo</p>
+                  </div>
                 </div>
               )}
 
-              {textLayers.length > 0 && !selectedText && (
-                <div className="space-y-1">
-                  <label className="text-white/40 text-[10px] mb-1 block">Capas ({textLayers.length})</label>
+              {/* Text layers list */}
+              {!selectedText && textLayers.length > 0 && (
+                <div className="space-y-1.5">
+                  <label className="text-white/30 text-[10px] uppercase tracking-wider mb-1.5 block font-medium flex items-center gap-1.5">
+                    <Layers className="w-3 h-3" /> Capas ({textLayers.length})
+                  </label>
                   {textLayers.map(layer => (
-                    <div key={layer.id} className="flex items-center gap-2 p-2 rounded bg-white/[0.03] hover:bg-white/[0.06] cursor-pointer"
+                    <div key={layer.id}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] hover:border-white/[0.08] cursor-pointer transition-all group"
                       onClick={() => setSelectedTextId(layer.id)}>
-                      <Type className="w-3 h-3 text-white/30" />
-                      <span className="text-white/70 text-xs flex-1 truncate" style={{ fontFamily: FONTS.find(f => f.value === layer.fontFamily)?.css }}>{layer.text}</span>
-                      <button onClick={e => { e.stopPropagation(); removeTextLayer(layer.id) }} className="text-white/20 hover:text-red-400">
+                      <div className="w-7 h-7 rounded-lg bg-sky-500/10 flex items-center justify-center shrink-0">
+                        <Type className="w-3 h-3 text-sky-400/60" />
+                      </div>
+                      <span className="text-white/60 text-xs flex-1 truncate" style={{ fontFamily: FONTS.find(f => f.value === layer.fontFamily)?.css }}>{layer.text}</span>
+                      <button onClick={e => { e.stopPropagation(); removeTextLayer(layer.id) }} className="text-white/10 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Trash2 className="w-3 h-3" />
                       </button>
                     </div>
@@ -811,53 +966,65 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                 </div>
               )}
 
-              {textLayers.length === 0 && !selectedText && (
-                <p className="text-white/30 text-xs text-center py-3">Escribí texto y tocá + para agregar</p>
+              {!selectedText && textLayers.length === 0 && (
+                <div className="text-center py-6">
+                  <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mx-auto mb-3">
+                    <Type className="w-5 h-5 text-white/15" />
+                  </div>
+                  <p className="text-white/25 text-xs">Escribi texto y toca + para agregar</p>
+                </div>
               )}
             </div>
           )}
 
+          {/* BLUR CONTROLS */}
           {activeTool === 'blur' && (
-            <div className="p-3 space-y-3">
-              <div className="flex items-start gap-3 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-                <Droplets className="w-4 h-4 text-yellow-400 shrink-0 mt-0.5" />
+            <div className="p-4 space-y-4">
+              <div className="flex items-start gap-3 p-3 bg-gradient-to-r from-amber-500/[0.07] to-orange-500/[0.07] border border-amber-500/15 rounded-2xl">
+                <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <Droplets className="w-4 h-4 text-amber-400" />
+                </div>
                 <div>
-                  <p className="text-yellow-200 text-xs font-medium">Pintá con el dedo o cursor</p>
-                  <p className="text-yellow-200/60 text-[10px] mt-1">Pasá por la zona que querés difuminar. Se ve el efecto en tiempo real.</p>
+                  <p className="text-amber-200/90 text-xs font-medium">Pinta con el dedo o cursor</p>
+                  <p className="text-amber-200/40 text-[10px] mt-1">Pasa por la zona que queres difuminar. Se ve el efecto pixelado en tiempo real.</p>
                 </div>
               </div>
 
               <div>
-                <label className="text-white/50 text-xs mb-2 flex items-center justify-between">
-                  <span>Tamaño del pincel</span>
-                  <span className="text-white/30">{blurBrushSize}%</span>
+                <label className="text-white/40 text-[10px] uppercase tracking-wider mb-2 flex items-center justify-between font-medium">
+                  <span>Tamano del pincel</span>
+                  <span className="text-white/20 normal-case">{blurBrushSize}%</span>
                 </label>
                 <Slider value={[blurBrushSize]} onValueChange={([v]) => setBlurBrushSize(v)} min={2} max={25} step={1} />
               </div>
 
               <div>
-                <label className="text-white/50 text-xs mb-2 flex items-center justify-between">
+                <label className="text-white/40 text-[10px] uppercase tracking-wider mb-2 flex items-center justify-between font-medium">
                   <span>Intensidad del blur</span>
-                  <span className="text-white/30">{blurIntensity}px</span>
+                  <span className="text-white/20 normal-case">{blurIntensity}px</span>
                 </label>
                 <Slider value={[blurIntensity]} onValueChange={([v]) => setBlurIntensity(v)} min={3} max={25} step={1} />
               </div>
 
               {blurStrokes.length > 0 && (
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-white/40 text-[10px]">Pinceladas ({blurStrokes.length})</label>
-                    <Button size="sm" variant="ghost" className="text-red-400 h-5 text-[10px] px-1" onClick={() => setBlurStrokes([])}>
-                      <Trash2 className="w-2.5 h-2.5 mr-0.5" />Borrar todo
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-white/30 text-[10px] uppercase tracking-wider font-medium flex items-center gap-1.5">
+                      <Layers className="w-3 h-3" /> Pinceladas ({blurStrokes.length})
+                    </label>
+                    <Button size="sm" variant="ghost" className="text-red-400/60 hover:text-red-400 hover:bg-red-500/10 h-7 text-[10px] px-2 rounded-lg" onClick={() => setBlurStrokes([])}>
+                      <Trash2 className="w-3 h-3 mr-1" />Borrar todo
                     </Button>
                   </div>
                   <div className="space-y-1">
                     {blurStrokes.map((stroke, i) => (
-                      <div key={stroke.id} className="flex items-center gap-2 p-1.5 rounded bg-white/[0.03]">
-                        <Droplets className="w-3 h-3 text-rose-400" />
-                        <span className="text-white/60 text-[10px] flex-1">Pincelada {i + 1}</span>
-                        <button onClick={() => setBlurStrokes(prev => prev.filter(s => s.id !== stroke.id))} className="text-white/20 hover:text-red-400">
-                          <X className="w-3 h-3" />
+                      <div key={stroke.id} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04] group">
+                        <div className="w-6 h-6 rounded-lg bg-rose-500/10 flex items-center justify-center shrink-0">
+                          <Droplets className="w-3 h-3 text-rose-400/60" />
+                        </div>
+                        <span className="text-white/50 text-xs flex-1">Pincelada {i + 1}</span>
+                        <button onClick={() => setBlurStrokes(prev => prev.filter(s => s.id !== stroke.id))} className="text-white/10 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <X className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     ))}
@@ -866,44 +1033,45 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
               )}
 
               {blurStrokes.length === 0 && (
-                <p className="text-white/30 text-xs text-center py-2">Pintá sobre la imagen para difuminar</p>
+                <div className="text-center py-4">
+                  <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mx-auto mb-3">
+                    <Droplets className="w-5 h-5 text-white/15" />
+                  </div>
+                  <p className="text-white/25 text-xs">Pinta sobre la imagen para difuminar</p>
+                </div>
               )}
             </div>
           )}
 
+          {/* ADJUST CONTROLS */}
           {activeTool === 'adjust' && (
-            <div className="p-3 space-y-3">
-              <div>
-                <label className="text-white/50 text-xs mb-2 flex items-center justify-between">
-                  <span className="flex items-center gap-1"><Sun className="w-3 h-3" /> Brillo</span>
-                  <span className="text-white/30">{brightness}%</span>
-                </label>
-                <Slider value={[brightness]} onValueChange={([v]) => setBrightness(v)} min={30} max={200} step={1} />
-              </div>
-              <div>
-                <label className="text-white/50 text-xs mb-2 flex items-center justify-between">
-                  <span>Contraste</span><span className="text-white/30">{contrast}%</span>
-                </label>
-                <Slider value={[contrast]} onValueChange={([v]) => setContrast(v)} min={30} max={200} step={1} />
-              </div>
-              <div>
-                <label className="text-white/50 text-xs mb-2 flex items-center justify-between">
-                  <span>Saturacion</span><span className="text-white/30">{saturate}%</span>
-                </label>
-                <Slider value={[saturate]} onValueChange={([v]) => setSaturate(v)} min={0} max={300} step={1} />
-              </div>
-              <Button variant="outline" size="sm" className="border-white/10 text-white/40 text-xs h-7"
+            <div className="p-4 space-y-4">
+              {[
+                { label: 'Brillo', icon: <Sun className="w-3.5 h-3.5" />, value: brightness, setter: setBrightness, min: 30, max: 200 },
+                { label: 'Contraste', icon: <span className="text-[10px] font-bold">C</span>, value: contrast, setter: setContrast, min: 30, max: 200 },
+                { label: 'Saturacion', icon: <Palette className="w-3.5 h-3.5" />, value: saturate, setter: setSaturate, min: 0, max: 300 },
+              ].map(adj => (
+                <div key={adj.label}>
+                  <label className="text-white/40 text-[10px] uppercase tracking-wider mb-2 flex items-center justify-between font-medium">
+                    <span className="flex items-center gap-1.5">{adj.icon} {adj.label}</span>
+                    <span className="text-white/20 normal-case">{adj.value}%</span>
+                  </label>
+                  <Slider value={[adj.value]} onValueChange={([v]) => adj.setter(v)} min={adj.min} max={adj.max} step={1} />
+                </div>
+              ))}
+
+              <Button variant="ghost" size="sm" className="text-white/30 hover:text-white/50 hover:bg-white/5 text-xs h-9 px-4 rounded-xl gap-1.5 border border-white/[0.04]"
                 onClick={() => { setBrightness(100); setContrast(100); setSaturate(100) }}>
-                <RotateCcw className="w-3 h-3 mr-1" />Resetear
+                <RotateCcw className="w-3 h-3" />Resetear
               </Button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Bottom Tool Bar */}
-      <div className="bg-zinc-900 border-t border-white/10 px-2 py-2 shrink-0">
-        <div className="flex items-center justify-around">
+      {/* ─── Bottom Tool Bar ─── */}
+      <div className="bg-gradient-to-b from-zinc-900 to-black border-t border-white/5 px-3 py-2 shrink-0">
+        <div className="flex items-center justify-around max-w-md mx-auto">
           {[
             { id: 'crop' as const, icon: Crop, label: 'Recorte' },
             { id: 'text' as const, icon: Type, label: 'Texto' },
@@ -911,8 +1079,15 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
             { id: 'adjust' as const, icon: Sun, label: 'Ajustes' },
           ].map(tool => (
             <button key={tool.id}
-              onClick={() => { setActiveTool(tool.id); if (tool.id !== 'text') setSelectedTextId(null) }}
-              className={`flex flex-col items-center gap-1 px-4 py-1.5 rounded-lg transition-all ${activeTool === tool.id ? 'text-sky-400' : 'text-white/40 hover:text-white/60'}`}>
+              onClick={() => { setActiveTool(tool.id); if (tool.id !== 'text') { setSelectedTextId(null); setShowFontPicker(false) } }}
+              className={`flex flex-col items-center gap-1 px-5 py-2 rounded-xl transition-all relative ${
+                activeTool === tool.id
+                  ? 'text-sky-400'
+                  : 'text-white/30 hover:text-white/50'
+              }`}>
+              {activeTool === tool.id && (
+                <div className="absolute -top-2 w-8 h-1 rounded-full bg-sky-400 shadow-lg shadow-sky-500/50" />
+              )}
               <tool.icon className="w-5 h-5" />
               <span className="text-[10px] font-medium">{tool.label}</span>
             </button>
