@@ -699,30 +699,36 @@ function ContentTab({ contents, onRefresh }: { contents: TweetContent[]; onRefre
   }
 
   const handlePostNow = async (contentId: string) => {
+    // Find the content and open Twitter with pre-filled text
+    const content = contents.find(c => c.id === contentId)
+    if (content) {
+      const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(content.text)}`
+      window.open(tweetUrl, '_blank')
+      // Mark as posted after a short delay (give user time to publish)
+      setTimeout(async () => {
+        try {
+          await fetch('/api/tweets/content', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: contentId, status: 'posted' }),
+          })
+          onRefresh()
+        } catch { /* silent */ }
+      }, 3000)
+    }
+  }
+
+  const handleMarkPosted = async (contentId: string) => {
     try {
-      const res = await fetch('/api/tweets/post', {
-        method: 'POST',
+      await fetch('/api/tweets/content', {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contentId }),
+        body: JSON.stringify({ id: contentId, status: 'posted' }),
       })
-      const data = await res.json()
-      if (data.success) {
-        toast({
-          title: '🐦 ¡Tweet publicado!',
-          description: data.tweetUrl
-            ? `Ver tweet: ${data.tweetUrl}`
-            : 'El tweet se publicó correctamente',
-        })
-      } else {
-        toast({
-          title: '❌ Error al publicar',
-          description: data.error || 'No se pudo publicar el tweet',
-          variant: 'destructive',
-        })
-      }
+      toast({ title: '✓ Marcado como publicado' })
       onRefresh()
     } catch {
-      toast({ title: 'Error', description: 'Error de conexión con Twitter', variant: 'destructive' })
+      toast({ title: 'Error', description: 'No se pudo actualizar', variant: 'destructive' })
     }
   }
 
@@ -891,7 +897,7 @@ function ContentTab({ contents, onRefresh }: { contents: TweetContent[]; onRefre
         ) : (
           <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
             {pendingContent.map(item => (
-              <ContentCard key={item.id} item={item} onDelete={handleDelete} onPost={handlePostNow} />
+              <ContentCard key={item.id} item={item} onDelete={handleDelete} onPost={handlePostNow} onMarkPosted={handleMarkPosted} />
             ))}
           </div>
         )}
@@ -912,7 +918,7 @@ function ContentTab({ contents, onRefresh }: { contents: TweetContent[]; onRefre
           </div>
           <div className="space-y-2 max-h-[30vh] overflow-y-auto pr-1">
             {postedContent.map(item => (
-              <ContentCard key={item.id} item={item} onDelete={handleDelete} onPost={handlePostNow} />
+              <ContentCard key={item.id} item={item} onDelete={handleDelete} onPost={handlePostNow} onMarkPosted={handleMarkPosted} />
             ))}
           </div>
         </div>
@@ -932,9 +938,8 @@ function ContentTab({ contents, onRefresh }: { contents: TweetContent[]; onRefre
 
 // ─── Content Card ────────────────────────────────────────────
 
-function ContentCard({ item, onDelete, onPost }: { item: TweetContent; onDelete: (id: string) => void; onPost: (id: string) => void }) {
+function ContentCard({ item, onDelete, onPost, onMarkPosted }: { item: TweetContent; onDelete: (id: string) => void; onPost: (id: string) => void; onMarkPosted: (id: string) => void }) {
   const [showFullImage, setShowFullImage] = useState(false)
-  const [posting, setPosting] = useState(false)
 
   return (
     <>
@@ -974,19 +979,29 @@ function ContentCard({ item, onDelete, onPost }: { item: TweetContent; onDelete:
           </div>
           <div className="flex flex-col gap-1 shrink-0">
             {item.status === 'pending' && (
-              <Button
-                size="sm"
-                variant="ghost"
-                className="text-sky-400/60 hover:text-sky-400 hover:bg-sky-500/10 h-8 px-2 shrink-0"
-                disabled={posting}
-                onClick={async () => {
-                  setPosting(true)
-                  await onPost(item.id)
-                  setPosting(false)
-                }}
-              >
-                {posting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Twitter className="w-3.5 h-3.5" />}
-              </Button>
+              <>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-sky-400/60 hover:text-sky-400 hover:bg-sky-500/10 h-8 px-2 shrink-0"
+                  title="Abrir en Twitter"
+                  onClick={() => {
+                    const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(item.text)}`
+                    window.open(tweetUrl, '_blank')
+                  }}
+                >
+                  <Twitter className="w-3.5 h-3.5" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-emerald-400/60 hover:text-emerald-400 hover:bg-emerald-500/10 h-8 w-8 p-0 shrink-0"
+                  title="Marcar como publicado"
+                  onClick={() => onMarkPosted(item.id)}
+                >
+                  <Check className="w-3.5 h-3.5" />
+                </Button>
+              </>
             )}
             <Button
               size="sm"
