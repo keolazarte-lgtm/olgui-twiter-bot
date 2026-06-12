@@ -1,9 +1,15 @@
 import { db } from '@/lib/db'
-import { uploadFile, deleteFile, getPublicUrl } from '@/lib/storage'
+import { isTurso, tursoGetContent, tursoCreateContent, tursoUpdateContent, tursoDeleteContent } from '@/lib/turso'
+import { uploadFile, deleteFile } from '@/lib/storage'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET() {
   try {
+    if (isTurso()) {
+      const content = await tursoGetContent()
+      return NextResponse.json(content)
+    }
+
     const content = await db.tweetContent.findMany({
       orderBy: { createdAt: 'desc' },
     })
@@ -28,6 +34,11 @@ export async function POST(request: NextRequest) {
       mediaUrl = result.url
     }
 
+    if (isTurso()) {
+      const content = await tursoCreateContent({ type: type || 'phrase_hot', text: text || '', mediaUrl })
+      return NextResponse.json(content, { status: 201 })
+    }
+
     const content = await db.tweetContent.create({
       data: {
         type: type || 'phrase_hot',
@@ -49,6 +60,11 @@ export async function PATCH(request: NextRequest) {
     const { id, status } = body
 
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 })
+
+    if (isTurso()) {
+      const content = await tursoUpdateContent(id, { status })
+      return NextResponse.json(content)
+    }
 
     const updateData: Record<string, unknown> = {}
     if (status !== undefined) {
@@ -73,6 +89,11 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 })
+
+    if (isTurso()) {
+      await tursoDeleteContent(id)
+      return NextResponse.json({ success: true })
+    }
 
     // Get content to delete associated file
     const content = await db.tweetContent.findUnique({ where: { id } })

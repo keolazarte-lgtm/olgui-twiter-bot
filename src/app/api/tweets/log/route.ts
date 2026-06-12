@@ -1,8 +1,14 @@
 import { db } from '@/lib/db'
+import { isTurso, tursoGetLogs } from '@/lib/turso'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
   try {
+    if (isTurso()) {
+      const logs = await tursoGetLogs()
+      return NextResponse.json(logs)
+    }
+
     const logs = await db.tweetLog.findMany({
       orderBy: { postedAt: 'desc' },
       take: 50,

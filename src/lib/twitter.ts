@@ -31,6 +31,21 @@ interface TweetStats {
  * Get Twitter config from database
  */
 export async function getTwitterConfig(): Promise<TwitterConfig | null> {
+  const { isTurso, tursoGetConfig } = await import('./turso')
+  
+  if (isTurso()) {
+    const config = await tursoGetConfig()
+    if (!config?.apiKey || !config?.apiSecret || !config?.accessToken || !config?.accessTokenSecret) {
+      return null
+    }
+    return {
+      apiKey: config.apiKey,
+      apiSecret: config.apiSecret,
+      accessToken: config.accessToken,
+      accessTokenSecret: config.accessTokenSecret,
+    }
+  }
+
   const { db } = await import('./db')
   const config = await db.tweetConfig.findFirst()
   if (!config?.apiKey || !config?.apiSecret || !config?.accessToken || !config?.accessTokenSecret) {
