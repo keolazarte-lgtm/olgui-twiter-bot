@@ -905,41 +905,88 @@ function ContentTab({ contents, onRefresh }: { contents: TweetContent[]; onRefre
 // ─── Content Card ────────────────────────────────────────────
 
 function ContentCard({ item, onDelete }: { item: TweetContent; onDelete: (id: string) => void }) {
+  const [showFullImage, setShowFullImage] = useState(false)
+
   return (
-    <Card className="bg-white/[0.03] border-white/[0.06] hover:border-white/10 transition-colors">
-      <CardContent className="p-3 flex items-start gap-3">
-        {/* Image thumbnail or type icon */}
-        {item.mediaUrl ? (
-          <div className="w-14 h-14 rounded-lg overflow-hidden shrink-0 border border-white/10">
-            <img src={item.mediaUrl} alt="" className="w-full h-full object-cover" />
+    <>
+      <Card className="bg-white/[0.03] border-white/[0.06] hover:border-white/10 transition-colors">
+        <CardContent className="p-3 flex items-start gap-3">
+          {/* Image thumbnail or type icon */}
+          {item.mediaUrl ? (
+            <div
+              className="w-14 h-14 rounded-lg overflow-hidden shrink-0 border border-white/10 cursor-pointer hover:border-sky-500/30 transition-colors"
+              onClick={() => setShowFullImage(true)}
+            >
+              <img src={item.mediaUrl} alt="" className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className="w-14 h-14 rounded-lg bg-white/5 flex items-center justify-center shrink-0 text-2xl">
+              {getContentTypeIcon(item.type)}
+            </div>
+          )}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <Badge className="bg-white/5 text-white/50 border-0 text-[10px]">
+                {getContentTypeLabel(item.type)}
+              </Badge>
+              <Badge className={`${item.status === 'pending' ? 'bg-sky-500/10 text-sky-400' : 'bg-emerald-500/10 text-emerald-400'} border-0 text-[10px]`}>
+                {item.status === 'pending' ? 'Pendiente' : 'Publicado'}
+              </Badge>
+            </div>
+            <p className="text-white/70 text-sm line-clamp-2">{item.text || '(sin texto)'}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <p className="text-white/25 text-[10px]">{timeAgo(item.createdAt)}</p>
+              {item.mediaUrl && (
+                <button onClick={() => setShowFullImage(true)} className="text-sky-400/60 hover:text-sky-400 text-[10px] flex items-center gap-0.5 transition-colors">
+                  <Eye className="w-2.5 h-2.5" />Ver
+                </button>
+              )}
+            </div>
           </div>
-        ) : (
-          <div className="w-14 h-14 rounded-lg bg-white/5 flex items-center justify-center shrink-0 text-2xl">
-            {getContentTypeIcon(item.type)}
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-white/20 hover:text-red-400 h-8 w-8 p-0 shrink-0"
+            onClick={() => onDelete(item.id)}
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Full Image Viewer Modal */}
+      {showFullImage && item.mediaUrl && (
+        <div className="fixed inset-0 z-[300] bg-black/95 backdrop-blur-xl flex flex-col" onClick={() => setShowFullImage(false)}>
+          <div className="flex items-center justify-between px-4 py-3 bg-zinc-900/90 border-b border-white/5">
+            <div className="flex items-center gap-2">
+              <Eye className="w-4 h-4 text-sky-400" />
+              <span className="text-white/70 text-sm font-medium">Vista del contenido</span>
+              <Badge className={`${item.status === 'pending' ? 'bg-sky-500/10 text-sky-400' : 'bg-emerald-500/10 text-emerald-400'} border-0 text-[10px]`}>
+                {item.status === 'pending' ? 'Pendiente' : 'Publicado'}
+              </Badge>
+            </div>
+            <div className="flex items-center gap-2">
+              <a href={item.mediaUrl} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center h-8 px-3 rounded-lg bg-white/5 border border-white/10 text-white/60 text-xs hover:bg-white/10 transition-all"
+                onClick={e => e.stopPropagation()}>
+                <ExternalLink className="w-3 h-3 mr-1" />Abrir
+              </a>
+              <Button size="sm" variant="ghost" className="text-white/50 hover:text-white h-8 w-8 p-0" onClick={() => setShowFullImage(false)}>
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
-        )}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <Badge className="bg-white/5 text-white/50 border-0 text-[10px]">
-              {getContentTypeLabel(item.type)}
-            </Badge>
-            <Badge className={`${item.status === 'pending' ? 'bg-sky-500/10 text-sky-400' : 'bg-emerald-500/10 text-emerald-400'} border-0 text-[10px]`}>
-              {item.status === 'pending' ? 'Pendiente' : 'Publicado'}
-            </Badge>
+          <div className="flex-1 flex items-center justify-center p-4 overflow-auto" onClick={e => e.stopPropagation()}>
+            <img src={item.mediaUrl} alt="Content" className="max-w-full max-h-full object-contain rounded-xl" />
           </div>
-          <p className="text-white/70 text-sm line-clamp-2">{item.text || '(sin texto)'}</p>
-          <p className="text-white/25 text-[10px] mt-1">{timeAgo(item.createdAt)}</p>
+          {item.text && (
+            <div className="bg-zinc-900/90 border-t border-white/5 px-4 py-3">
+              <p className="text-white/60 text-sm">{item.text}</p>
+            </div>
+          )}
         </div>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="text-white/20 hover:text-red-400 h-8 w-8 p-0 shrink-0"
-          onClick={() => onDelete(item.id)}
-        >
-          <Trash2 className="w-3.5 h-3.5" />
-        </Button>
-      </CardContent>
-    </Card>
+      )}
+    </>
   )
 }
 

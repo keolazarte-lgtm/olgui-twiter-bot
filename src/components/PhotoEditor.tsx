@@ -6,7 +6,7 @@ import {
   Crop, Type, Droplets, Sun, RotateCcw, Check, X, Plus,
   Trash2, Palette, Bold, Italic, Underline,
   AlignLeft, AlignCenter, AlignRight, Eye, Download,
-  Sparkles, Move, ChevronDown, Layers
+  Sparkles, Move, ChevronDown, Layers, Grid3X3, Circle, Square
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -28,11 +28,14 @@ interface TextLayer {
   align: 'left' | 'center' | 'right'
 }
 
+type BlurMode = 'pixelate' | 'gaussian' | 'blackout'
+
 interface BlurStroke {
   id: string
   points: { x: number; y: number }[]
   brushSize: number
   intensity: number
+  mode: BlurMode
 }
 
 interface PhotoEditorProps {
@@ -58,6 +61,12 @@ const FONTS = [
   { value: 'Georgia', label: 'Georgia', css: 'Georgia, serif' },
   { value: 'Verdana', label: 'Verdana', css: 'Verdana, sans-serif' },
   { value: 'CourierNew', label: 'Courier', css: '"Courier New", monospace' },
+]
+
+const BLUR_MODES: { id: BlurMode; label: string; desc: string; icon: typeof Grid3X3 }[] = [
+  { id: 'pixelate', label: 'Pixelado', desc: 'Efecto mosaico', icon: Grid3X3 },
+  { id: 'gaussian', label: 'Difuminado', desc: 'Blur suave', icon: Droplets },
+  { id: 'blackout', label: 'Blackout', desc: 'Tapar con negro', icon: Square },
 ]
 
 const CROP_PRESETS = [
@@ -105,6 +114,7 @@ function getPointerPos(e: React.MouseEvent | React.TouchEvent | MouseEvent | Tou
   }
 }
 
+// Pixelate a circular region
 function pixelateCircle(ctx: CanvasRenderingContext2D, cx: number, cy: number, radius: number, pixelSize: number) {
   const x0 = Math.max(0, Math.floor(cx - radius))
   const y0 = Math.max(0, Math.floor(cy - radius))
@@ -141,6 +151,85 @@ function pixelateCircle(ctx: CanvasRenderingContext2D, cx: number, cy: number, r
   ctx.restore()
 }
 
+// Gaussian blur a circular region
+function gaussianBlurCircle(ctx: CanvasRenderingContext2D, sourceCanvas: HTMLCanvasElement, cx: number, cy: number, radius: number, blurAmount: number) {
+  if (blurAmount <= 0 || radius <= 0) return
+
+  ctx.save()
+  ctx.beginPath()
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2)
+  ctx.clip()
+  ctx.filter = `blur(${blurAmount}px)`
+  ctx.drawImage(sourceCanvas, 0, 0)
+  ctx.filter = 'none'
+  ctx.restore()
+}
+
+// Blackout a circular region
+function blackoutCircle(ctx: CanvasRenderingContext2D, cx: number, cy: number, radius: number) {
+  ctx.save()
+  ctx.beginPath()
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2)
+  ctx.fillStyle = '#000000'
+  ctx.fill()
+  ctx.restore()
+}
+
+// Apply a single blur stroke to a canvas context
+function applyBlurStroke(
+  ctx: CanvasRenderingContext2D,
+  sourceCanvas: HTMLCanvasElement,
+  stroke: BlurStroke,
+  canvasWidth: number,
+  canvasHeight: number,
+  scaleFactor: number
+) {
+  const interpolatedPoints: { x: number; y: number }[] = []
+
+  // Interpolate points for smooth strokes
+  for (let i = 0; i < stroke.points.length; i++) {
+    interpolatedPoints.push(stroke.points[i])
+    if (i < stroke.points.length - 1) {
+      const prev = stroke.points[i]
+      const curr = stroke.points[i + 1]
+      const dist = Math.sqrt((curr.x - prev.x) ** 2 + (curr.y - prev.y) ** 2)
+      const steps = Math.max(1, Math.floor(dist / 0.3))
+      for (let s = 1; s < steps; s++) {
+        const t = s / steps
+        interpolatedPoints.push({
+          x: prev.x + (curr.x - prev.x) * t,
+          y: prev.y + (curr.y - prev.y) * t,
+        })
+      }
+    }
+  }
+
+  for (const point of interpolatedPoints) {
+    const px = point.x / 100 * canvasWidth
+    const py = point.y / 100 * canvasHeight
+    const radius = stroke.brushSize / 100 * canvasWidth / 2
+
+    switch (stroke.mode) {
+      case 'pixelate': {
+        // Scale pixelSize for full-res rendering
+        const pixelSize = Math.max(2, Math.round(stroke.intensity * scaleFactor))
+        pixelateCircle(ctx, px, py, radius, pixelSize)
+        break
+      }
+      case 'gaussian': {
+        // Scale blur amount for full-res rendering
+        const blurAmount = Math.max(1, stroke.intensity * scaleFactor * 0.8)
+        gaussianBlurCircle(ctx, sourceCanvas, px, py, radius, blurAmount)
+        break
+      }
+      case 'blackout': {
+        blackoutCircle(ctx, px, py, radius)
+        break
+      }
+    }
+  }
+}
+
 // ─── Main Component ──────────────────────────────────────────
 export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditorProps) {
   const [activeTool, setActiveTool] = useState<'crop' | 'text' | 'blur' | 'adjust'>('crop')
@@ -162,7 +251,8 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
   const [isPaintingBlur, setIsPaintingBlur] = useState(false)
   const [currentStrokePoints, setCurrentStrokePoints] = useState<{ x: number; y: number }[]>([])
   const [blurBrushSize, setBlurBrushSize] = useState(8)
-  const [blurIntensity, setBlurIntensity] = useState(12)
+  const [blurIntensity, setBlurIntensity] = useState(10)
+  const [blurMode, setBlurMode] = useState<BlurMode>('pixelate')
 
   // Adjustments
   const [brightness, setBrightness] = useState(100)
@@ -184,7 +274,6 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
   // ─── Load fonts ────────────────────────────────────────────
   useEffect(() => {
     document.fonts.ready.then(() => {
-      // Force re-render by triggering a no-op state change
       setTextLayers(prev => [...prev])
     })
   }, [])
@@ -226,7 +315,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
     ctx.drawImage(img, 0, 0, w, h)
     ctx.filter = 'none'
 
-    // Apply blur strokes
+    // Apply all blur strokes
     const allStrokes = [...blurStrokes]
     if (isPaintingBlur && currentStrokePoints.length > 0) {
       allStrokes.push({
@@ -234,35 +323,32 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
         points: currentStrokePoints,
         brushSize: blurBrushSize,
         intensity: blurIntensity,
+        mode: blurMode,
       })
     }
 
+    // Scale factor: preview is at display resolution, so factor is 1
+    const previewScale = 1
+
     for (const stroke of allStrokes) {
-      const pixelSize = Math.max(3, stroke.intensity)
-      // Interpolate points for smoother strokes
-      for (let i = 0; i < stroke.points.length; i++) {
-        const point = stroke.points[i]
-        const px = point.x / 100 * w
-        const py = point.y / 100 * h
-        const radius = stroke.brushSize / 100 * w / 2
-        pixelateCircle(ctx, px, py, radius, pixelSize)
+      // Create a snapshot for gaussian blur (needs pre-blur source)
+      let sourceForGaussian: HTMLCanvasElement | null = null
+      if (stroke.mode === 'gaussian') {
+        sourceForGaussian = document.createElement('canvas')
+        sourceForGaussian.width = w
+        sourceForGaussian.height = h
+        sourceForGaussian.getContext('2d')!.drawImage(canvas, 0, 0)
       }
-      // Also interpolate between consecutive points for continuous stroke
-      for (let i = 1; i < stroke.points.length; i++) {
-        const prev = stroke.points[i - 1]
-        const curr = stroke.points[i]
-        const dist = Math.sqrt((curr.x - prev.x) ** 2 + (curr.y - prev.y) ** 2)
-        const steps = Math.max(1, Math.floor(dist / 0.5))
-        for (let s = 1; s < steps; s++) {
-          const t = s / steps
-          const interpX = (prev.x + (curr.x - prev.x) * t) / 100 * w
-          const interpY = (prev.y + (curr.y - prev.y) * t) / 100 * h
-          const radius = stroke.brushSize / 100 * w / 2
-          pixelateCircle(ctx, interpX, interpY, radius, pixelSize)
-        }
-      }
+
+      applyBlurStroke(
+        ctx,
+        sourceForGaussian || canvas,
+        stroke,
+        w, h,
+        previewScale
+      )
     }
-  }, [blurStrokes, isPaintingBlur, currentStrokePoints, blurBrushSize, blurIntensity, brightness, contrast, saturate])
+  }, [blurStrokes, isPaintingBlur, currentStrokePoints, blurBrushSize, blurIntensity, blurMode, brightness, contrast, saturate])
 
   useEffect(() => {
     if (activeTool === 'blur' || blurStrokes.length > 0) {
@@ -351,6 +437,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
         points: currentStrokePoints,
         brushSize: blurBrushSize,
         intensity: blurIntensity,
+        mode: blurMode,
       }
       setBlurStrokes(prev => [...prev, stroke])
       setCurrentStrokePoints([])
@@ -379,6 +466,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
           points: currentStrokePoints,
           brushSize: blurBrushSize,
           intensity: blurIntensity,
+          mode: blurMode,
         }
         setBlurStrokes(prev => [...prev, stroke])
         setCurrentStrokePoints([])
@@ -397,7 +485,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
       window.removeEventListener('touchmove', handleGlobalMove)
       window.removeEventListener('touchend', handleGlobalUp)
     }
-  }, [draggingText, dragOffset, updateTextLayer, isPaintingBlur, currentStrokePoints, blurBrushSize, blurIntensity])
+  }, [draggingText, dragOffset, updateTextLayer, isPaintingBlur, currentStrokePoints, blurBrushSize, blurIntensity, blurMode])
 
   // Close font picker on outside click
   useEffect(() => {
@@ -441,35 +529,37 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
     adjustedCtx.drawImage(sourceCanvas, 0, 0)
     adjustedCtx.filter = 'none'
 
-    // Blur
+    // Blur strokes
     const blurCanvas = document.createElement('canvas')
     blurCanvas.width = adjustedCanvas.width
     blurCanvas.height = adjustedCanvas.height
     const blurCtx = blurCanvas.getContext('2d')!
     blurCtx.drawImage(adjustedCanvas, 0, 0)
 
+    // SCALE FACTOR: This is the key fix!
+    // The preview canvas is ~400-600px wide, but the final image could be 2000-4000px.
+    // Without scaling, blur effects are invisible at full resolution.
+    const referenceWidth = 500
+    const scaleFactor = blurCanvas.width / referenceWidth
+
     for (const stroke of blurStrokes) {
-      const pixelSize = Math.max(3, stroke.intensity)
-      for (let i = 0; i < stroke.points.length; i++) {
-        const point = stroke.points[i]
-        const px = point.x / 100 * blurCanvas.width
-        const py = point.y / 100 * blurCanvas.height
-        const radius = stroke.brushSize / 100 * blurCanvas.width / 2
-        pixelateCircle(blurCtx, px, py, radius, pixelSize)
+      // Create snapshot for gaussian blur source
+      let sourceForGaussian: HTMLCanvasElement | null = null
+      if (stroke.mode === 'gaussian') {
+        sourceForGaussian = document.createElement('canvas')
+        sourceForGaussian.width = blurCanvas.width
+        sourceForGaussian.height = blurCanvas.height
+        sourceForGaussian.getContext('2d')!.drawImage(blurCanvas, 0, 0)
       }
-      for (let i = 1; i < stroke.points.length; i++) {
-        const prev = stroke.points[i - 1]
-        const curr = stroke.points[i]
-        const dist = Math.sqrt((curr.x - prev.x) ** 2 + (curr.y - prev.y) ** 2)
-        const steps = Math.max(1, Math.floor(dist / 0.5))
-        for (let s = 1; s < steps; s++) {
-          const t = s / steps
-          const interpX = (prev.x + (curr.x - prev.x) * t) / 100 * blurCanvas.width
-          const interpY = (prev.y + (curr.y - prev.y) * t) / 100 * blurCanvas.height
-          const radius = stroke.brushSize / 100 * blurCanvas.width / 2
-          pixelateCircle(blurCtx, interpX, interpY, radius, pixelSize)
-        }
-      }
+
+      applyBlurStroke(
+        blurCtx,
+        sourceForGaussian || blurCanvas,
+        stroke,
+        blurCanvas.width,
+        blurCanvas.height,
+        scaleFactor
+      )
     }
 
     // Text
@@ -534,6 +624,9 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
   const cropRatio = CROP_PRESETS.find(p => p.value === cropPreset)?.ratio
   const hasBlur = blurStrokes.length > 0 || isPaintingBlur
 
+  // Current blur mode info
+  const currentBlurMode = BLUR_MODES.find(m => m.id === blurMode)!
+
   // ─── Preview Modal ────────────────────────────────────────
   if (previewUrl) {
     return (
@@ -579,9 +672,10 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
           <div>
             <h2 className="text-white font-bold text-sm leading-tight">Photo Editor</h2>
             <p className="text-white/25 text-[10px]">
-              {textLayers.length > 0 && `${textLayers.length} textos `}
-              {blurStrokes.length > 0 && `${blurStrokes.length} blur `}
+              {textLayers.length > 0 && `${textLayers.length} textos · `}
+              {blurStrokes.length > 0 && `${blurStrokes.length} blur · `}
               {(brightness !== 100 || contrast !== 100 || saturate !== 100) && 'ajustes'}
+              {!textLayers.length && !blurStrokes.length && brightness === 100 && contrast === 100 && saturate === 100 && 'Listo para editar'}
             </p>
           </div>
         </div>
@@ -627,7 +721,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                 onTouchEnd={handleCanvasPointerUp}
                 style={{ cursor: activeTool === 'blur' ? 'crosshair' : 'default' }}
               >
-                {/* Base image (spacers - always visible but may be hidden visually) */}
+                {/* Base image spacer */}
                 <img
                   data-img-base
                   src={imageSrc}
@@ -637,7 +731,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                   draggable={false}
                 />
 
-                {/* Blur canvas overlay - shows actual pixelated preview */}
+                {/* Blur preview canvas */}
                 <canvas
                   ref={blurCanvasRef}
                   className="absolute top-0 left-0 rounded-lg"
@@ -649,7 +743,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                   }}
                 />
 
-                {/* When no blur, show the filtered image overlay */}
+                {/* Filtered image when no blur */}
                 {!hasBlur && (
                   <img
                     src={imageSrc}
@@ -660,10 +754,15 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                   />
                 )}
 
-                {/* Brush size cursor indicator for blur */}
+                {/* Blur tool info overlay */}
                 {activeTool === 'blur' && (
-                  <div className="absolute top-2 right-2 z-30 bg-black/60 backdrop-blur-sm rounded-lg px-2 py-1 pointer-events-none">
-                    <span className="text-white/50 text-[10px]">Pincel: {blurBrushSize}% | Blur: {blurIntensity}px</span>
+                  <div className="absolute top-2 left-2 z-30 flex items-center gap-2">
+                    <div className="bg-black/70 backdrop-blur-sm rounded-lg px-2.5 py-1.5 flex items-center gap-2">
+                      <currentBlurMode.icon className="w-3 h-3 text-sky-400" />
+                      <span className="text-white/60 text-[10px]">{currentBlurMode.label}</span>
+                      <span className="text-white/25 text-[10px]">|</span>
+                      <span className="text-white/40 text-[10px]">Pincel {blurBrushSize}%</span>
+                    </div>
                   </div>
                 )}
 
@@ -684,7 +783,6 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                     onMouseDown={e => { if (activeTool === 'text') handleTextPointerDown(e, layer.id) }}
                     onTouchStart={e => { if (activeTool === 'text') handleTextPointerDown(e, layer.id) }}
                   >
-                    {/* Selection indicator */}
                     {selectedTextId === layer.id && (
                       <div className="absolute -inset-2 border-2 border-sky-400/60 rounded-md pointer-events-none" style={{ borderStyle: 'dashed' }} />
                     )}
@@ -715,7 +813,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
         {/* ─── Tool Controls Panel ─── */}
         <div className="bg-gradient-to-b from-zinc-900 to-zinc-950 border-t border-white/5 max-h-[40vh] overflow-y-auto shrink-0" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
 
-          {/* CROP CONTROLS */}
+          {/* CROP */}
           {activeTool === 'crop' && (
             <div className="p-4 space-y-4">
               <div>
@@ -741,10 +839,9 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
             </div>
           )}
 
-          {/* TEXT CONTROLS */}
+          {/* TEXT */}
           {activeTool === 'text' && (
             <div className="p-4 space-y-3">
-              {/* Add text input */}
               <div className="flex gap-2">
                 <div className="flex-1 relative">
                   <Input
@@ -765,7 +862,6 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                 </Button>
               </div>
 
-              {/* Selected text editing panel */}
               {selectedText && (
                 <div className="space-y-3 p-4 bg-white/[0.02] rounded-2xl border border-white/[0.06]">
                   <div className="flex items-center justify-between">
@@ -780,7 +876,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                     </Button>
                   </div>
 
-                  {/* ─── FONT PICKER (Custom - No Dropdown) ─── */}
+                  {/* Font picker */}
                   <div className="relative" ref={fontPickerRef}>
                     <label className="text-white/30 text-[10px] uppercase tracking-wider mb-1.5 block font-medium">Fuente</label>
                     <button
@@ -799,7 +895,6 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                       <ChevronDown className={`w-4 h-4 text-white/30 transition-transform ${showFontPicker ? 'rotate-180' : ''}`} />
                     </button>
 
-                    {/* Font picker panel - slides up, not a portal/dropdown */}
                     {showFontPicker && (
                       <div className="absolute bottom-full left-0 right-0 mb-2 bg-zinc-900/98 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden z-50" style={{ maxHeight: '220px' }}>
                         <div className="p-2 overflow-y-auto" style={{ maxHeight: '210px', scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}>
@@ -816,14 +911,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                                   : 'text-white/70 hover:bg-white/[0.05] hover:text-white'
                               }`}
                             >
-                              <span
-                                className="text-base"
-                                style={{
-                                  fontFamily: f.css,
-                                  fontWeight: 'bold',
-                                  minWidth: '60px',
-                                }}
-                              >
+                              <span className="text-base" style={{ fontFamily: f.css, fontWeight: 'bold', minWidth: '60px' }}>
                                 {f.label}
                               </span>
                               <span className="text-[10px] text-white/20">{f.value.replace(/([A-Z])/g, ' $1').trim()}</span>
@@ -849,15 +937,10 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                         { key: 'italic' as const, icon: Italic, active: selectedText.italic },
                         { key: 'stroke' as const, icon: Underline, active: selectedText.stroke },
                       ].map(btn => (
-                        <button
-                          key={btn.key}
-                          onClick={() => updateTextLayer(selectedText.id, { [btn.key]: !btn.active })}
+                        <button key={btn.key} onClick={() => updateTextLayer(selectedText.id, { [btn.key]: !btn.active })}
                           className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
-                            btn.active
-                              ? 'bg-sky-500/15 text-sky-400 border border-sky-500/30 shadow-sm shadow-sky-500/10'
-                              : 'bg-white/[0.03] text-white/30 border border-white/[0.06] hover:bg-white/[0.06] hover:text-white/50'
-                          }`}
-                        >
+                            btn.active ? 'bg-sky-500/15 text-sky-400 border border-sky-500/30 shadow-sm shadow-sky-500/10' : 'bg-white/[0.03] text-white/30 border border-white/[0.06] hover:bg-white/[0.06] hover:text-white/50'
+                          }`}>
                           <btn.icon className="w-4 h-4" />
                         </button>
                       ))}
@@ -867,15 +950,10 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                         { key: 'center' as const, icon: AlignCenter, active: selectedText.align === 'center' },
                         { key: 'right' as const, icon: AlignRight, active: selectedText.align === 'right' },
                       ].map(btn => (
-                        <button
-                          key={btn.key}
-                          onClick={() => updateTextLayer(selectedText.id, { align: btn.key })}
+                        <button key={btn.key} onClick={() => updateTextLayer(selectedText.id, { align: btn.key })}
                           className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
-                            btn.active
-                              ? 'bg-sky-500/15 text-sky-400 border border-sky-500/30 shadow-sm shadow-sky-500/10'
-                              : 'bg-white/[0.03] text-white/30 border border-white/[0.06] hover:bg-white/[0.06] hover:text-white/50'
-                          }`}
-                        >
+                            btn.active ? 'bg-sky-500/15 text-sky-400 border border-sky-500/30 shadow-sm shadow-sky-500/10' : 'bg-white/[0.03] text-white/30 border border-white/[0.06] hover:bg-white/[0.06] hover:text-white/50'
+                          }`}>
                           <btn.icon className="w-4 h-4" />
                         </button>
                       ))}
@@ -884,54 +962,32 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
 
                   {/* Colors */}
                   <div>
-                    <label className="text-white/30 text-[10px] uppercase tracking-wider mb-1.5 block font-medium flex items-center gap-1.5">
-                      <Palette className="w-3 h-3" /> Color
-                    </label>
+                    <label className="text-white/30 text-[10px] uppercase tracking-wider mb-1.5 block font-medium flex items-center gap-1.5"><Palette className="w-3 h-3" /> Color</label>
                     <div className="flex flex-wrap gap-2">
                       {COLORS.map(c => (
                         <button key={c} onClick={() => updateTextLayer(selectedText.id, { color: c })}
-                          className={`w-7 h-7 rounded-lg transition-all border-2 ${
-                            selectedText.color === c
-                              ? 'border-white scale-110 shadow-lg'
-                              : 'border-white/10 hover:border-white/30 hover:scale-105'
-                          }`}
+                          className={`w-7 h-7 rounded-lg transition-all border-2 ${selectedText.color === c ? 'border-white scale-110 shadow-lg' : 'border-white/10 hover:border-white/30 hover:scale-105'}`}
                           style={{ backgroundColor: c, boxShadow: selectedText.color === c ? `0 0 12px ${c}40` : undefined }} />
                       ))}
-                      {/* Custom color input */}
                       <label className="w-7 h-7 rounded-lg border-2 border-dashed border-white/10 hover:border-white/30 flex items-center justify-center cursor-pointer transition-all hover:scale-105 overflow-hidden relative">
                         <Plus className="w-3 h-3 text-white/30" />
-                        <input
-                          type="color"
-                          value={selectedText.color}
-                          onChange={e => updateTextLayer(selectedText.id, { color: e.target.value })}
-                          className="absolute inset-0 opacity-0 cursor-pointer"
-                        />
+                        <input type="color" value={selectedText.color} onChange={e => updateTextLayer(selectedText.id, { color: e.target.value })} className="absolute inset-0 opacity-0 cursor-pointer" />
                       </label>
                     </div>
                   </div>
 
-                  {/* Stroke color */}
                   {selectedText.stroke && (
                     <div>
                       <label className="text-white/30 text-[10px] uppercase tracking-wider mb-1.5 block font-medium">Contorno</label>
                       <div className="flex flex-wrap gap-2">
                         {COLORS.map(c => (
                           <button key={c} onClick={() => updateTextLayer(selectedText.id, { strokeColor: c })}
-                            className={`w-7 h-7 rounded-lg transition-all border-2 ${
-                              selectedText.strokeColor === c
-                                ? 'border-white scale-110 shadow-lg'
-                                : 'border-white/10 hover:border-white/30 hover:scale-105'
-                            }`}
+                            className={`w-7 h-7 rounded-lg transition-all border-2 ${selectedText.strokeColor === c ? 'border-white scale-110 shadow-lg' : 'border-white/10 hover:border-white/30 hover:scale-105'}`}
                             style={{ backgroundColor: c }} />
                         ))}
                         <label className="w-7 h-7 rounded-lg border-2 border-dashed border-white/10 hover:border-white/30 flex items-center justify-center cursor-pointer transition-all hover:scale-105 overflow-hidden relative">
                           <Plus className="w-3 h-3 text-white/30" />
-                          <input
-                            type="color"
-                            value={selectedText.strokeColor}
-                            onChange={e => updateTextLayer(selectedText.id, { strokeColor: e.target.value })}
-                            className="absolute inset-0 opacity-0 cursor-pointer"
-                          />
+                          <input type="color" value={selectedText.strokeColor} onChange={e => updateTextLayer(selectedText.id, { strokeColor: e.target.value })} className="absolute inset-0 opacity-0 cursor-pointer" />
                         </label>
                       </div>
                     </div>
@@ -944,12 +1000,9 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                 </div>
               )}
 
-              {/* Text layers list */}
               {!selectedText && textLayers.length > 0 && (
                 <div className="space-y-1.5">
-                  <label className="text-white/30 text-[10px] uppercase tracking-wider mb-1.5 block font-medium flex items-center gap-1.5">
-                    <Layers className="w-3 h-3" /> Capas ({textLayers.length})
-                  </label>
+                  <label className="text-white/30 text-[10px] uppercase tracking-wider mb-1.5 block font-medium flex items-center gap-1.5"><Layers className="w-3 h-3" /> Capas ({textLayers.length})</label>
                   {textLayers.map(layer => (
                     <div key={layer.id}
                       className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] hover:border-white/[0.08] cursor-pointer transition-all group"
@@ -977,19 +1030,40 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
             </div>
           )}
 
-          {/* BLUR CONTROLS */}
+          {/* BLUR */}
           {activeTool === 'blur' && (
             <div className="p-4 space-y-4">
+              {/* Blur mode selector */}
+              <div>
+                <label className="text-white/40 text-[10px] uppercase tracking-wider mb-2 block font-medium">Efecto de Blur</label>
+                <div className="flex gap-2">
+                  {BLUR_MODES.map(mode => (
+                    <button key={mode.id} onClick={() => setBlurMode(mode.id)}
+                      className={`flex-1 flex flex-col items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                        blurMode === mode.id
+                          ? 'bg-sky-500/15 border border-sky-500/30 text-sky-300 shadow-sm shadow-sky-500/10'
+                          : 'bg-white/[0.03] border border-white/[0.06] text-white/40 hover:bg-white/[0.06] hover:text-white/60'
+                      }`}>
+                      <mode.icon className="w-4 h-4" />
+                      <span className="text-[10px]">{mode.label}</span>
+                    </button>
+                  ))}
+                </div>
+                <p className="text-white/20 text-[10px] mt-1.5 text-center">{currentBlurMode.desc}</p>
+              </div>
+
+              {/* Tip banner */}
               <div className="flex items-start gap-3 p-3 bg-gradient-to-r from-amber-500/[0.07] to-orange-500/[0.07] border border-amber-500/15 rounded-2xl">
                 <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0 mt-0.5">
                   <Droplets className="w-4 h-4 text-amber-400" />
                 </div>
                 <div>
                   <p className="text-amber-200/90 text-xs font-medium">Pinta con el dedo o cursor</p>
-                  <p className="text-amber-200/40 text-[10px] mt-1">Pasa por la zona que queres difuminar. Se ve el efecto pixelado en tiempo real.</p>
+                  <p className="text-amber-200/40 text-[10px] mt-1">Pasa por la zona que queres ocultar. El efecto se ve en tiempo real.</p>
                 </div>
               </div>
 
+              {/* Brush size */}
               <div>
                 <label className="text-white/40 text-[10px] uppercase tracking-wider mb-2 flex items-center justify-between font-medium">
                   <span>Tamano del pincel</span>
@@ -998,14 +1072,18 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                 <Slider value={[blurBrushSize]} onValueChange={([v]) => setBlurBrushSize(v)} min={2} max={25} step={1} />
               </div>
 
-              <div>
-                <label className="text-white/40 text-[10px] uppercase tracking-wider mb-2 flex items-center justify-between font-medium">
-                  <span>Intensidad del blur</span>
-                  <span className="text-white/20 normal-case">{blurIntensity}px</span>
-                </label>
-                <Slider value={[blurIntensity]} onValueChange={([v]) => setBlurIntensity(v)} min={3} max={25} step={1} />
-              </div>
+              {/* Intensity (not for blackout) */}
+              {blurMode !== 'blackout' && (
+                <div>
+                  <label className="text-white/40 text-[10px] uppercase tracking-wider mb-2 flex items-center justify-between font-medium">
+                    <span>{blurMode === 'pixelate' ? 'Intensidad pixelado' : 'Intensidad blur'}</span>
+                    <span className="text-white/20 normal-case">{blurIntensity}</span>
+                  </label>
+                  <Slider value={[blurIntensity]} onValueChange={([v]) => setBlurIntensity(v)} min={3} max={25} step={1} />
+                </div>
+              )}
 
+              {/* Stroke list */}
               {blurStrokes.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between mb-2">
@@ -1017,17 +1095,26 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                     </Button>
                   </div>
                   <div className="space-y-1">
-                    {blurStrokes.map((stroke, i) => (
-                      <div key={stroke.id} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04] group">
-                        <div className="w-6 h-6 rounded-lg bg-rose-500/10 flex items-center justify-center shrink-0">
-                          <Droplets className="w-3 h-3 text-rose-400/60" />
+                    {blurStrokes.map((stroke, i) => {
+                      const modeInfo = BLUR_MODES.find(m => m.id === stroke.mode)
+                      return (
+                        <div key={stroke.id} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04] group">
+                          <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${
+                            stroke.mode === 'pixelate' ? 'bg-sky-500/10' :
+                            stroke.mode === 'gaussian' ? 'bg-purple-500/10' : 'bg-zinc-500/10'
+                          }`}>
+                            {modeInfo && <modeInfo.icon className={`w-3 h-3 ${
+                              stroke.mode === 'pixelate' ? 'text-sky-400/60' :
+                              stroke.mode === 'gaussian' ? 'text-purple-400/60' : 'text-zinc-400/60'
+                            }`} />}
+                          </div>
+                          <span className="text-white/50 text-xs flex-1">{modeInfo?.label} {i + 1}</span>
+                          <button onClick={() => setBlurStrokes(prev => prev.filter(s => s.id !== stroke.id))} className="text-white/10 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <X className="w-3.5 h-3.5" />
+                          </button>
                         </div>
-                        <span className="text-white/50 text-xs flex-1">Pincelada {i + 1}</span>
-                        <button onClick={() => setBlurStrokes(prev => prev.filter(s => s.id !== stroke.id))} className="text-white/10 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
               )}
@@ -1043,7 +1130,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
             </div>
           )}
 
-          {/* ADJUST CONTROLS */}
+          {/* ADJUST */}
           {activeTool === 'adjust' && (
             <div className="p-4 space-y-4">
               {[
@@ -1059,7 +1146,6 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
                   <Slider value={[adj.value]} onValueChange={([v]) => adj.setter(v)} min={adj.min} max={adj.max} step={1} />
                 </div>
               ))}
-
               <Button variant="ghost" size="sm" className="text-white/30 hover:text-white/50 hover:bg-white/5 text-xs h-9 px-4 rounded-xl gap-1.5 border border-white/[0.04]"
                 onClick={() => { setBrightness(100); setContrast(100); setSaturate(100) }}>
                 <RotateCcw className="w-3 h-3" />Resetear
@@ -1081,9 +1167,7 @@ export default function PhotoEditor({ imageSrc, onApply, onCancel }: PhotoEditor
             <button key={tool.id}
               onClick={() => { setActiveTool(tool.id); if (tool.id !== 'text') { setSelectedTextId(null); setShowFontPicker(false) } }}
               className={`flex flex-col items-center gap-1 px-5 py-2 rounded-xl transition-all relative ${
-                activeTool === tool.id
-                  ? 'text-sky-400'
-                  : 'text-white/30 hover:text-white/50'
+                activeTool === tool.id ? 'text-sky-400' : 'text-white/30 hover:text-white/50'
               }`}>
               {activeTool === tool.id && (
                 <div className="absolute -top-2 w-8 h-1 rounded-full bg-sky-400 shadow-lg shadow-sky-500/50" />
