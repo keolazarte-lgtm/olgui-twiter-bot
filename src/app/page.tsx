@@ -559,44 +559,6 @@ export default function DinastiaAcademy() {
         </div>
       </section>
 
-      {/* ═══════════════ VIDEO TESTIMONIAL SECTION ═══════════════ */}
-      <section className="bg-[#080808] py-16 sm:py-24 px-4">
-        <div className="max-w-3xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-10"
-          >
-            <p className="font-cinzel text-amber-500/50 text-xs tracking-[0.3em] mb-3">
-              TESTIMONIAL
-            </p>
-            <h2 className="font-cinzel-decorative text-2xl sm:text-4xl font-bold text-white mb-3">
-              Escuchá de <span className="gold-text">ellas</span>
-            </h2>
-            <OrnamentalLine />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <div className="relative aspect-video bg-black/40 border border-amber-500/20 rounded-2xl overflow-hidden gold-border-glow flex items-center justify-center group cursor-pointer">
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-900/10 to-black/50" />
-              {/* Placeholder when no video */}
-              <div className="relative text-center">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto mb-4 group-hover:bg-amber-500/20 transition-colors">
-                  <Play className="w-8 h-8 sm:w-10 sm:h-10 text-amber-400 ml-1" />
-                </div>
-                <p className="font-cinzel text-white/60 text-sm tracking-wider">PRÓXIMAMENTE</p>
-                <p className="font-inter text-white/30 text-xs mt-1">Video testimonial de creadoras</p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
       {/* ═══════════════ WHAT YOU'LL LEARN ═══════════════ */}
       <section className="py-16 sm:py-24 px-4">
         <div className="max-w-4xl mx-auto">
@@ -1245,7 +1207,8 @@ export default function DinastiaAcademy() {
         )}
       </AnimatePresence>
 
-      {/* ═══════════════ FLOATING WHATSAPP ═══════════════ */}
+      {/* ═══════════════ FLOATING WHATSAPP (temporalmente oculto) ═══════════════ */}
+      {/*
       <a
         href="https://wa.me/542246449032?text=Hola!%20Quiero%20info%20sobre%20Dinasty%20Academy"
         target="_blank"
@@ -1254,6 +1217,7 @@ export default function DinastiaAcademy() {
       >
         <MessageCircle className="w-6 h-6 text-black" />
       </a>
+      */}
     </div>
   )
 }
