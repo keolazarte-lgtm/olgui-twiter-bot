@@ -128,26 +128,50 @@ function useCountdown(targetDate: Date) {
 }
 
 // ─── Gold Particles Component ──────────────────────────────
+// Pre-computed particle positions to avoid Math.random() hydration mismatch
+const PARTICLE_DATA = [
+  { x: 12, y1: 45, y2: 78, dur: 8, del: 0.5 },
+  { x: 28, y1: 22, y2: 67, dur: 10, del: 1.2 },
+  { x: 45, y1: 83, y2: 15, dur: 7, del: 2.1 },
+  { x: 62, y1: 35, y2: 90, dur: 9, del: 0.8 },
+  { x: 78, y1: 58, y2: 12, dur: 11, del: 3.0 },
+  { x: 91, y1: 40, y2: 72, dur: 8, del: 1.5 },
+  { x: 5, y1: 70, y2: 25, dur: 10, del: 2.5 },
+  { x: 37, y1: 15, y2: 55, dur: 7, del: 0.3 },
+  { x: 55, y1: 62, y2: 8, dur: 9, del: 1.8 },
+  { x: 72, y1: 48, y2: 85, dur: 12, del: 3.5 },
+  { x: 18, y1: 90, y2: 33, dur: 8, del: 0.9 },
+  { x: 33, y1: 5, y2: 50, dur: 10, del: 2.3 },
+  { x: 50, y1: 72, y2: 18, dur: 7, del: 1.1 },
+  { x: 67, y1: 28, y2: 65, dur: 11, del: 3.2 },
+  { x: 85, y1: 55, y2: 30, dur: 9, del: 0.6 },
+  { x: 8, y1: 38, y2: 82, dur: 8, del: 2.8 },
+  { x: 23, y1: 68, y2: 10, dur: 10, del: 1.6 },
+  { x: 42, y1: 12, y2: 58, dur: 7, del: 3.8 },
+  { x: 58, y1: 85, y2: 40, dur: 12, del: 0.4 },
+  { x: 75, y1: 20, y2: 95, dur: 9, del: 2.0 },
+]
+
 function GoldParticles() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(20)].map((_, i) => (
+      {PARTICLE_DATA.map((p, i) => (
         <motion.div
           key={i}
           className="absolute w-1 h-1 rounded-full bg-amber-400/40"
           initial={{
-            x: `${Math.random() * 100}%`,
-            y: `${Math.random() * 100}%`,
+            x: `${p.x}%`,
+            y: `${p.y1}%`,
             opacity: 0,
           }}
           animate={{
-            y: [`${Math.random() * 100}%`, `${Math.random() * 100}%`],
+            y: [`${p.y1}%`, `${p.y2}%`],
             opacity: [0, 0.6, 0],
           }}
           transition={{
-            duration: 6 + Math.random() * 8,
+            duration: p.dur,
             repeat: Infinity,
-            delay: Math.random() * 5,
+            delay: p.del,
             ease: 'easeInOut',
           }}
         />
@@ -192,17 +216,22 @@ export default function DinastiaAcademy() {
   const { toast } = useToast()
 
   // Countdown — 2 days from now (resets each visit for urgency)
-  const [countdownTarget] = useState(() => {
-    const stored = typeof window !== 'undefined' ? localStorage.getItem('da_countdown') : null
+  const [countdownTarget, setCountdownTarget] = useState<Date | null>(null)
+  const timeLeft = useCountdown(countdownTarget ?? new Date(Date.now() + 48 * 60 * 60 * 1000))
+
+  useEffect(() => {
+    const stored = localStorage.getItem('da_countdown')
     if (stored) {
       const date = new Date(stored)
-      if (date.getTime() > Date.now()) return date
+      if (date.getTime() > Date.now()) {
+        setCountdownTarget(date)
+        return
+      }
     }
     const newDate = new Date(Date.now() + 48 * 60 * 60 * 1000)
-    if (typeof window !== 'undefined') localStorage.setItem('da_countdown', newDate.toISOString())
-    return newDate
-  })
-  const timeLeft = useCountdown(countdownTarget)
+    localStorage.setItem('da_countdown', newDate.toISOString())
+    setCountdownTarget(newDate)
+  }, [])
 
   // Scroll detection for sticky CTA
   useEffect(() => {
