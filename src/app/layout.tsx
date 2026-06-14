@@ -1,29 +1,28 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "TweetBot — Auto-Promo Scheduler",
-  description: "Publica contenido de promocion en Twitter las 24hs apuntando a horarios extranjeros. Automatico, inteligente, sin esfuerzo.",
-  keywords: ["twitter", "auto-post", "scheduler", "promo", "content creator", "onlyfans", "marketing"],
-  authors: [{ name: "TweetBot" }],
+  title: "DINASTÍA ACADEMY — Creadoras de Élite",
+  description:
+    "Aprendé a crear contenido de élite, proteger tu identidad y cobrar — con o sin rostro. Manual completo de configuración y privacidad para OnlyFans.",
+  keywords: [
+    "onlyfans",
+    "creadora de contenido",
+    "privacidad",
+    "geoblocking",
+    "cobrar sin rostro",
+    "manual onlyfans",
+    "dinastia academy",
+  ],
+  authors: [{ name: "Dinastía Academy" }],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👑</text></svg>",
   },
   openGraph: {
-    title: "TweetBot — Auto-Promo Scheduler",
-    description: "Publica contenido de promocion en Twitter las 24hs. Automatico.",
+    title: "DINASTÍA ACADEMY — Creadoras de Élite",
+    description:
+      "Manual completo de configuración y privacidad. Aprendé a cobrar sin exponer tu identidad.",
     type: "website",
   },
 };
@@ -37,15 +36,13 @@ export default function RootLayout({
     <html lang="es" className="dark" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dancing+Script:wght@400;700&family=Lobster&family=Oswald:wght@400;700&family=Pacifico&family=Permanent+Marker&family=Press+Start+2P&family=Russo+One&family=Shadows+Into+Light&family=Staatliches&display=swap"
-          rel="stylesheet"
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
         />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
-      >
+      <body className="antialiased bg-background text-foreground">
         {children}
         <Toaster />
       </body>
