@@ -194,14 +194,15 @@ function OrnamentalLine() {
 }
 
 // ─── Dynasty Crest Image Component ──
+// mix-blend-mode: multiply makes white backgrounds transparent on dark pages
 function DynastyCrest({ className = '' }: { className?: string }) {
   return (
     <Image
-      src="/dinasty-crest-v2.png"
+      src="/dinasty-crest-v3.png"
       alt="Dinasty Academy"
       width={240}
       height={240}
-      className={`${className}`}
+      className={`mix-blend-multiply ${className}`}
       priority
       quality={100}
     />
