@@ -194,21 +194,17 @@ function OrnamentalLine() {
 }
 
 // ─── Dynasty Crest Image Component ──
-// Uses mix-blend-mode: screen so black background becomes transparent
-// Only the gold parts of the logo are visible — no background removal needed
 function DynastyCrest({ className = '' }: { className?: string }) {
   return (
-    <div className={`bg-black rounded-2xl p-2 inline-block ${className}`}>
-      <Image
-        src="/dynasty-crest.png"
-        alt="Dinasty Academy"
-        width={240}
-        height={240}
-        className="mix-blend-screen w-full h-full"
-        priority
-        quality={100}
-      />
-    </div>
+    <Image
+      src="/dynasty-crest.png"
+      alt="Dinasty Academy"
+      width={240}
+      height={240}
+      className={`${className}`}
+      priority
+      quality={100}
+    />
   )
 }
 
