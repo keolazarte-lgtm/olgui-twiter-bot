@@ -199,9 +199,9 @@ function DynastyCrest({ className = '' }: { className?: string }) {
     <Image
       src="/dynasty-crest.png"
       alt="Dinasty Academy"
-      width={80}
-      height={80}
-      className={className}
+      width={120}
+      height={120}
+      className={`drop-shadow-[0_0_20px_rgba(212,175,55,0.3)] ${className}`}
       priority
     />
   )
@@ -396,9 +396,9 @@ export default function DinastiaAcademy() {
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="mb-4"
+            className="mb-6"
           >
-            <DynastyCrest className="w-14 h-18 sm:w-16 sm:h-22 mx-auto" />
+            <DynastyCrest className="w-28 h-28 sm:w-40 sm:h-40 md:w-48 md:h-48 mx-auto" />
           </motion.div>
 
           {/* Badge */}
@@ -771,7 +771,7 @@ export default function DinastiaAcademy() {
           >
             <Card className="bg-black/40 border-amber-500/15 gold-border-glow">
               <CardContent className="p-6 sm:p-8 text-center">
-                <DynastyCrest className="w-14 h-18 sm:w-16 sm:h-22 mx-auto" />
+                <DynastyCrest className="w-20 h-20 sm:w-24 sm:h-24 mx-auto" />
                 <h3 className="font-cinzel text-white font-bold text-lg mt-3 mb-4 tracking-wider">
                   DINASTY ACADEMY
                 </h3>
@@ -945,7 +945,7 @@ export default function DinastiaAcademy() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
-            <DynastyCrest className="w-14 h-18 sm:w-16 sm:h-22 mx-auto" />
+            <DynastyCrest className="w-20 h-20 sm:w-24 sm:h-24 mx-auto" />
 
             <h2 className="font-cinzel-decorative text-2xl sm:text-3xl font-bold text-white mb-3 mt-4">
               Convertite en{' '}
@@ -1095,7 +1095,7 @@ export default function DinastiaAcademy() {
               className="bg-[#0a0a0a] border border-amber-500/20 rounded-2xl p-6 sm:p-8 max-w-sm w-full gold-border-glow"
             >
               <div className="text-center mb-6">
-                <DynastyCrest className="w-14 h-18 sm:w-16 sm:h-22 mx-auto" />
+                <DynastyCrest className="w-20 h-20 sm:w-24 sm:h-24 mx-auto" />
                 <h3 className="font-cinzel-decorative text-white font-bold text-lg mt-2">
                   Finalizar Compra
                 </h3>
