@@ -1,13 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Shield, Eye, Lock, DollarSign, Brain, UserCheck, ArrowRight,
   Check, AlertTriangle, Clock, Star, Zap, ChevronDown, ChevronUp,
   MessageCircle, Send, Loader2, Crown, Sparkles, Users, Gem,
-  Fingerprint, Banknote, TrendingUp, Award
+  Fingerprint, Banknote, TrendingUp, Award, X, Play, Timer,
+  ShieldCheck, EyeOff, Wallet, HeartHandshake, Volume2, VolumeX
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -73,6 +74,88 @@ const TESTIMONIALS = [
   },
 ]
 
+// Fake purchase notifications for social proof
+const PURCHASE_NOTIFICATIONS = [
+  { name: 'María G.', city: 'Buenos Aires', time: 'hace 3 min' },
+  { name: 'Sofía L.', city: 'Córdoba', time: 'hace 7 min' },
+  { name: 'Agustina R.', city: 'Rosario', time: 'hace 12 min' },
+  { name: 'Luciana P.', city: 'Mendoza', time: 'hace 18 min' },
+  { name: 'Florencia M.', city: 'La Plata', time: 'hace 25 min' },
+  { name: 'Natalia D.', city: 'Tucumán', time: 'hace 31 min' },
+  { name: 'Carla V.', city: 'Mar del Plata', time: 'hace 38 min' },
+  { name: 'Romina S.', city: 'Salta', time: 'hace 45 min' },
+  { name: 'Gabriela T.', city: 'Santa Fe', time: 'hace 52 min' },
+  { name: 'Alejandra K.', city: 'Neuquén', time: 'hace 1 hora' },
+]
+
+// Comparison table data
+const COMPARISON = [
+  { feature: 'Privacidad de ubicación', without: 'Cualquiera te encuentra', with_: 'Geoblocking total' },
+  { feature: 'Control de usuarios', without: 'No podés bloquear', with_: 'Bloqueo selectivo' },
+  { feature: 'Cobro seguro', without: 'Exponés tu identidad', with_: 'Métodos 100% privados' },
+  { feature: 'Verificación', without: 'Errores y rechazos', with_: 'Aprobación garantizada' },
+  { feature: 'Mentalidad', without: 'Dudas e inseguridad', with_: 'Marca que vende' },
+  { feature: 'Soporte', without: 'Estás sola', with_: 'Canal Telegram exclusivo' },
+]
+
+// ─── Countdown Timer Hook ──────────────────────────────────
+function useCountdown(targetDate: Date) {
+  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 })
+
+  useEffect(() => {
+    const tick = () => {
+      const now = new Date().getTime()
+      const distance = targetDate.getTime() - now
+
+      if (distance < 0) {
+        setTimeLeft({ hours: 0, minutes: 0, seconds: 0 })
+        return
+      }
+
+      setTimeLeft({
+        hours: Math.floor(distance / (1000 * 60 * 60)),
+        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((distance % (1000 * 60)) / 1000),
+      })
+    }
+
+    tick()
+    const interval = setInterval(tick, 1000)
+    return () => clearInterval(interval)
+  }, [targetDate])
+
+  return timeLeft
+}
+
+// ─── Gold Particles Component ──────────────────────────────
+function GoldParticles() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(20)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 rounded-full bg-amber-400/40"
+          initial={{
+            x: `${Math.random() * 100}%`,
+            y: `${Math.random() * 100}%`,
+            opacity: 0,
+          }}
+          animate={{
+            y: [`${Math.random() * 100}%`, `${Math.random() * 100}%`],
+            opacity: [0, 0.6, 0],
+          }}
+          transition={{
+            duration: 6 + Math.random() * 8,
+            repeat: Infinity,
+            delay: Math.random() * 5,
+            ease: 'easeInOut',
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
 // ─── Decorative Components ──────────────────────────────────
 function OrnamentalLine() {
   return (
@@ -94,6 +177,7 @@ function CrownIcon() {
 
 // ─── Main Page ───────────────────────────────────────────────
 export default function DinastiaAcademy() {
+  const TOTAL_SPOTS = 30
   const [spotsLeft, setSpotsLeft] = useState(17)
   const [showPayment, setShowPayment] = useState(false)
   const [email, setEmail] = useState('')
@@ -101,8 +185,35 @@ export default function DinastiaAcademy() {
   const [loading, setLoading] = useState(false)
   const [paid, setPaid] = useState(false)
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
+  const [showStickyCta, setShowStickyCta] = useState(false)
+  const [notification, setNotification] = useState<typeof PURCHASE_NOTIFICATIONS[0] | null>(null)
+  const [notifVisible, setNotifVisible] = useState(false)
+  const [buyerCount] = useState(47)
   const { toast } = useToast()
 
+  // Countdown — 2 days from now (resets each visit for urgency)
+  const [countdownTarget] = useState(() => {
+    const stored = typeof window !== 'undefined' ? localStorage.getItem('da_countdown') : null
+    if (stored) {
+      const date = new Date(stored)
+      if (date.getTime() > Date.now()) return date
+    }
+    const newDate = new Date(Date.now() + 48 * 60 * 60 * 1000)
+    if (typeof window !== 'undefined') localStorage.setItem('da_countdown', newDate.toISOString())
+    return newDate
+  })
+  const timeLeft = useCountdown(countdownTarget)
+
+  // Scroll detection for sticky CTA
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowStickyCta(window.scrollY > 600)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Spots fluctuation
   useEffect(() => {
     const interval = setInterval(() => {
       setSpotsLeft(prev => {
@@ -111,6 +222,29 @@ export default function DinastiaAcademy() {
       })
     }, 45000)
     return () => clearInterval(interval)
+  }, [])
+
+  // Purchase notification rotation
+  useEffect(() => {
+    let idx = 0
+    const showNotif = () => {
+      setNotification(PURCHASE_NOTIFICATIONS[idx % PURCHASE_NOTIFICATIONS.length])
+      setNotifVisible(true)
+      idx++
+
+      setTimeout(() => {
+        setNotifVisible(false)
+      }, 4000)
+    }
+
+    // Show first one after 8 seconds, then every 15-25 seconds
+    const initialTimeout = setTimeout(() => {
+      showNotif()
+      const interval = setInterval(showNotif, 15000 + Math.random() * 10000)
+      return () => clearInterval(interval)
+    }, 8000)
+
+    return () => clearTimeout(initialTimeout)
   }, [])
 
   const handlePurchase = async () => {
@@ -125,7 +259,6 @@ export default function DinastiaAcademy() {
 
     setLoading(true)
 
-    // Register the lead
     try {
       await fetch('/api/academy/register', {
         method: 'POST',
@@ -134,8 +267,7 @@ export default function DinastiaAcademy() {
       })
     } catch { /* silent */ }
 
-    // Open MercadoPago payment link
-    const MP_LINK = 'https://mpago.la/PLACEHOLDER' // TODO: Replace with real MP link
+    const MP_LINK = 'https://mpago.la/PLACEHOLDER'
     window.open(MP_LINK, '_blank')
 
     setTimeout(() => {
@@ -143,6 +275,9 @@ export default function DinastiaAcademy() {
       setLoading(false)
     }, 2000)
   }
+
+  const spotsUsed = TOTAL_SPOTS - spotsLeft
+  const spotsPercent = (spotsUsed / TOTAL_SPOTS) * 100
 
   const faqs = [
     {
@@ -167,10 +302,30 @@ export default function DinastiaAcademy() {
     },
   ]
 
+  const pad = (n: number) => n.toString().padStart(2, '0')
+
   return (
     <div className="min-h-screen bg-[#050505] flex flex-col overflow-x-hidden">
+      {/* ═══════════════ COUNTDOWN BAR ═══════════════ */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-amber-900/90 via-amber-800/90 to-amber-900/90 backdrop-blur-md border-b border-amber-500/20 py-2 px-4">
+        <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm">
+          <Timer className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+          <span className="font-cinzel text-amber-200 tracking-wider">OFERTA TERMINA EN</span>
+          <div className="flex items-center gap-1">
+            {[pad(timeLeft.hours), pad(timeLeft.minutes), pad(timeLeft.seconds)].map((val, i) => (
+              <span key={i} className="flex items-center gap-1">
+                <span className="bg-black/40 px-1.5 py-0.5 rounded font-cinzel font-bold text-amber-300 min-w-[28px] text-center">
+                  {val}
+                </span>
+                {i < 2 && <span className="text-amber-500/60">:</span>}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* ═══════════════ HERO SECTION ═══════════════ */}
-      <section className="relative overflow-hidden min-h-screen flex items-center justify-center">
+      <section className="relative overflow-hidden min-h-screen flex items-center justify-center pt-10">
         {/* Hero background image */}
         <div className="absolute inset-0">
           <Image
@@ -181,6 +336,8 @@ export default function DinastiaAcademy() {
             priority
           />
         </div>
+        {/* Gold particles */}
+        <GoldParticles />
         {/* Background effects */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(212,175,55,0.12)_0%,_transparent_60%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_rgba(184,134,11,0.08)_0%,_transparent_50%)]" />
@@ -239,6 +396,21 @@ export default function DinastiaAcademy() {
 
           <OrnamentalLine />
 
+          {/* Buyer count social proof */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="mb-6"
+          >
+            <div className="inline-flex items-center gap-2 bg-amber-500/5 border border-amber-500/10 rounded-full px-4 py-1.5">
+              <Users className="w-3.5 h-3.5 text-amber-400" />
+              <span className="font-inter text-amber-400/80 text-xs">
+                <span className="font-bold">+{buyerCount}</span> creadoras ya confiaron en Dinastía Academy
+              </span>
+            </div>
+          </motion.div>
+
           {/* Subtitle */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -271,6 +443,22 @@ export default function DinastiaAcademy() {
                 <p className="font-playfair text-amber-400/60 text-xs italic mb-5">
                   Manual completo + Acceso a canal exclusivo
                 </p>
+
+                {/* Spots progress bar */}
+                <div className="mb-3">
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <span className="font-cinzel text-amber-400/70 tracking-wider">CUPOS OCUPADOS</span>
+                    <span className="font-inter text-amber-400">{spotsUsed}/{TOTAL_SPOTS}</span>
+                  </div>
+                  <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-400 rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${spotsPercent}%` }}
+                      transition={{ duration: 1.5, ease: 'easeOut' }}
+                    />
+                  </div>
+                </div>
 
                 {/* Urgency */}
                 <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg px-3 py-2 mb-5 pulse-gold">
@@ -329,8 +517,46 @@ export default function DinastiaAcademy() {
         </div>
       </section>
 
-      {/* ═══════════════ WHAT YOU'LL LEARN ═══════════════ */}
+      {/* ═══════════════ VIDEO TESTIMONIAL SECTION ═══════════════ */}
       <section className="bg-[#080808] py-16 sm:py-24 px-4">
+        <div className="max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-10"
+          >
+            <p className="font-cinzel text-amber-500/50 text-xs tracking-[0.3em] mb-3">
+              TESTIMONIAL
+            </p>
+            <h2 className="font-cinzel-decorative text-2xl sm:text-4xl font-bold text-white mb-3">
+              Escuchá de <span className="gold-text">ellas</span>
+            </h2>
+            <OrnamentalLine />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <div className="relative aspect-video bg-black/40 border border-amber-500/20 rounded-2xl overflow-hidden gold-border-glow flex items-center justify-center group cursor-pointer">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-900/10 to-black/50" />
+              {/* Placeholder when no video */}
+              <div className="relative text-center">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto mb-4 group-hover:bg-amber-500/20 transition-colors">
+                  <Play className="w-8 h-8 sm:w-10 sm:h-10 text-amber-400 ml-1" />
+                </div>
+                <p className="font-cinzel text-white/60 text-sm tracking-wider">PRÓXIMAMENTE</p>
+                <p className="font-inter text-white/30 text-xs mt-1">Video testimonial de creadoras</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════ WHAT YOU'LL LEARN ═══════════════ */}
+      <section className="py-16 sm:py-24 px-4">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -380,6 +606,59 @@ export default function DinastiaAcademy() {
         </div>
       </section>
 
+      {/* ═══════════════ COMPARISON TABLE ═══════════════ */}
+      <section className="bg-[#080808] py-16 sm:py-24 px-4">
+        <div className="max-w-2xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-10"
+          >
+            <p className="font-cinzel text-amber-500/50 text-xs tracking-[0.3em] mb-3">
+              COMPARACIÓN
+            </p>
+            <h2 className="font-cinzel-decorative text-2xl sm:text-3xl font-bold text-white mb-3">
+              Sin el manual vs <span className="gold-text">Con el manual</span>
+            </h2>
+            <OrnamentalLine />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <Card className="bg-black/40 border-amber-500/10 overflow-hidden">
+              {/* Table Header */}
+              <div className="grid grid-cols-3 gap-0 border-b border-amber-500/10">
+                <div className="p-3 sm:p-4" />
+                <div className="p-3 sm:p-4 text-center border-x border-amber-500/10">
+                  <span className="font-cinzel text-white/30 text-xs tracking-wider">SIN MANUAL</span>
+                </div>
+                <div className="p-3 sm:p-4 text-center bg-amber-500/5">
+                  <span className="font-cinzel text-amber-400 text-xs tracking-wider">CON MANUAL</span>
+                </div>
+              </div>
+              {/* Table Rows */}
+              {COMPARISON.map((row, i) => (
+                <div key={i} className="grid grid-cols-3 gap-0 border-b border-amber-500/5 last:border-0">
+                  <div className="p-3 sm:p-4 flex items-center">
+                    <span className="font-inter text-white/60 text-xs sm:text-sm">{row.feature}</span>
+                  </div>
+                  <div className="p-3 sm:p-4 flex items-center justify-center border-x border-amber-500/5">
+                    <span className="font-inter text-red-400/60 text-xs text-center">{row.without}</span>
+                  </div>
+                  <div className="p-3 sm:p-4 flex items-center justify-center bg-amber-500/[0.02]">
+                    <span className="font-inter text-amber-400 text-xs text-center font-medium">{row.with_}</span>
+                  </div>
+                </div>
+              ))}
+            </Card>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ═══════════════ SOCIAL PROOF / TESTIMONIALS ═══════════════ */}
       <section className="py-16 sm:py-24 px-4">
         <div className="max-w-4xl mx-auto">
@@ -412,22 +691,15 @@ export default function DinastiaAcademy() {
                   <CardContent className="p-5 sm:p-6">
                     <div className="flex items-center gap-1 mb-3">
                       {[...Array(5)].map((_, j) => (
-                        <Star
-                          key={j}
-                          className="w-3.5 h-3.5 text-amber-400 fill-amber-400"
-                        />
+                        <Star key={j} className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
                       ))}
                     </div>
                     <p className="font-playfair text-white/60 text-sm leading-relaxed mb-4 italic">
                       &ldquo;{t.text}&rdquo;
                     </p>
                     <div className="border-t border-amber-500/10 pt-3">
-                      <p className="font-cinzel text-white font-medium text-sm tracking-wide">
-                        {t.name}
-                      </p>
-                      <p className="font-inter text-amber-500/40 text-xs">
-                        {t.role}
-                      </p>
+                      <p className="font-cinzel text-white font-medium text-sm tracking-wide">{t.name}</p>
+                      <p className="font-inter text-amber-500/40 text-xs">{t.role}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -437,8 +709,70 @@ export default function DinastiaAcademy() {
         </div>
       </section>
 
-      {/* ═══════════════ VALUE STACK ═══════════════ */}
+      {/* ═══════════════ QUIÉNES SOMOS ═══════════════ */}
       <section className="bg-[#080808] py-16 sm:py-24 px-4">
+        <div className="max-w-2xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-10"
+          >
+            <p className="font-cinzel text-amber-500/50 text-xs tracking-[0.3em] mb-3">
+              NUESTRA MISIÓN
+            </p>
+            <h2 className="font-cinzel-decorative text-2xl sm:text-3xl font-bold text-white mb-3">
+              Quiénes <span className="gold-text">somos</span>
+            </h2>
+            <OrnamentalLine />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <Card className="bg-black/40 border-amber-500/15 gold-border-glow">
+              <CardContent className="p-6 sm:p-8 text-center">
+                <CrownIcon />
+                <h3 className="font-cinzel text-white font-bold text-lg mt-3 mb-4 tracking-wider">
+                  DINASTÍA ACADEMY
+                </h3>
+                <p className="font-playfair text-white/60 text-sm sm:text-base leading-relaxed mb-4 italic">
+                  Nacimos de la necesidad real de creadoras que querían trabajar con seguridad y privacidad,
+                  sin depender de nadie. Sabemos lo que es empezar con dudas, miedo a ser descubierta y
+                  sin saber cómo cobrar. Por eso armamos este manual: para que ninguna mujer tenga que
+                  pasar por eso sola.
+                </p>
+                <p className="font-inter text-white/40 text-xs leading-relaxed">
+                  Dinastía Academy no es solo un curso. Es una comunidad de creadoras que eligieron
+                  tomar el control de su negocio, su privacidad y su futuro. Con o sin rostro,
+                  vos decidís cómo mostrarte al mundo.
+                </p>
+                <div className="mt-6 flex items-center justify-center gap-6 text-amber-500/30">
+                  <div className="text-center">
+                    <p className="font-cinzel-decorative text-2xl font-bold text-amber-400">{buyerCount}+</p>
+                    <p className="font-inter text-[10px] tracking-wider mt-1">CREADORAS</p>
+                  </div>
+                  <div className="w-px h-10 bg-amber-500/10" />
+                  <div className="text-center">
+                    <p className="font-cinzel-decorative text-2xl font-bold text-amber-400">6</p>
+                    <p className="font-inter text-[10px] tracking-wider mt-1">MÓDULOS</p>
+                  </div>
+                  <div className="w-px h-10 bg-amber-500/10" />
+                  <div className="text-center">
+                    <p className="font-cinzel-decorative text-2xl font-bold text-amber-400">24/7</p>
+                    <p className="font-inter text-[10px] tracking-wider mt-1">SOPORTE</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════ VALUE STACK ═══════════════ */}
+      <section className="py-16 sm:py-24 px-4">
         <div className="max-w-lg mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -505,7 +839,7 @@ export default function DinastiaAcademy() {
       </section>
 
       {/* ═══════════════ FAQ ═══════════════ */}
-      <section className="py-16 sm:py-24 px-4">
+      <section className="bg-[#080808] py-16 sm:py-24 px-4">
         <div className="max-w-2xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -567,7 +901,7 @@ export default function DinastiaAcademy() {
       </section>
 
       {/* ═══════════════ FINAL CTA ═══════════════ */}
-      <section className="bg-[#080808] py-16 sm:py-24 px-4">
+      <section className="py-16 sm:py-24 px-4">
         <div className="max-w-md mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -595,6 +929,19 @@ export default function DinastiaAcademy() {
                     $20.000
                   </span>
                   <span className="font-cinzel text-amber-500/50 text-sm">ARS</span>
+                </div>
+                {/* Spots progress bar */}
+                <div className="mb-3">
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <span className="font-cinzel text-amber-400/70 tracking-wider">CUPOS</span>
+                    <span className="font-inter text-amber-400">{spotsUsed}/{TOTAL_SPOTS}</span>
+                  </div>
+                  <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-400 rounded-full"
+                      style={{ width: `${spotsPercent}%` }}
+                    />
+                  </div>
                 </div>
                 <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg px-3 py-2 mb-5 pulse-gold">
                   <div className="flex items-center justify-center gap-2 text-amber-400 text-sm">
@@ -632,6 +979,66 @@ export default function DinastiaAcademy() {
           </p>
         </div>
       </footer>
+
+      {/* ═══════════════ STICKY CTA (MOBILE) ═══════════════ */}
+      <AnimatePresence>
+        {showStickyCta && !showPayment && !paid && (
+          <motion.div
+            initial={{ y: 100 }}
+            animate={{ y: 0 }}
+            exit={{ y: 100 }}
+            className="fixed bottom-0 left-0 right-0 z-40 sm:hidden bg-[#0a0a0a]/95 backdrop-blur-md border-t border-amber-500/20 p-3"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="font-cinzel text-white text-xs tracking-wider truncate">
+                  MÓDULO 1 — <span className="gold-text">$20.000</span>
+                </p>
+                <p className="font-inter text-amber-400/60 text-[10px]">
+                  ¡Quedan {spotsLeft} cupos!
+                </p>
+              </div>
+              <Button
+                onClick={() => setShowPayment(true)}
+                className="gold-btn-glow text-black font-cinzel font-bold tracking-wider text-xs px-4 h-10 rounded-lg border-0 shrink-0 cursor-pointer"
+              >
+                <Crown className="w-4 h-4 mr-1" />
+                ADQUIRIR
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ═══════════════ PURCHASE NOTIFICATION TOAST ═══════════════ */}
+      <AnimatePresence>
+        {notifVisible && notification && (
+          <motion.div
+            initial={{ x: -300, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -300, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+            className="fixed bottom-20 sm:bottom-6 left-4 z-40 bg-[#0a0a0a]/95 border border-amber-500/20 rounded-xl p-3 max-w-[260px] shadow-xl shadow-amber-500/5 backdrop-blur-md"
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center shrink-0">
+                <Crown className="w-4 h-4 text-black" />
+              </div>
+              <div className="min-w-0">
+                <p className="font-inter text-white text-xs font-medium truncate">
+                  {notification.name}
+                </p>
+                <p className="font-inter text-amber-400/70 text-[10px]">
+                  {notification.city} · {notification.time}
+                </p>
+                <p className="font-inter text-white/40 text-[10px] mt-0.5">
+                  Adquirió el Manual Completo
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ═══════════════ PAYMENT MODAL ═══════════════ */}
       <AnimatePresence>
@@ -728,7 +1135,7 @@ export default function DinastiaAcademy() {
         )}
       </AnimatePresence>
 
-      {/* ═══════════════ PAYMENT SUCCESS MODAL ═══════════════ */}
+      {/* ═══════════════ PAYMENT SUCCESS / THANK YOU ═══════════════ */}
       <AnimatePresence>
         {paid && (
           <motion.div
@@ -747,13 +1154,36 @@ export default function DinastiaAcademy() {
                 <Check className="w-8 h-8 text-amber-400" />
               </div>
               <h3 className="font-cinzel-decorative text-white font-bold text-xl mb-2">
-                ¡Pago en proceso!
+                ¡Gracias por tu compra!
               </h3>
               <p className="font-playfair text-white/60 text-sm mb-4 italic">
-                Una vez que se confirme el pago, tu material llega en{' '}
+                Tu material llega en{' '}
                 <span className="text-amber-400 font-semibold not-italic">5 a 10 minutos</span>{' '}
                 a tu email y WhatsApp.
               </p>
+
+              {/* Thank you details */}
+              <div className="bg-amber-500/5 border border-amber-500/10 rounded-lg p-4 mb-5 text-left space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center shrink-0">
+                    <Check className="w-3 h-3 text-black" />
+                  </div>
+                  <span className="font-inter text-white/60 text-xs">PDF completo del Módulo 1</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center shrink-0">
+                    <Check className="w-3 h-3 text-black" />
+                  </div>
+                  <span className="font-inter text-white/60 text-xs">Acceso al canal de Telegram</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center shrink-0">
+                    <Check className="w-3 h-3 text-black" />
+                  </div>
+                  <span className="font-inter text-white/60 text-xs">Actualizaciones gratuitas</span>
+                </div>
+              </div>
+
               <div className="bg-white/5 rounded-lg p-3 mb-5">
                 <p className="font-inter text-white/30 text-xs">
                   Revisá también la carpeta de spam o correo no deseado.
@@ -778,7 +1208,7 @@ export default function DinastiaAcademy() {
         href="https://wa.me/?text=Hola!%20Quiero%20info%20sobre%20Dinast%C3%ADa%20Academy"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-40 w-14 h-14 bg-amber-600 hover:bg-amber-500 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/20 transition-colors"
+        className={`fixed right-6 z-40 w-14 h-14 bg-amber-600 hover:bg-amber-500 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/20 transition-all ${showStickyCta && !showPayment ? 'bottom-20 sm:bottom-6' : 'bottom-6'}`}
       >
         <MessageCircle className="w-6 h-6 text-black" />
       </a>
