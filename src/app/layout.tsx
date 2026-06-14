@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Dinasty Academy" }],
   icons: {
-    icon: "/dynasty-favicon.png",
+    icon: "/dinasty-favicon-v2.png",
   },
   openGraph: {
     title: "DINASTY ACADEMY — Creadoras de Élite",

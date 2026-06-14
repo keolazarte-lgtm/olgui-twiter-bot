@@ -200,7 +200,7 @@ function DynastyCrest({ className = '' }: { className?: string }) {
   return (
     <div className={`bg-black rounded-2xl p-2 inline-block ${className}`}>
       <Image
-        src="/dynasty-crest.png"
+        src="/dinasty-crest-v2.png"
         alt="Dinasty Academy"
         width={240}
         height={240}
