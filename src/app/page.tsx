@@ -199,10 +199,11 @@ function DynastyCrest({ className = '' }: { className?: string }) {
     <Image
       src="/dynasty-crest.png"
       alt="Dinasty Academy"
-      width={120}
-      height={120}
-      className={`drop-shadow-[0_0_20px_rgba(212,175,55,0.3)] ${className}`}
+      width={240}
+      height={240}
+      className={`${className}`}
       priority
+      quality={100}
     />
   )
 }
