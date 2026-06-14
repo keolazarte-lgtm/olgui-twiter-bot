@@ -1207,8 +1207,7 @@ export default function DinastiaAcademy() {
         )}
       </AnimatePresence>
 
-      {/* ═══════════════ FLOATING WHATSAPP (temporalmente oculto) ═══════════════ */}
-      {/*
+      {/* ═══════════════ FLOATING WHATSAPP ═══════════════ */}
       <a
         href="https://wa.me/542246449032?text=Hola!%20Quiero%20info%20sobre%20Dinasty%20Academy"
         target="_blank"
@@ -1217,7 +1216,6 @@ export default function DinastiaAcademy() {
       >
         <MessageCircle className="w-6 h-6 text-black" />
       </a>
-      */}
     </div>
   )
 }
