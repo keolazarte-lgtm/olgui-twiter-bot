@@ -61,14 +61,14 @@ export async function POST(request: NextRequest) {
           })
         }
 
-        console.log(`[DINASTÍA ACADEMY] Lead saved to DB: ${email} | Phone: ${phone || 'N/A'}`)
+        console.log(`[DINASTY ACADEMY] Lead saved to DB: ${email} | Phone: ${phone || 'N/A'}`)
       } catch (dbError) {
         console.error('DB save failed, falling back to log:', dbError)
-        console.log(`[DINASTÍA ACADEMY] New lead (log only): ${email} | Phone: ${phone || 'N/A'} | ${new Date().toISOString()}`)
+        console.log(`[DINASTY ACADEMY] New lead (log only): ${email} | Phone: ${phone || 'N/A'} | ${new Date().toISOString()}`)
       }
     } else {
       // Fallback: just log
-      console.log(`[DINASTÍA ACADEMY] New lead (no DB): ${email} | Phone: ${phone || 'N/A'} | ${new Date().toISOString()}`)
+      console.log(`[DINASTY ACADEMY] New lead (no DB): ${email} | Phone: ${phone || 'N/A'} | ${new Date().toISOString()}`)
     }
 
     return NextResponse.json({ success: true, message: 'Lead registered' })

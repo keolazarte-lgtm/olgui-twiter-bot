@@ -193,9 +193,63 @@ function OrnamentalLine() {
   )
 }
 
-function CrownIcon() {
+// ─── Dynasty Crest SVG Icon (inspired by heraldic shield + crown) ──
+function DynastyCrest({ className = '' }: { className?: string }) {
   return (
-    <span className="text-2xl sm:text-3xl" role="img" aria-label="corona">👑</span>
+    <svg
+      viewBox="0 0 120 160"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <linearGradient id="crestGold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#F5D77A" />
+          <stop offset="50%" stopColor="#D4AF37" />
+          <stop offset="100%" stopColor="#B8860B" />
+        </linearGradient>
+        <linearGradient id="crestGoldLight" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#FAE6A0" />
+          <stop offset="100%" stopColor="#D4AF37" />
+        </linearGradient>
+        <linearGradient id="shieldFill" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#1a1508" />
+          <stop offset="100%" stopColor="#0d0a04" />
+        </linearGradient>
+      </defs>
+
+      {/* Crown */}
+      <path d="M30 52 L35 28 L42 42 L50 20 L58 42 L65 28 L70 52" stroke="url(#crestGoldLight)" strokeWidth="2" fill="url(#crestGold)" strokeLinejoin="round" />
+      {/* Crown jewels */}
+      <circle cx="42" cy="38" r="1.5" fill="#1a1508" />
+      <circle cx="50" cy="28" r="1.5" fill="#1a1508" />
+      <circle cx="58" cy="38" r="1.5" fill="#1a1508" />
+      {/* Crown base band */}
+      <rect x="30" y="50" width="40" height="4" rx="1" fill="url(#crestGold)" />
+      <circle cx="37" cy="52" r="1" fill="#1a1508" />
+      <circle cx="43" cy="52" r="1" fill="#1a1508" />
+      <circle cx="50" cy="52" r="1" fill="#1a1508" />
+      <circle cx="57" cy="52" r="1" fill="#1a1508" />
+      <circle cx="63" cy="52" r="1" fill="#1a1508" />
+
+      {/* Shield */}
+      <path d="M24 58 L60 58 L76 58 L76 105 Q76 135 50 148 Q24 135 24 105 Z" fill="url(#shieldFill)" stroke="url(#crestGoldLight)" strokeWidth="2" />
+      {/* Shield inner border */}
+      <path d="M28 62 L72 62 L72 103 Q72 130 50 143 Q28 130 28 103 Z" fill="none" stroke="url(#crestGold)" strokeWidth="0.5" opacity="0.4" />
+
+      {/* DA Monogram */}
+      <text x="50" y="105" textAnchor="middle" fontFamily="serif" fontSize="36" fontWeight="bold" fill="url(#crestGoldLight)" letterSpacing="2">DA</text>
+
+      {/* Bottom flourishes */}
+      <path d="M35 148 Q28 155 20 152 Q15 150 18 145 Q22 140 28 143" stroke="url(#crestGold)" strokeWidth="1.2" fill="none" />
+      <path d="M65 148 Q72 155 80 152 Q85 150 82 145 Q78 140 72 143" stroke="url(#crestGold)" strokeWidth="1.2" fill="none" />
+      {/* Center bottom ornament */}
+      <path d="M46 148 Q50 155 54 148" stroke="url(#crestGold)" strokeWidth="1" fill="none" />
+      <circle cx="50" cy="153" r="1.5" fill="url(#crestGold)" />
+      {/* Side small leaves */}
+      <path d="M22 150 Q16 146 14 150 Q16 154 22 150" fill="url(#crestGold)" opacity="0.6" />
+      <path d="M78 150 Q84 146 86 150 Q84 154 78 150" fill="url(#crestGold)" opacity="0.6" />
+    </svg>
   )
 }
 
@@ -390,7 +444,7 @@ export default function DinastiaAcademy() {
             transition={{ duration: 0.8 }}
             className="mb-4"
           >
-            <CrownIcon />
+            <DynastyCrest className="w-14 h-18 sm:w-16 sm:h-22 mx-auto" />
           </motion.div>
 
           {/* Badge */}
@@ -412,7 +466,7 @@ export default function DinastiaAcademy() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="font-cinzel-decorative font-black text-5xl sm:text-7xl md:text-8xl mb-2 tracking-wide leading-none"
           >
-            <span className="gold-shimmer">DINASTÍA</span>
+            <span className="gold-shimmer">DINASTY</span>
           </motion.h1>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -435,7 +489,7 @@ export default function DinastiaAcademy() {
             <div className="inline-flex items-center gap-2 bg-amber-500/5 border border-amber-500/10 rounded-full px-4 py-1.5">
               <Users className="w-3.5 h-3.5 text-amber-400" />
               <span className="font-inter text-amber-400/80 text-xs">
-                <span className="font-bold">+{buyerCount}</span> creadoras ya confiaron en Dinastía Academy
+                <span className="font-bold">+{buyerCount}</span> creadoras ya confiaron en Dinasty Academy
               </span>
             </div>
           </motion.div>
@@ -763,9 +817,9 @@ export default function DinastiaAcademy() {
           >
             <Card className="bg-black/40 border-amber-500/15 gold-border-glow">
               <CardContent className="p-6 sm:p-8 text-center">
-                <CrownIcon />
+                <DynastyCrest className="w-14 h-18 sm:w-16 sm:h-22 mx-auto" />
                 <h3 className="font-cinzel text-white font-bold text-lg mt-3 mb-4 tracking-wider">
-                  DINASTÍA ACADEMY
+                  DINASTY ACADEMY
                 </h3>
                 <p className="font-playfair text-white/60 text-sm sm:text-base leading-relaxed mb-4 italic">
                   Nacimos de la necesidad real de creadoras que querían trabajar con seguridad y privacidad,
@@ -774,7 +828,7 @@ export default function DinastiaAcademy() {
                   pasar por eso sola.
                 </p>
                 <p className="font-inter text-white/40 text-xs leading-relaxed">
-                  Dinastía Academy no es solo un curso. Es una comunidad de creadoras que eligieron
+                  Dinasty Academy no es solo un curso. Es una comunidad de creadoras que eligieron
                   tomar el control de su negocio, su privacidad y su futuro. Con o sin rostro,
                   vos decidís cómo mostrarte al mundo.
                 </p>
@@ -937,7 +991,7 @@ export default function DinastiaAcademy() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
-            <CrownIcon />
+            <DynastyCrest className="w-14 h-18 sm:w-16 sm:h-22 mx-auto" />
 
             <h2 className="font-cinzel-decorative text-2xl sm:text-3xl font-bold text-white mb-3 mt-4">
               Convertite en{' '}
@@ -1001,7 +1055,7 @@ export default function DinastiaAcademy() {
       <footer className="mt-auto bg-[#050505] border-t border-amber-500/5 py-8 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <p className="font-cinzel text-amber-500/20 text-xs tracking-[0.2em]">
-            © 2026 DINASTÍA ACADEMY · TODOS LOS DERECHOS RESERVADOS
+            © 2026 DINASTY ACADEMY · TODOS LOS DERECHOS RESERVADOS
           </p>
           <p className="font-inter text-white/10 text-[10px] mt-2">
             Este producto es para mayores de 18 años
@@ -1087,7 +1141,7 @@ export default function DinastiaAcademy() {
               className="bg-[#0a0a0a] border border-amber-500/20 rounded-2xl p-6 sm:p-8 max-w-sm w-full gold-border-glow"
             >
               <div className="text-center mb-6">
-                <CrownIcon />
+                <DynastyCrest className="w-14 h-18 sm:w-16 sm:h-22 mx-auto" />
                 <h3 className="font-cinzel-decorative text-white font-bold text-lg mt-2">
                   Finalizar Compra
                 </h3>
