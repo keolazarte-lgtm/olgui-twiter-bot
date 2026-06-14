@@ -1210,7 +1210,6 @@ export default function DinastiaAcademy() {
       {/* ═══════════════ FLOATING WHATSAPP ═══════════════ */}
       <a
         href="https://api.whatsapp.com/send?phone=5492246449032&text=Hola!%20Quiero%20info%20sobre%20Dinasty%20Academy"
-        target="_blank"
         rel="noopener noreferrer"
         className={`fixed right-6 z-40 w-14 h-14 bg-amber-600 hover:bg-amber-500 rounded-full flex items-center justify-center shadow-lg shadow-amber-500/20 transition-all ${showStickyCta && !showPayment ? 'bottom-20 sm:bottom-6' : 'bottom-6'}`}
       >
