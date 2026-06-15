@@ -306,7 +306,7 @@ export default function DinastiaAcademy() {
       })
     } catch { /* silent */ }
 
-    const MP_LINK = 'https://mpago.la/PLACEHOLDER'
+    const MP_LINK = 'https://link.mercadopago.com.ar/dinastyacadem'
     window.open(MP_LINK, '_blank')
 
     setTimeout(() => {
@@ -1056,10 +1056,10 @@ export default function DinastiaAcademy() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-[#0a0a0a] border border-amber-500/20 rounded-2xl p-6 sm:p-8 max-w-sm w-full gold-border-glow"
+              className="bg-[#0a0a0a] border border-amber-500/20 rounded-2xl p-6 sm:p-8 max-w-sm w-full gold-border-glow max-h-[90vh] overflow-y-auto"
             >
-              <div className="text-center mb-6">
-                <DynastyCrest className="w-20 h-20 sm:w-24 sm:h-24 mx-auto" />
+              <div className="text-center mb-5">
+                <DynastyCrest className="w-16 h-16 sm:w-20 sm:h-20 mx-auto" />
                 <h3 className="font-cinzel-decorative text-white font-bold text-lg mt-2">
                   Finalizar Compra
                 </h3>
@@ -1097,32 +1097,55 @@ export default function DinastiaAcademy() {
                   </p>
                 </div>
 
+                {/* QR Code */}
+                <div className="bg-amber-500/5 border border-amber-500/15 rounded-xl p-4 text-center">
+                  <p className="font-cinzel text-amber-400 text-xs tracking-wider mb-3">
+                    ESCANEÁ Y PAGÁ
+                  </p>
+                  <div className="bg-white rounded-xl p-3 inline-block mx-auto">
+                    <Image
+                      src="/mp-qr.jpeg"
+                      alt="QR MercadoPago"
+                      width={200}
+                      height={200}
+                      className="rounded-lg"
+                    />
+                  </div>
+                  <p className="font-inter text-white/30 text-[10px] mt-3">
+                    Abrí la cámara de tu celular y escaneá el QR
+                  </p>
+                </div>
+
+                {/* MP Link button */}
+                <a
+                  href="https://link.mercadopago.com.ar/dinastyacadem"
+                  onClick={() => {
+                    // Register lead when they click pay
+                    if (email.trim() && email.includes('@')) {
+                      fetch('/api/academy/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, phone }),
+                      }).catch(() => {})
+                    }
+                  }}
+                  className="w-full h-12 text-sm font-cinzel font-bold tracking-wider gold-btn-glow text-black rounded-xl border-0 cursor-pointer flex items-center justify-center gap-2 no-underline"
+                >
+                  <DollarSign className="w-5 h-5" />
+                  PAGAR CON MERCADOPAGO
+                </a>
+
                 <div className="bg-amber-500/5 border border-amber-500/10 rounded-lg p-3">
                   <div className="flex items-center gap-2 text-amber-400 text-xs mb-1">
                     <Clock className="w-3.5 h-3.5" />
                     <span className="font-cinzel font-semibold tracking-wide">
-                      ENTREGA EN 5 A 10 MINUTOS
+                      ENTREGA INMEDIATA
                     </span>
                   </div>
                   <p className="font-inter text-white/30 text-[10px]">
                     Una vez confirmado el pago, recibís el PDF completo en tu email y/o WhatsApp
                   </p>
                 </div>
-
-                <Button
-                  onClick={handlePurchase}
-                  disabled={loading}
-                  className="w-full h-12 text-sm font-cinzel font-bold tracking-wider gold-btn-glow text-black rounded-xl border-0 cursor-pointer"
-                >
-                  {loading ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <>
-                      <DollarSign className="w-5 h-5 mr-2" />
-                      PAGAR CON MERCADOPAGO
-                    </>
-                  )}
-                </Button>
 
                 <button
                   onClick={() => setShowPayment(false)}
