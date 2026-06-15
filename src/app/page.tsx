@@ -8,7 +8,8 @@ import {
   Check, AlertTriangle, Clock, Star, Zap, ChevronDown, ChevronUp,
   MessageCircle, Send, Loader2, Crown, Sparkles, Users, Gem,
   Fingerprint, Banknote, TrendingUp, Award, X, Play, Timer,
-  ShieldCheck, EyeOff, Wallet, HeartHandshake, Volume2, VolumeX
+  ShieldCheck, EyeOff, Wallet, HeartHandshake, Volume2, VolumeX,
+  Flame, Globe, Palette, Ghost
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -86,6 +87,33 @@ const PURCHASE_NOTIFICATIONS = [
   { name: 'Romina S.', city: 'Salta', time: 'hace 45 min' },
   { name: 'Gabriela T.', city: 'Santa Fe', time: 'hace 52 min' },
   { name: 'Alejandra K.', city: 'Neuquén', time: 'hace 1 hora' },
+]
+
+// Premium content cards
+const PREMIUM_CONTENT = [
+  {
+    icon: Flame,
+    title: 'Curso Avanzado de Fetiches Psicológicos',
+    gradient: 'from-amber-700 to-red-800',
+  },
+  {
+    icon: Globe,
+    title: 'Curso de Reddit',
+    subtitle: 'Estrategia de Tráfico Orgánico',
+    gradient: 'from-amber-600 to-orange-700',
+  },
+  {
+    icon: Palette,
+    title: 'Diseño de Identidad Digital',
+    subtitle: 'Mentoría Personalizada',
+    gradient: 'from-yellow-600 to-amber-700',
+  },
+  {
+    icon: Ghost,
+    title: 'El Arte de ser Invisible',
+    subtitle: 'Cómo usar las redes sociales en anonimato',
+    gradient: 'from-amber-800 to-stone-800',
+  },
 ]
 
 // Comparison table data
@@ -620,6 +648,58 @@ export default function DinastiaAcademy() {
                     <p className="font-inter text-white/45 text-xs leading-relaxed">
                       {item.desc}
                     </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════ PREMIUM CONTENT ═══════════════ */}
+      <section className="bg-[#080808] py-16 sm:py-24 px-4">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <p className="font-cinzel text-amber-500/50 text-xs tracking-[0.3em] mb-3">
+              EXCLUSIVO
+            </p>
+            <h2 className="font-cinzel-decorative text-2xl sm:text-4xl font-bold text-white mb-3">
+              Contenido <span className="gold-text">Premium</span>
+            </h2>
+            <OrnamentalLine />
+            <p className="font-playfair text-white/50 text-sm sm:text-base max-w-lg mx-auto italic">
+              Accedé a cursos exclusivos diseñados para llevar tu carrera al siguiente nivel
+            </p>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            {PREMIUM_CONTENT.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <Card className="bg-white/[0.02] border-amber-500/[0.08] hover:border-amber-500/25 transition-all duration-500 h-full group overflow-hidden relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <CardContent className="p-5 sm:p-6 relative">
+                    <div className={`w-11 h-11 rounded-lg bg-gradient-to-br ${item.gradient} flex items-center justify-center mb-4 opacity-80 group-hover:opacity-100 transition-opacity`}>
+                      <item.icon className="w-5 h-5 text-white" />
+                    </div>
+                    <h3 className="font-cinzel text-white font-semibold text-sm mb-1.5 tracking-wide">
+                      {item.title}
+                    </h3>
+                    {item.subtitle && (
+                      <p className="font-inter text-amber-400/50 text-xs leading-relaxed">
+                        {item.subtitle}
+                      </p>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>

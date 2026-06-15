@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -19,12 +19,22 @@ export const metadata: Metadata = {
   icons: {
     icon: "/dinasty-favicon-v2.png",
   },
+  manifest: "/manifest.json",
   openGraph: {
     title: "DINASTY ACADEMY — Creadoras de Élite",
     description:
       "Manual completo de configuración y privacidad. Aprendé a cobrar sin exponer tu identidad.",
     type: "website",
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Dinasty Academy",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#d4af37",
 };
 
 export default function RootLayout({
@@ -45,6 +55,17 @@ export default function RootLayout({
       <body className="antialiased bg-background text-foreground">
         {children}
         <Toaster />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js');
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );

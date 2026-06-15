@@ -90,3 +90,43 @@ Stage Summary:
 - Admin panel with user management
 - All pages match gold/dark luxury aesthetic of landing page
 - Database: Using local SQLite (academy.db) as Turso credentials expired; can switch to Turso when new credentials provided
+
+---
+Task ID: 2+4
+Agent: Main Agent
+Task: Update seed data with real temario and make the app a PWA
+
+Work Log:
+- Read /src/lib/academy-db.ts (323 lines) to understand existing seedModules function
+- Replaced seedModules() function with updated content:
+  - Changed from conditional INSERT (check-then-insert) to DELETE + INSERT pattern for clean re-seeding
+  - Updated 6 modules with new titles, descriptions, and icons matching the real temario
+  - Updated lessons from 12 to 16 across all 6 modules
+  - Module 1: Mentalidad y Preparación de Alto Valor (3 lessons)
+  - Module 2: Registro y Verificación de Identidad (3 lessons)
+  - Module 3: El Panel de Control: Tu Centro de Mandos (3 lessons)
+  - Module 4: La Barra de Herramientas (1 lesson)
+  - Module 5: Perfil e Identidad de Alto Valor (4 lessons)
+  - Module 6: Cómo obtener tus primeros suscriptores desde cero (1 lesson)
+  - All lesson content includes rich HTML with h2, h3, ul, ol, strong tags
+- Created /public/manifest.json with PWA manifest:
+  - App name: "Dinasty Academy", short_name: "Dinasty"
+  - Theme color: #d4af37 (gold), background: #050505 (dark)
+  - Portrait orientation, standalone display
+  - Icons referencing /dinasty-favicon-v2.png at 192x192 and 512x512
+- Created /public/sw.js service worker:
+  - Cache-first strategy with CACHE_NAME = 'dinasty-v1'
+  - Pre-caches /, /login, /campus
+  - Cache fallback on fetch, old cache cleanup on activate
+- Updated /src/app/layout.tsx for PWA support:
+  - Added manifest: "/manifest.json" to metadata export
+  - Added appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Dinasty Academy" }
+  - Added viewport export with themeColor: "#d4af37"
+  - Added inline script for service worker registration via dangerouslySetInnerHTML
+- Ran lint: passed with no errors
+- Checked dev server log: all routes returning 200, no errors from changes
+
+Stage Summary:
+- Seed data fully replaced with real temario (6 modules, 16 lessons)
+- App is now a PWA with manifest.json, service worker, and proper meta tags
+- Lint passes, dev server running without errors
