@@ -225,23 +225,9 @@ export default function DinastiaAcademy() {
   const [buyerCount] = useState(47)
   const { toast } = useToast()
 
-  // Countdown — 2 days from now (resets each visit for urgency)
-  const [countdownTarget, setCountdownTarget] = useState<Date | null>(null)
-  const timeLeft = useCountdown(countdownTarget ?? new Date(Date.now() + 48 * 60 * 60 * 1000))
-
-  useEffect(() => {
-    const stored = localStorage.getItem('da_countdown')
-    if (stored) {
-      const date = new Date(stored)
-      if (date.getTime() > Date.now()) {
-        setCountdownTarget(date)
-        return
-      }
-    }
-    const newDate = new Date(Date.now() + 48 * 60 * 60 * 1000)
-    localStorage.setItem('da_countdown', newDate.toISOString())
-    setCountdownTarget(newDate)
-  }, [])
+  // Countdown — fixed real deadline: June 30, 2026 23:59 Argentina time
+  const COUNTDOWN_DEADLINE = new Date('2026-06-30T23:59:59-03:00')
+  const timeLeft = useCountdown(COUNTDOWN_DEADLINE)
 
   // Scroll detection for sticky CTA
   useEffect(() => {
