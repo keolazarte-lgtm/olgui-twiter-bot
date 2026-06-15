@@ -6,7 +6,8 @@ import { motion } from 'framer-motion'
 import {
   Shield, UserCheck, Lock, DollarSign, Brain, Banknote,
   Crown, LogOut, Loader2, BookOpen, CheckCircle2, Circle,
-  ChevronRight, AlertTriangle, Clock
+  ChevronRight, AlertTriangle, Clock, Flame, Globe,
+  Palette, Ghost, Sparkles
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -15,7 +16,39 @@ import { useRouter } from 'next/navigation'
 
 const ICON_MAP: Record<string, React.ElementType> = {
   Shield, UserCheck, Lock, DollarSign, Banknote, Brain,
+  Flame, Globe, Palette, Ghost,
 }
+
+// Premium content inside campus
+const PREMIUM_COURSES = [
+  {
+    icon: Flame,
+    title: 'Curso Avanzado de Fetiches Psicológicos',
+    desc: 'Explorá los fetiches más buscados y aprendé a crear contenido que conecte con la psicología de tus suscriptores. Técnicas avanzadas de seducción mental.',
+    gradient: 'from-amber-700 to-red-800',
+  },
+  {
+    icon: Globe,
+    title: 'Curso de Reddit',
+    subtitle: 'Estrategia de Tráfico Orgánico',
+    desc: 'Aprendé a usar Reddit como fuente principal de tráfico orgánico. Conseguí suscriptores sin gastar un centavo en publicidad.',
+    gradient: 'from-amber-600 to-orange-700',
+  },
+  {
+    icon: Palette,
+    title: 'Diseño de Identidad Digital',
+    subtitle: 'Mentoría Personalizada',
+    desc: 'Desarrollá una marca personal que te diferencie. Diseño de perfil, estética, contenido visual y estrategia de identidad.',
+    gradient: 'from-yellow-600 to-amber-700',
+  },
+  {
+    icon: Ghost,
+    title: 'El Arte de ser Invisible',
+    subtitle: 'Cómo usar las redes sociales en anonimato',
+    desc: 'Manejá redes, promocioná tu contenido y crecé tu audiencia sin que nadie sepa quién sos. Técnicas de anonimato avanzadas.',
+    gradient: 'from-amber-800 to-stone-800',
+  },
+]
 
 interface Module {
   id: string
@@ -181,7 +214,7 @@ export default function CampusPage() {
           <p className="font-inter text-white/40 text-sm">
             {isActive
               ? 'Accedé a todos los módulos de configuración de élite. Marcá las lecciones como completadas a medida que avances.'
-              : 'Tu cuenta está creada. Adquirí el material de estudio para acceder a todo el contenido del campus.'
+              : 'Tu cuenta fue creada sin costo. Adquirí el material de estudio para acceder a todo el contenido del campus.'
             }
           </p>
         </motion.div>
@@ -274,6 +307,58 @@ export default function CampusPage() {
             ))}
           </motion.div>
         )}
+
+        {/* ─── CONTENIDO PREMIUM ─── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-8"
+        >
+          <div className="flex items-center gap-3 mb-5">
+            <Sparkles className="w-5 h-5 text-amber-400" />
+            <h3 className="font-cinzel-decorative text-lg sm:text-xl font-bold text-white">
+              Contenido <span className="gold-text">Premium</span>
+            </h3>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            {PREMIUM_COURSES.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 + i * 0.08 }}
+              >
+                <Card className="bg-white/[0.02] border-amber-500/[0.08] hover:border-amber-500/25 transition-all duration-500 h-full group overflow-hidden relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <CardContent className="p-5 sm:p-6 relative">
+                    <div className={`w-11 h-11 rounded-lg bg-gradient-to-br ${item.gradient} flex items-center justify-center mb-4 opacity-80 group-hover:opacity-100 transition-opacity`}>
+                      <item.icon className="w-5 h-5 text-white" />
+                    </div>
+                    <h4 className="font-cinzel text-white font-semibold text-sm mb-1 tracking-wide">
+                      {item.title}
+                    </h4>
+                    {item.subtitle && (
+                      <p className="font-inter text-amber-400/60 text-xs font-medium mb-2">
+                        {item.subtitle}
+                      </p>
+                    )}
+                    <p className="font-inter text-white/40 text-xs leading-relaxed">
+                      {item.desc}
+                    </p>
+                    {!isActive && (
+                      <div className="mt-3 flex items-center gap-1.5 text-amber-500/30">
+                        <Lock className="w-3 h-3" />
+                        <span className="font-inter text-[10px]">Disponible al adquirir el material</span>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
 
         {/* Modules grid — show preview if inactive, full access if active */}
         <div className="space-y-4">

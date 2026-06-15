@@ -428,27 +428,37 @@ export default function DinastiaAcademy() {
     <div className="min-h-screen bg-[#050505] flex flex-col overflow-x-hidden">
       {/* ═══════════════ COUNTDOWN BAR ═══════════════ */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-amber-900/90 via-amber-800/90 to-amber-900/90 backdrop-blur-md border-b border-amber-500/20 py-2 px-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 sm:gap-4 text-xs sm:text-sm">
-          <Timer className="w-3.5 h-3.5 text-amber-300 shrink-0" />
-          <span className="font-cinzel text-amber-200 tracking-wider">OFERTA TERMINA EN</span>
-          <div className="flex items-center gap-1">
-            {timeLeft.days > 0 && (
-              <>
-                <span className="bg-black/40 px-1.5 py-0.5 rounded font-cinzel font-bold text-amber-300 min-w-[28px] text-center">
-                  {timeLeft.days}
+        <div className="max-w-4xl mx-auto flex items-center justify-between text-xs sm:text-sm">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Timer className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+            <span className="font-cinzel text-amber-200 tracking-wider">OFERTA TERMINA EN</span>
+            <div className="flex items-center gap-1">
+              {timeLeft.days > 0 && (
+                <>
+                  <span className="bg-black/40 px-1.5 py-0.5 rounded font-cinzel font-bold text-amber-300 min-w-[28px] text-center">
+                    {timeLeft.days}
+                  </span>
+                  <span className="text-amber-500/60 text-[10px]">D</span>
+                </>
+              )}
+              {[pad(timeLeft.hours), pad(timeLeft.minutes), pad(timeLeft.seconds)].map((val, i) => (
+                <span key={i} className="flex items-center gap-1">
+                  <span className="bg-black/40 px-1.5 py-0.5 rounded font-cinzel font-bold text-amber-300 min-w-[28px] text-center">
+                    {val}
+                  </span>
+                  {i < 2 && <span className="text-amber-500/60">:</span>}
                 </span>
-                <span className="text-amber-500/60 text-[10px]">D</span>
-              </>
-            )}
-            {[pad(timeLeft.hours), pad(timeLeft.minutes), pad(timeLeft.seconds)].map((val, i) => (
-              <span key={i} className="flex items-center gap-1">
-                <span className="bg-black/40 px-1.5 py-0.5 rounded font-cinzel font-bold text-amber-300 min-w-[28px] text-center">
-                  {val}
-                </span>
-                {i < 2 && <span className="text-amber-500/60">:</span>}
-              </span>
-            ))}
+              ))}
+            </div>
           </div>
+          <a
+            href="/login"
+            className="flex items-center gap-1.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 rounded-lg px-3 py-1.5 font-cinzel text-amber-400 text-[10px] sm:text-xs tracking-wider transition-colors no-underline"
+          >
+            <Crown className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">CREAR CUENTA</span>
+            <span className="sm:hidden">REGISTRARSE</span>
+          </a>
         </div>
       </div>
 
@@ -565,7 +575,7 @@ export default function DinastiaAcademy() {
               INGRESAR AL CAMPUS
             </a>
             <p className="font-playfair text-white/40 text-xs italic mt-4">
-              Registrate gratis y accedé al material de estudio
+              Crear cuenta es sin costo — Registrate gratis y accedé al material de estudio
             </p>
           </motion.div>
 
