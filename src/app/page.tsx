@@ -127,21 +127,42 @@ const COMPARISON = [
 ]
 
 // ─── Countdown Timer Hook ──────────────────────────────────
-function useCountdown(targetDate: Date) {
-  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 })
+// Dynamic countdown: 3 days from the user's first visit (stored in localStorage)
+const OFFER_STORAGE_KEY = 'da_offer_start'
+const OFFER_DURATION_MS = 3 * 24 * 60 * 60 * 1000 // 3 days
+
+function useDynamicCountdown() {
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
 
   useEffect(() => {
+    const getDeadline = (): number => {
+      try {
+        const stored = localStorage.getItem(OFFER_STORAGE_KEY)
+        if (stored) {
+          const start = parseInt(stored, 10)
+          if (!isNaN(start)) return start + OFFER_DURATION_MS
+        }
+      } catch {}
+      // First visit — store now
+      const now = Date.now()
+      try { localStorage.setItem(OFFER_STORAGE_KEY, now.toString()) } catch {}
+      return now + OFFER_DURATION_MS
+    }
+
+    const deadline = getDeadline()
+
     const tick = () => {
-      const now = new Date().getTime()
-      const distance = targetDate.getTime() - now
+      const now = Date.now()
+      const distance = deadline - now
 
       if (distance < 0) {
-        setTimeLeft({ hours: 0, minutes: 0, seconds: 0 })
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
         return
       }
 
       setTimeLeft({
-        hours: Math.floor(distance / (1000 * 60 * 60)),
+        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
         minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
         seconds: Math.floor((distance % (1000 * 60)) / 1000),
       })
@@ -150,7 +171,7 @@ function useCountdown(targetDate: Date) {
     tick()
     const interval = setInterval(tick, 1000)
     return () => clearInterval(interval)
-  }, [targetDate])
+  }, [])
 
   return timeLeft
 }
@@ -254,9 +275,8 @@ export default function DinastiaAcademy() {
   const [buyerCount] = useState(47)
   const { toast } = useToast()
 
-  // Countdown — fixed real deadline: June 30, 2026 23:59 Argentina time
-  const COUNTDOWN_DEADLINE = new Date('2026-06-30T23:59:59-03:00')
-  const timeLeft = useCountdown(COUNTDOWN_DEADLINE)
+  // Dynamic countdown: 3 days from first visit
+  const timeLeft = useDynamicCountdown()
 
   // Scroll detection for sticky CTA
   useEffect(() => {
@@ -412,6 +432,14 @@ export default function DinastiaAcademy() {
           <Timer className="w-3.5 h-3.5 text-amber-300 shrink-0" />
           <span className="font-cinzel text-amber-200 tracking-wider">OFERTA TERMINA EN</span>
           <div className="flex items-center gap-1">
+            {timeLeft.days > 0 && (
+              <>
+                <span className="bg-black/40 px-1.5 py-0.5 rounded font-cinzel font-bold text-amber-300 min-w-[28px] text-center">
+                  {timeLeft.days}
+                </span>
+                <span className="text-amber-500/60 text-[10px]">D</span>
+              </>
+            )}
             {[pad(timeLeft.hours), pad(timeLeft.minutes), pad(timeLeft.seconds)].map((val, i) => (
               <span key={i} className="flex items-center gap-1">
                 <span className="bg-black/40 px-1.5 py-0.5 rounded font-cinzel font-bold text-amber-300 min-w-[28px] text-center">
