@@ -475,7 +475,7 @@ export default function DinastiaAcademy() {
                 </p>
                 <div className="flex items-baseline justify-center gap-2 mb-2">
                   <span className="font-cinzel-decorative font-black text-4xl sm:text-5xl gold-text">
-                    $20.000
+                    $15.000
                   </span>
                   <span className="font-cinzel text-amber-500/50 text-sm">ARS</span>
                 </div>
@@ -825,7 +825,7 @@ export default function DinastiaAcademy() {
                   </p>
                   <div className="flex items-baseline justify-center gap-2 mb-2">
                     <span className="font-cinzel-decorative font-black text-3xl sm:text-4xl gold-text">
-                      $20.000
+                      $15.000
                     </span>
                     <span className="font-cinzel text-amber-500/50 text-sm">ARS</span>
                   </div>
@@ -927,7 +927,7 @@ export default function DinastiaAcademy() {
                 </p>
                 <div className="flex items-baseline justify-center gap-2 mb-4">
                   <span className="font-cinzel-decorative font-black text-4xl gold-text">
-                    $20.000
+                    $15.000
                   </span>
                   <span className="font-cinzel text-amber-500/50 text-sm">ARS</span>
                 </div>
@@ -993,7 +993,7 @@ export default function DinastiaAcademy() {
             <div className="flex items-center gap-3">
               <div className="flex-1 min-w-0">
                 <p className="font-cinzel text-white text-xs tracking-wider truncate">
-                  MÓDULO 1 — <span className="gold-text">$20.000</span>
+                  MÓDULO 1 — <span className="gold-text">$15.000</span>
                 </p>
                 <p className="font-inter text-amber-400/60 text-[10px]">
                   ¡Quedan {spotsLeft} cupos!
@@ -1064,7 +1064,7 @@ export default function DinastiaAcademy() {
                   Finalizar Compra
                 </h3>
                 <p className="font-cinzel text-amber-500/50 text-xs tracking-wider mt-1">
-                  Manual Completo — $20.000 ARS
+                  Manual Completo — $15.000 ARS
                 </p>
               </div>
 
