@@ -29,9 +29,9 @@ export async function middleware(request: NextRequest) {
       return response
     }
 
-    // If user is inactive and trying to access campus (not pending), redirect to pending
-    if (payload.active === 0 && pathname !== '/campus/pending') {
-      return NextResponse.redirect(new URL('/campus/pending', request.url))
+    // If user is inactive and trying to access a module page, redirect to campus (where they see payment)
+    if (payload.active === 0 && pathname.startsWith('/campus/modulo')) {
+      return NextResponse.redirect(new URL('/campus', request.url))
     }
 
     // If user is active, don't let them stay on pending page

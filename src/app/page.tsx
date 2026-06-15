@@ -494,63 +494,51 @@ export default function DinastiaAcademy() {
             <span className="text-amber-400 font-semibold not-italic">con o sin rostro</span>
           </motion.p>
 
-          {/* Price Card */}
+          {/* CTA Button */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.6 }}
-            className="max-w-sm mx-auto mb-10"
+            className="mb-8"
           >
-            <Card className="bg-black/60 border border-amber-500/20 backdrop-blur-md gold-border-glow">
-              <CardContent className="p-6 sm:p-8 text-center">
-                <p className="font-cinzel text-amber-500/70 text-xs sm:text-sm tracking-[0.25em] mb-3">
-                  MÓDULO 1 — CONFIGURACIÓN DE ÉLITE
-                </p>
-                <div className="flex items-baseline justify-center gap-2 mb-2">
-                  <span className="font-cinzel-decorative font-black text-4xl sm:text-5xl gold-text">
-                    $15.000
+            <a
+              href="/login"
+              className="inline-flex items-center justify-center gap-3 h-14 sm:h-16 px-10 sm:px-14 text-base sm:text-lg font-cinzel font-bold tracking-wider gold-btn-glow text-black rounded-xl border-0 cursor-pointer no-underline"
+            >
+              <Crown className="w-6 h-6" />
+              INGRESAR AL CAMPUS
+            </a>
+            <p className="font-playfair text-white/40 text-xs italic mt-4">
+              Registrate gratis y accedé al material de estudio
+            </p>
+          </motion.div>
+
+          {/* Price hint + spots */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+            className="max-w-xs mx-auto mb-8"
+          >
+            <div className="bg-black/40 border border-amber-500/10 rounded-xl p-4 text-center">
+              <div className="flex items-baseline justify-center gap-2 mb-2">
+                <span className="font-cinzel-decorative font-black text-2xl sm:text-3xl gold-text">
+                  $15.000
+                </span>
+                <span className="font-cinzel text-amber-500/50 text-xs">ARS</span>
+              </div>
+              <p className="font-inter text-white/30 text-[10px] mb-2 line-through">
+                Valor real: $50.000 ARS
+              </p>
+              <div className="bg-amber-500/5 border border-amber-500/15 rounded-lg px-3 py-1.5 mb-3 pulse-gold">
+                <div className="flex items-center justify-center gap-2 text-amber-400 text-xs">
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  <span className="font-cinzel font-semibold tracking-wide">
+                    ¡Quedan {spotsLeft} cupos!
                   </span>
-                  <span className="font-cinzel text-amber-500/50 text-sm">ARS</span>
                 </div>
-                <p className="font-playfair text-amber-400/60 text-xs italic mb-5">
-                  Manual completo + Acceso al campus exclusivo
-                </p>
-
-                {/* Spots progress bar */}
-                <div className="mb-3">
-                  <div className="flex items-center justify-between text-xs mb-1.5">
-                    <span className="font-cinzel text-amber-400/70 tracking-wider">CUPOS OCUPADOS</span>
-                    <span className="font-inter text-amber-400">{spotsUsed}/{TOTAL_SPOTS}</span>
-                  </div>
-                  <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-400 rounded-full"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${spotsPercent}%` }}
-                      transition={{ duration: 1.5, ease: 'easeOut' }}
-                    />
-                  </div>
-                </div>
-
-                {/* Urgency */}
-                <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg px-3 py-2 mb-5 pulse-gold">
-                  <div className="flex items-center justify-center gap-2 text-amber-400 text-sm">
-                    <AlertTriangle className="w-4 h-4" />
-                    <span className="font-cinzel font-semibold tracking-wide">
-                      ¡Quedan {spotsLeft} cupos!
-                    </span>
-                  </div>
-                </div>
-
-                <Button
-                  onClick={() => setShowPayment(true)}
-                  className="w-full h-13 text-sm sm:text-base font-cinzel font-bold tracking-wider gold-btn-glow text-black rounded-xl border-0 cursor-pointer"
-                >
-                  <Crown className="w-5 h-5 mr-2" />
-                  ADQUIRIR MANUAL COMPLETO
-                </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </motion.div>
 
           {/* Trust badges */}
@@ -569,9 +557,6 @@ export default function DinastiaAcademy() {
             <span className="flex items-center gap-1.5">
               <Shield className="w-3 h-3" /> 100% PRIVADO
             </span>
-            <a href="/login" className="flex items-center gap-1.5 text-amber-400/60 hover:text-amber-400 transition-colors">
-              <Crown className="w-3 h-3" /> ACCEDER AL CAMPUS
-            </a>
           </motion.div>
 
           {/* Scroll indicator */}
@@ -956,47 +941,13 @@ export default function DinastiaAcademy() {
               Dejá de perder tiempo y dinero. Arrancá hoy con la configuración correcta.
             </p>
 
-            <Card className="bg-black/60 border-amber-500/20 backdrop-blur-md gold-border-glow mb-6">
-              <CardContent className="p-6 sm:p-8">
-                <p className="font-cinzel text-amber-500/70 text-xs tracking-[0.25em] mb-3">
-                  MÓDULO 1 — CONFIGURACIÓN DE ÉLITE
-                </p>
-                <div className="flex items-baseline justify-center gap-2 mb-4">
-                  <span className="font-cinzel-decorative font-black text-4xl gold-text">
-                    $15.000
-                  </span>
-                  <span className="font-cinzel text-amber-500/50 text-sm">ARS</span>
-                </div>
-                {/* Spots progress bar */}
-                <div className="mb-3">
-                  <div className="flex items-center justify-between text-xs mb-1.5">
-                    <span className="font-cinzel text-amber-400/70 tracking-wider">CUPOS</span>
-                    <span className="font-inter text-amber-400">{spotsUsed}/{TOTAL_SPOTS}</span>
-                  </div>
-                  <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-400 rounded-full"
-                      style={{ width: `${spotsPercent}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg px-3 py-2 mb-5 pulse-gold">
-                  <div className="flex items-center justify-center gap-2 text-amber-400 text-sm">
-                    <AlertTriangle className="w-4 h-4" />
-                    <span className="font-cinzel font-semibold tracking-wide">
-                      ¡Quedan {spotsLeft} cupos!
-                    </span>
-                  </div>
-                </div>
-                <Button
-                  onClick={() => setShowPayment(true)}
-                  className="w-full h-13 text-sm sm:text-base font-cinzel font-bold tracking-wider gold-btn-glow text-black rounded-xl border-0 cursor-pointer"
-                >
-                  <Crown className="w-5 h-5 mr-2" />
-                  ADQUIRIR MANUAL COMPLETO
-                </Button>
-              </CardContent>
-            </Card>
+            <a
+              href="/login"
+              className="inline-flex items-center justify-center gap-3 h-14 sm:h-16 px-10 sm:px-14 text-base sm:text-lg font-cinzel font-bold tracking-wider gold-btn-glow text-black rounded-xl border-0 cursor-pointer no-underline mb-6"
+            >
+              <Crown className="w-6 h-6" />
+              INGRESAR AL CAMPUS
+            </a>
 
             <p className="font-cinzel text-white/20 text-[10px] tracking-widest">
               PAGO SEGURO POR MERCADOPAGO · ENTREGA INMEDIATA · 100% PRIVADO
@@ -1041,13 +992,13 @@ export default function DinastiaAcademy() {
                   ¡Quedan {spotsLeft} cupos!
                 </p>
               </div>
-              <Button
-                onClick={() => setShowPayment(true)}
-                className="gold-btn-glow text-black font-cinzel font-bold tracking-wider text-xs px-4 h-10 rounded-lg border-0 shrink-0 cursor-pointer"
+              <a
+                href="/login"
+                className="gold-btn-glow text-black font-cinzel font-bold tracking-wider text-xs px-4 h-10 rounded-lg border-0 shrink-0 no-underline inline-flex items-center"
               >
                 <Crown className="w-4 h-4 mr-1" />
-                ADQUIRIR
-              </Button>
+                INGRESAR
+              </a>
             </div>
           </motion.div>
         )}

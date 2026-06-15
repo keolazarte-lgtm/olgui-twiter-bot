@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import {
   Shield, UserCheck, Lock, DollarSign, Brain, Banknote,
   Crown, LogOut, Loader2, BookOpen, CheckCircle2, Circle,
-  ChevronRight
+  ChevronRight, AlertTriangle, Clock
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -37,6 +37,7 @@ export default function CampusPage() {
   const [modules, setModules] = useState<Module[]>([])
   const [progress, setProgress] = useState<Progress[]>([])
   const [loading, setLoading] = useState(true)
+  const [paying, setPaying] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
 
@@ -52,21 +53,17 @@ export default function CampusPage() {
         const userData = await userRes.json()
         setUser(userData.user)
 
-        // If inactive, redirect to pending
-        if (userData.user.active === 0) {
-          router.push('/campus/pending')
-          return
-        }
-
         // Load modules
         const modRes = await fetch('/api/modules')
         const modData = await modRes.json()
         setModules(modData.modules || [])
 
-        // Load progress
-        const progRes = await fetch('/api/progress')
-        const progData = await progRes.json()
-        setProgress(progData.progress || [])
+        // Load progress only if active
+        if (userData.user.active === 1) {
+          const progRes = await fetch('/api/progress')
+          const progData = await progRes.json()
+          setProgress(progData.progress || [])
+        }
       } catch (error) {
         console.error('Campus load error:', error)
         router.push('/login')
@@ -76,6 +73,33 @@ export default function CampusPage() {
     }
     load()
   }, [router])
+
+  const handlePurchase = async () => {
+    setPaying(true)
+    try {
+      const mpRes = await fetch('/api/mp/create-preference', { method: 'POST' })
+      const mpData = await mpRes.json()
+
+      if (mpData.initPoint) {
+        window.location.href = mpData.initPoint
+        return
+      }
+
+      toast({
+        title: 'Error al generar el link de pago',
+        description: 'Intentá de nuevo o contactanos por WhatsApp',
+        variant: 'destructive',
+      })
+    } catch (error) {
+      toast({
+        title: 'Error de conexión',
+        description: 'Intentá de nuevo en unos segundos',
+        variant: 'destructive',
+      })
+    } finally {
+      setPaying(false)
+    }
+  }
 
   const handleLogout = async () => {
     document.cookie = 'da_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
@@ -101,6 +125,8 @@ export default function CampusPage() {
       </div>
     )
   }
+
+  const isActive = user?.active === 1
 
   return (
     <div className="min-h-screen bg-[#050505]">
@@ -153,39 +179,110 @@ export default function CampusPage() {
             Bienvenida, <span className="gold-text">{user?.name || 'Creadora'}</span>
           </h2>
           <p className="font-inter text-white/40 text-sm">
-            Accedé a todos los módulos de configuración de élite. Marcá las lecciones como completadas a medida que avances.
+            {isActive
+              ? 'Accedé a todos los módulos de configuración de élite. Marcá las lecciones como completadas a medida que avances.'
+              : 'Tu cuenta está creada. Adquirí el material de estudio para acceder a todo el contenido del campus.'
+            }
           </p>
         </motion.div>
 
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-3 gap-4 mb-8"
-        >
-          {[
-            { label: 'MÓDULOS', value: modules.length },
-            { label: 'LECCIONES', value: modules.reduce((acc, m) => acc + m.lessons.length, 0) },
-            { label: 'COMPLETADAS', value: progress.filter(p => p.completed).length },
-          ].map((stat, i) => (
-            <Card key={i} className="bg-white/[0.02] border-amber-500/[0.08]">
-              <CardContent className="p-4 text-center">
-                <p className="font-cinzel-decorative text-2xl font-bold text-amber-400">{stat.value}</p>
-                <p className="font-cinzel text-amber-500/40 text-[10px] tracking-wider mt-1">{stat.label}</p>
+        {/* ─── INACTIVE USER: SHOW PAYMENT ─── */}
+        {!isActive && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="mb-8"
+          >
+            <Card className="bg-black/60 border border-amber-500/20 backdrop-blur-md gold-border-glow">
+              <CardContent className="p-6 sm:p-8 text-center">
+                <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mx-auto mb-4">
+                  <Crown className="w-8 h-8 text-amber-400" />
+                </div>
+                <p className="font-cinzel text-amber-500/70 text-xs sm:text-sm tracking-[0.25em] mb-3">
+                  MÓDULO 1 — CONFIGURACIÓN DE ÉLITE
+                </p>
+                <div className="flex items-baseline justify-center gap-2 mb-2">
+                  <span className="font-cinzel-decorative font-black text-4xl sm:text-5xl gold-text">
+                    $15.000
+                  </span>
+                  <span className="font-cinzel text-amber-500/50 text-sm">ARS</span>
+                </div>
+                <p className="font-inter text-white/30 text-xs line-through mb-1">
+                  Valor real: $50.000 ARS
+                </p>
+                <p className="font-playfair text-amber-400/60 text-xs italic mb-5">
+                  6 módulos completos + Campus exclusivo
+                </p>
+                <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg px-3 py-2 mb-5 pulse-gold">
+                  <div className="flex items-center justify-center gap-2 text-amber-400 text-sm">
+                    <AlertTriangle className="w-4 h-4" />
+                    <span className="font-cinzel font-semibold tracking-wide">
+                      ¡Cupos limitados!
+                    </span>
+                  </div>
+                </div>
+                <Button
+                  onClick={handlePurchase}
+                  disabled={paying}
+                  className="w-full h-13 text-sm sm:text-base font-cinzel font-bold tracking-wider gold-btn-glow text-black rounded-xl border-0 cursor-pointer"
+                >
+                  {paying ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      GENERANDO LINK DE PAGO...
+                    </>
+                  ) : (
+                    <>
+                      <Crown className="w-5 h-5 mr-2" />
+                      ADQUIRIR MATERIAL DE ESTUDIO
+                    </>
+                  )}
+                </Button>
+                <div className="flex items-center justify-center gap-4 mt-4 text-amber-500/30 text-[10px] font-cinzel tracking-wider">
+                  <span className="flex items-center gap-1">
+                    <Lock className="w-3 h-3" /> PAGO SEGURO
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" /> ACTIVACIÓN INMEDIATA
+                  </span>
+                </div>
               </CardContent>
             </Card>
-          ))}
-        </motion.div>
+          </motion.div>
+        )}
 
-        {/* Modules grid */}
+        {/* ─── ACTIVE USER: STATS ─── */}
+        {isActive && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="grid grid-cols-3 gap-4 mb-8"
+          >
+            {[
+              { label: 'MÓDULOS', value: modules.length },
+              { label: 'LECCIONES', value: modules.reduce((acc, m) => acc + m.lessons.length, 0) },
+              { label: 'COMPLETADAS', value: progress.filter(p => p.completed).length },
+            ].map((stat, i) => (
+              <Card key={i} className="bg-white/[0.02] border-amber-500/[0.08]">
+                <CardContent className="p-4 text-center">
+                  <p className="font-cinzel-decorative text-2xl font-bold text-amber-400">{stat.value}</p>
+                  <p className="font-cinzel text-amber-500/40 text-[10px] tracking-wider mt-1">{stat.label}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </motion.div>
+        )}
+
+        {/* Modules grid — show preview if inactive, full access if active */}
         <div className="space-y-4">
           {modules.map((mod, i) => {
             const IconComp = ICON_MAP[mod.icon || ''] || Shield
-            const prog = getModuleProgress(mod.id)
-            const completedLessons = mod.lessons.filter(l =>
+            const prog = isActive ? getModuleProgress(mod.id) : 0
+            const completedLessons = isActive ? mod.lessons.filter(l =>
               progress.some(p => p.lessonId === l.id && p.completed)
-            ).length
+            ).length : 0
 
             return (
               <motion.div
@@ -195,13 +292,13 @@ export default function CampusPage() {
                 transition={{ delay: 0.15 + i * 0.05 }}
               >
                 <Card
-                  className="bg-white/[0.02] border-amber-500/[0.08] hover:border-amber-500/20 transition-all duration-300 cursor-pointer group"
-                  onClick={() => router.push(`/campus/modulo/${mod.id}`)}
+                  className={`bg-white/[0.02] border-amber-500/[0.08] hover:border-amber-500/20 transition-all duration-300 group ${isActive ? 'cursor-pointer' : 'opacity-60'}`}
+                  onClick={() => isActive && router.push(`/campus/modulo/${mod.id}`)}
                 >
                   <CardContent className="p-4 sm:p-6">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-600 to-yellow-500 flex items-center justify-center shrink-0">
-                        <IconComp className="w-6 h-6 text-black" />
+                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${isActive ? 'bg-gradient-to-br from-amber-600 to-yellow-500' : 'bg-white/5'}`}>
+                        <IconComp className={`w-6 h-6 ${isActive ? 'text-black' : 'text-amber-500/30'}`} />
                       </div>
 
                       <div className="flex-1 min-w-0">
@@ -209,24 +306,36 @@ export default function CampusPage() {
                           <h3 className="font-cinzel text-white font-semibold text-sm sm:text-base tracking-wide">
                             Módulo {mod.orderNum}: {mod.title}
                           </h3>
-                          <ChevronRight className="w-5 h-5 text-amber-500/20 group-hover:text-amber-400 transition-colors shrink-0" />
+                          {isActive && (
+                            <ChevronRight className="w-5 h-5 text-amber-500/20 group-hover:text-amber-400 transition-colors shrink-0" />
+                          )}
+                          {!isActive && (
+                            <Lock className="w-4 h-4 text-amber-500/20 shrink-0" />
+                          )}
                         </div>
                         <p className="font-inter text-white/35 text-xs leading-relaxed mb-3 line-clamp-2">
                           {mod.description}
                         </p>
 
                         {/* Progress bar */}
-                        <div className="flex items-center gap-3">
-                          <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-400 rounded-full transition-all duration-500"
-                              style={{ width: `${prog}%` }}
-                            />
+                        {isActive && (
+                          <div className="flex items-center gap-3">
+                            <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-400 rounded-full transition-all duration-500"
+                                style={{ width: `${prog}%` }}
+                              />
+                            </div>
+                            <span className="font-inter text-amber-400/60 text-[10px] shrink-0">
+                              {completedLessons}/{mod.lessons.length} lecciones
+                            </span>
                           </div>
-                          <span className="font-inter text-amber-400/60 text-[10px] shrink-0">
-                            {completedLessons}/{mod.lessons.length} lecciones
-                          </span>
-                        </div>
+                        )}
+                        {!isActive && (
+                          <p className="font-inter text-amber-400/40 text-[10px]">
+                            {mod.lessons.length} lecciones — Disponible al adquirir el material
+                          </p>
+                        )}
                       </div>
                     </div>
                   </CardContent>
