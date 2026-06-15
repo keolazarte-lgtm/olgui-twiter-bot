@@ -95,7 +95,7 @@ const COMPARISON = [
   { feature: 'Cobro seguro', without: 'Exponés tu identidad', with_: 'Métodos 100% privados' },
   { feature: 'Verificación', without: 'Errores y rechazos', with_: 'Aprobación garantizada' },
   { feature: 'Mentalidad', without: 'Dudas e inseguridad', with_: 'Marca que vende' },
-  { feature: 'Soporte', without: 'Estás sola', with_: 'Canal Telegram exclusivo' },
+  { feature: 'Soporte', without: 'Estás sola', with_: 'Campus exclusivo 24/7' },
 ]
 
 // ─── Countdown Timer Hook ──────────────────────────────────
@@ -216,6 +216,7 @@ export default function DinastiaAcademy() {
   const [showPayment, setShowPayment] = useState(false)
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [paid, setPaid] = useState(false)
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
@@ -276,7 +277,16 @@ export default function DinastiaAcademy() {
     if (!email.trim() || !email.includes('@')) {
       toast({
         title: 'Ingresá tu email',
-        description: 'Necesitamos tu email para enviarte el material',
+        description: 'Necesitamos tu email para crear tu cuenta',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    if (!password || password.length < 6) {
+      toast({
+        title: 'Ingresá una contraseña',
+        description: 'Mínimo 6 caracteres para acceder al campus',
         variant: 'destructive',
       })
       return
@@ -285,20 +295,57 @@ export default function DinastiaAcademy() {
     setLoading(true)
 
     try {
-      await fetch('/api/academy/register', {
+      // Step 1: Try to register the user (if already exists, login instead)
+      let authRes = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, phone }),
+        body: JSON.stringify({ email, password, name: email.split('@')[0], phone }),
       })
-    } catch { /* silent */ }
 
-    const MP_LINK = 'https://mpago.la/1YyoEXn'
-    window.open(MP_LINK, '_blank')
+      if (!authRes.ok) {
+        // If registration fails (e.g. email exists), try login
+        const errData = await authRes.json()
+        if (errData.error?.includes('ya está registrado') || errData.error?.includes('already')) {
+          authRes = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          })
+        }
+      }
 
-    setTimeout(() => {
+      if (!authRes.ok) {
+        const errData = await authRes.json()
+        toast({
+          title: errData.error || 'Error al crear cuenta',
+          variant: 'destructive',
+        })
+        setLoading(false)
+        return
+      }
+
+      // Step 2: Create MP preference and redirect to payment
+      const mpRes = await fetch('/api/mp/create-preference', { method: 'POST' })
+      const mpData = await mpRes.json()
+
+      if (mpData.initPoint) {
+        // Redirect to MercadoPago
+        window.location.href = mpData.initPoint
+        return
+      }
+
+      // Fallback: show success
       setPaid(true)
+    } catch (error) {
+      console.error('Purchase error:', error)
+      toast({
+        title: 'Error de conexión',
+        description: 'Intentá de nuevo en unos minutos',
+        variant: 'destructive',
+      })
+    } finally {
       setLoading(false)
-    }, 2000)
+    }
   }
 
   const spotsUsed = TOTAL_SPOTS - spotsLeft
@@ -323,7 +370,7 @@ export default function DinastiaAcademy() {
     },
     {
       q: '¿Hay soporte si tengo dudas?',
-      a: 'Sí. Accedés a un canal de Telegram exclusivo donde podés consultar cualquier duda sobre el manual. No estás sola en esto.',
+      a: 'Sí. Al comprar accedés al campus exclusivo de Dinasty Academy donde podés consultar el material las 24hs. Además podés escribirnos por WhatsApp para cualquier duda.'
     },
   ]
 
@@ -466,7 +513,7 @@ export default function DinastiaAcademy() {
                   <span className="font-cinzel text-amber-500/50 text-sm">ARS</span>
                 </div>
                 <p className="font-playfair text-amber-400/60 text-xs italic mb-5">
-                  Manual completo + Acceso a canal exclusivo
+                  Manual completo + Acceso al campus exclusivo
                 </p>
 
                 {/* Spots progress bar */}
@@ -789,7 +836,7 @@ export default function DinastiaAcademy() {
                     'Guía paso a paso de Geoblocking + Bloqueo de usuarios',
                     'Registro y Verificación sin errores',
                     'Métodos de retiro seguros y privados para Argentina y Latam',
-                    'Acceso al canal exclusivo de Telegram',
+                    'Acceso al campus exclusivo de Dinasty Academy',
                     'Actualizaciones gratuitas del manual',
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
@@ -1069,6 +1116,21 @@ export default function DinastiaAcademy() {
                 </div>
                 <div>
                   <label className="font-cinzel text-amber-500/50 text-xs tracking-wider mb-1.5 block">
+                    CONTRASEÑA *
+                  </label>
+                  <Input
+                    type="password"
+                    placeholder="Mínimo 6 caracteres"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-white/5 border-amber-500/10 text-white placeholder:text-white/20 focus:border-amber-500/40 h-11"
+                  />
+                  <p className="font-inter text-white/20 text-[10px] mt-1">
+                    Para acceder al campus exclusivo
+                  </p>
+                </div>
+                <div>
+                  <label className="font-cinzel text-amber-500/50 text-xs tracking-wider mb-1.5 block">
                     WHATSAPP (OPCIONAL)
                   </label>
                   <Input
@@ -1102,24 +1164,21 @@ export default function DinastiaAcademy() {
                   </p>
                 </div>
 
-                {/* MP Link button */}
-                <a
-                  href="https://mpago.la/1YyoEXn"
-                  onClick={() => {
-                    // Register lead when they click pay
-                    if (email.trim() && email.includes('@')) {
-                      fetch('/api/academy/register', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, phone }),
-                      }).catch(() => {})
-                    }
-                  }}
-                  className="w-full h-12 text-sm font-cinzel font-bold tracking-wider gold-btn-glow text-black rounded-xl border-0 cursor-pointer flex items-center justify-center gap-2 no-underline"
+                {/* Pay button */}
+                <Button
+                  onClick={handlePurchase}
+                  disabled={loading}
+                  className="w-full h-12 text-sm font-cinzel font-bold tracking-wider gold-btn-glow text-black rounded-xl border-0 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  <DollarSign className="w-5 h-5" />
-                  PAGAR CON MERCADOPAGO
-                </a>
+                  {loading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      <DollarSign className="w-5 h-5" />
+                      PAGAR CON MERCADOPAGO
+                    </>
+                  )}
+                </Button>
 
                 <div className="bg-amber-500/5 border border-amber-500/10 rounded-lg p-3">
                   <div className="flex items-center gap-2 text-amber-400 text-xs mb-1">
@@ -1167,9 +1226,7 @@ export default function DinastiaAcademy() {
                 ¡Gracias por tu compra!
               </h3>
               <p className="font-playfair text-white/60 text-sm mb-4 italic">
-                Tu material llega en{' '}
-                <span className="text-amber-400 font-semibold not-italic">5 a 10 minutos</span>{' '}
-                a tu email y WhatsApp.
+                Una vez confirmado el pago, tendrás acceso inmediato al campus exclusivo de Dinasty Academy.
               </p>
 
               {/* Thank you details */}
@@ -1178,13 +1235,13 @@ export default function DinastiaAcademy() {
                   <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center shrink-0">
                     <Check className="w-3 h-3 text-black" />
                   </div>
-                  <span className="font-inter text-white/60 text-xs">PDF completo del Módulo 1</span>
+                  <span className="font-inter text-white/60 text-xs">Pago procesado por MercadoPago</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center shrink-0">
                     <Check className="w-3 h-3 text-black" />
                   </div>
-                  <span className="font-inter text-white/60 text-xs">Acceso al canal de Telegram</span>
+                  <span className="font-inter text-white/60 text-xs">Acceso al campus exclusivo</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center shrink-0">
@@ -1196,17 +1253,18 @@ export default function DinastiaAcademy() {
 
               <div className="bg-white/5 rounded-lg p-3 mb-5">
                 <p className="font-inter text-white/30 text-xs">
-                  Revisá también la carpeta de spam o correo no deseado.
+                  Si el pago tarda en confirmarse, podés ingresar al campus y se activará automáticamente.
                 </p>
               </div>
               <Button
                 onClick={() => {
                   setPaid(false)
                   setShowPayment(false)
+                  window.location.href = '/campus'
                 }}
                 className="bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-black font-cinzel font-bold tracking-wider border-0"
               >
-                ENTENDIDO
+                IR AL CAMPUS
               </Button>
             </motion.div>
           </motion.div>

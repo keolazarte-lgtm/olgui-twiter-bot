@@ -43,3 +43,50 @@ Stage Summary:
 - 20 default posting schedules seeded (US East/West, UK, EU, AU)
 - Frontend loads at https://olgui-twiter-bot.vercel.app/
 - App is fully functional and ready for Olgui to use
+
+---
+Task ID: 2
+Agent: Fullstack Dev Agent
+Task: Build Dinasty Academy campus — course platform with auth, payments, and course content
+
+Work Log:
+- Read existing project structure, landing page, database setup, and Turso client
+- Created /src/lib/academy-db.ts with full database helpers supporting both Turso (cloud) and local SQLite
+- Created /src/lib/auth.ts with JWT (jose) + bcrypt helpers for authentication
+- Created /src/middleware.ts for route protection (/campus/* and /admin/*)
+- Created API routes:
+  - /api/auth/register — User registration with password hashing
+  - /api/auth/login — User login with JWT token in cookie
+  - /api/auth/me — Get current user data
+  - /api/mp/create-preference — Create MercadoPago payment preference (with fallback)
+  - /api/mp/webhook — Receive MP payment notifications and activate users
+  - /api/admin/users — Admin user management (list + toggle active)
+  - /api/modules — Get modules with lessons
+  - /api/progress — Toggle and get lesson completion progress
+  - /api/seed — Initialize database with modules, lessons, and admin user
+- Created pages:
+  - /login — Login/Register page with gold/dark luxury theme
+  - /campus — Main campus dashboard with modules, progress, stats
+  - /campus/modulo/[id] — Module detail with lesson viewer, progress tracking, navigation
+  - /campus/pending — Payment pending page with retry and status check
+  - /admin — Admin panel with user list, toggle active, stats, seed button
+- Updated landing page (/src/app/page.tsx):
+  - Added password field to payment modal
+  - Updated handlePurchase to register/login user then create MP preference
+  - Updated success modal to redirect to campus
+  - Changed "PAGAR CON MERCADOPAGO" from static link to dynamic button
+- Set up .env.local with DATABASE_URL, MP_ACCESS_TOKEN, JWT_SECRET, ADMIN_EMAIL
+- Seeded database with 6 modules and 12 lessons with Spanish content
+- Created default admin user: admin@dinastyacademy.com / Dinasty2026!
+- All API endpoints tested and working (seed, register, login, modules, MP preference)
+- Lint passes with no errors
+- All routes respond correctly (200 for public, 307 redirect for protected)
+
+Stage Summary:
+- Complete Dinasty Academy campus platform built
+- Auth system with JWT + bcrypt working end-to-end
+- Payment flow: Register → MP preference → Webhook activates user → Campus access
+- 6 course modules with 12 lessons seeded in local SQLite
+- Admin panel with user management
+- All pages match gold/dark luxury aesthetic of landing page
+- Database: Using local SQLite (academy.db) as Turso credentials expired; can switch to Turso when new credentials provided
