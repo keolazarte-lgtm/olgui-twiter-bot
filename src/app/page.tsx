@@ -202,7 +202,7 @@ function DynastyCrest({ className = '' }: { className?: string }) {
       alt="Dinasty Academy"
       width={240}
       height={240}
-      className={`mix-blend-multiply ${className}`}
+      className={`${className}`}
       priority
       quality={100}
     />
