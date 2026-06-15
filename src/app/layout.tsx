@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Dinasty Academy" }],
   icons: {
     icon: "/dinasty-favicon-v2.png",
+    apple: "/icon-192.png",
   },
   manifest: "/manifest.json",
   openGraph: {
