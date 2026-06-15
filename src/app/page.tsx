@@ -306,7 +306,7 @@ export default function DinastiaAcademy() {
       })
     } catch { /* silent */ }
 
-    const MP_LINK = 'https://link.mercadopago.com.ar/dinastyacadem'
+    const MP_LINK = 'https://mpago.la/1YyoEXn'
     window.open(MP_LINK, '_blank')
 
     setTimeout(() => {
@@ -1118,7 +1118,7 @@ export default function DinastiaAcademy() {
 
                 {/* MP Link button */}
                 <a
-                  href="https://link.mercadopago.com.ar/dinastyacadem"
+                  href="https://mpago.la/1YyoEXn"
                   onClick={() => {
                     // Register lead when they click pay
                     if (email.trim() && email.includes('@')) {
