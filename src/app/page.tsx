@@ -569,6 +569,9 @@ export default function DinastiaAcademy() {
             <span className="flex items-center gap-1.5">
               <Shield className="w-3 h-3" /> 100% PRIVADO
             </span>
+            <a href="/login" className="flex items-center gap-1.5 text-amber-400/60 hover:text-amber-400 transition-colors">
+              <Crown className="w-3 h-3" /> ACCEDER AL CAMPUS
+            </a>
           </motion.div>
 
           {/* Scroll indicator */}
@@ -1005,6 +1008,12 @@ export default function DinastiaAcademy() {
       {/* ═══════════════ FOOTER ═══════════════ */}
       <footer className="mt-auto bg-[#050505] border-t border-amber-500/5 py-8 px-4">
         <div className="max-w-4xl mx-auto text-center">
+          <div className="mb-4">
+            <a href="/login" className="inline-flex items-center gap-2 font-cinzel text-amber-400/50 hover:text-amber-400 text-xs tracking-widest transition-colors">
+              <Crown className="w-3.5 h-3.5" />
+              ACCEDER AL CAMPUS
+            </a>
+          </div>
           <p className="font-cinzel text-amber-500/20 text-xs tracking-[0.2em]">
             © 2026 DINASTY ACADEMY · TODOS LOS DERECHOS RESERVADOS
           </p>
