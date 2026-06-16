@@ -50,10 +50,16 @@ const MODULE_ITEMS = [
     gradient: 'from-amber-600 to-yellow-400',
   },
   {
+    icon: Wallet,
+    title: 'Guía de Tarifas',
+    desc: 'Estrategia de venta dinámica — Aprendé a ponerle precio a tu contenido y maximizar tus ganancias con técnicas probadas.',
+    gradient: 'from-yellow-700 to-amber-500',
+  },
+  {
     icon: Brain,
     title: 'Mentalidad de Negocio y Marca Personal',
     desc: 'Con o sin rostro — aprendé a construir una marca que venda. Pensá como empresaria, no como empleada.',
-    gradient: 'from-yellow-700 to-amber-500',
+    gradient: 'from-amber-700 to-yellow-500',
   },
 ]
 
