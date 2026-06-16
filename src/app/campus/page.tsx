@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
+import { useContentProtection } from '@/hooks/use-content-protection'
 import { useRouter } from 'next/navigation'
 
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -74,6 +75,9 @@ export default function CampusPage() {
   const [paying, setPaying] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
+
+  // Activate content protection (blocks copy, right-click, shortcuts)
+  useContentProtection()
 
   useEffect(() => {
     async function load() {
@@ -163,7 +167,7 @@ export default function CampusPage() {
   const isActive = user?.active === 1
 
   return (
-    <div className="min-h-screen bg-[#050505]">
+    <div className="min-h-screen bg-[#050505] content-protected">
       {/* ─── HEADER ─── */}
       <header className="border-b border-amber-500/10 bg-[#050505]/90 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">

@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
+import { useContentProtection } from '@/hooks/use-content-protection'
 import { useRouter } from 'next/navigation'
 
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -51,6 +52,9 @@ export default function ModulePage({ params }: { params: Promise<{ id: string }>
   const [togglingProgress, setTogglingProgress] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
+
+  // Activate content protection (blocks copy, right-click, shortcuts)
+  useContentProtection()
 
   useEffect(() => {
     async function load() {
@@ -138,7 +142,7 @@ export default function ModulePage({ params }: { params: Promise<{ id: string }>
   const nextModule = currentIdx < allModules.length - 1 ? allModules[currentIdx + 1] : null
 
   return (
-    <div className="min-h-screen bg-[#050505]">
+    <div className="min-h-screen bg-[#050505] content-protected">
       {/* ─── HEADER ─── */}
       <header className="border-b border-amber-500/10 bg-[#050505]/90 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -292,19 +296,49 @@ export default function ModulePage({ params }: { params: Promise<{ id: string }>
 
                   <div className="gold-divider mb-6" />
 
-                  {/* Lesson content */}
-                  <div
-                    className="font-inter text-white/70 text-sm leading-relaxed prose prose-invert prose-amber max-w-none
-                      [&_h2]:font-cinzel [&_h2]:text-white [&_h2]:text-lg [&_h2]:font-bold [&_h2]:mt-8 [&_h2]:mb-4
-                      [&_h3]:font-cinzel [&_h3]:text-amber-400 [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:mt-6 [&_h3]:mb-3
-                      [&_p]:mb-4 [&_p]:text-white/60
-                      [&_ul]:space-y-2 [&_ul]:mb-4 [&_ul]:ml-4
-                      [&_ol]:space-y-2 [&_ol]:mb-4 [&_ol]:ml-4 [&_ol]:list-decimal
-                      [&_li]:text-white/50 [&_li]:text-sm
-                      [&_strong]:text-amber-400 [&_strong]:font-semibold
-                    "
-                    dangerouslySetInnerHTML={{ __html: selectedLesson.content || '<p>Contenido próximamente...</p>' }}
-                  />
+                  {/* Lesson content — protected with watermark overlay */}
+                  <div className="relative">
+                    <div
+                      className="font-inter text-white/70 text-sm leading-relaxed prose prose-invert prose-amber max-w-none
+                        [&_h2]:font-cinzel [&_h2]:text-white [&_h2]:text-lg [&_h2]:font-bold [&_h2]:mt-8 [&_h2]:mb-4
+                        [&_h3]:font-cinzel [&_h3]:text-amber-400 [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:mt-6 [&_h3]:mb-3
+                        [&_p]:mb-4 [&_p]:text-white/60
+                        [&_ul]:space-y-2 [&_ul]:mb-4 [&_ul]:ml-4
+                        [&_ol]:space-y-2 [&_ol]:mb-4 [&_ol]:ml-4 [&_ol]:list-decimal
+                        [&_li]:text-white/50 [&_li]:text-sm
+                        [&_strong]:text-amber-400 [&_strong]:font-semibold
+                      "
+                      dangerouslySetInnerHTML={{ __html: selectedLesson.content || '<p>Contenido próximamente...</p>' }}
+                    />
+                    {/* Watermark overlay — only visible on screenshots */}
+                    <div
+                      className="absolute inset-0 pointer-events-none overflow-hidden"
+                      aria-hidden="true"
+                    >
+                      <div className="absolute inset-0" style={{
+                        backgroundImage: `repeating-linear-gradient(
+                          -45deg,
+                          transparent,
+                          transparent 120px,
+                          rgba(212, 175, 55, 0.03) 120px,
+                          rgba(212, 175, 55, 0.03) 121px
+                        )`
+                      }} />
+                      {[...Array(6)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="absolute font-cinzel text-amber-400/[0.04] text-sm tracking-[0.3em] whitespace-nowrap select-none"
+                          style={{
+                            top: `${15 + i * 16}%`,
+                            left: `${i % 2 === 0 ? '5%' : '25%'}`,
+                            transform: 'rotate(-25deg)',
+                          }}
+                        >
+                          DINASTY ACADEMY — CONTENIDO PROTEGIDO
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
                   {/* Navigation between lessons */}
                   <div className="gold-divider my-6" />

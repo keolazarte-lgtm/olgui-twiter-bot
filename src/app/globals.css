@@ -216,6 +216,41 @@
   animation: pulseGold 2s ease-in-out infinite;
 }
 
+/* ─── CONTENT PROTECTION ─── */
+/* Prevent text selection on course content */
+.content-protected {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Prevent drag on images and all media */
+.content-protected img,
+.content-protected video,
+.content-protected svg,
+.content-protected canvas {
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* Prevent printing course content */
+@media print {
+  .content-protected {
+    display: none !important;
+  }
+  body::after {
+    content: 'El contenido de Dinasty Academy está protegido y no puede ser impreso.';
+    display: block;
+    text-align: center;
+    padding: 100px 20px;
+    font-size: 24px;
+    color: #D4AF37;
+    font-family: 'Cinzel', serif;
+  }
+}
+
 /* Smooth scroll */
 html {
   scroll-behavior: smooth;
