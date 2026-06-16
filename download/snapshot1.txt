@@ -1,0 +1,2472 @@
+- generic
+  - Iframe "Office on the web Frame" [ref=e1]
+    - application
+      - generic
+      - form
+        - generic
+          - generic
+            - toolbar "Header"
+              - generic
+                - banner
+                  - button "App launcher" [expanded=false, ref=e43]
+                    - StaticText ""
+                  - generic
+                    - generic
+                      - generic
+                        - link "Word, click to open Word home page" [ref=e58]
+                    - generic
+                      - generic
+                        - StaticText "curso onlyfans Dinasty Academy"
+                        - button "Saved to OneDrive Click the cloud icon to view file location" [expanded=false, ref=e59]
+                      - generic
+                        - generic
+                          - textbox "Search for tools, help, and more (Alt + Q)" [ref=e60]
+                          - marquee
+                    - generic
+                      - button "Settings" [expanded=false, ref=e49]
+                  - generic
+                    - button "Sign in" [ref=e44]
+                      - StaticText "Sign in"
+                      - StaticText ""
+            - generic
+              - toolbar "Ribbon"
+                - generic
+                  - generic
+                    - button "File" [expanded=true, ref=e47]
+                      - StaticText "File"
+                    - paragraph
+                      - StaticText "."
+                    - generic
+                      - tablist
+                        - tab "Home" [selected, ref=e50]
+                          - StaticText "Home"
+                        - tab "Insert" [ref=e51]
+                          - StaticText "Insert"
+                        - tab "Layout" [ref=e52]
+                          - StaticText "Layout"
+                        - tab "References" [ref=e53]
+                          - StaticText "References"
+                        - tab "Review" [ref=e54]
+                          - StaticText "Review"
+                        - tab "View" [ref=e55]
+                          - StaticText "View"
+                        - tab "Help" [ref=e56]
+                          - StaticText "Help"
+                  - toolbar "Additional Controls"
+                    - group
+                      - list
+                        - listitem [level=1]
+                          - button "Olga Elizabeth Dacal Has this document open" [ref=e61]
+                        - listitem [level=1]
+                          - button "Cassava (Guest) Has this document open" [ref=e62]
+                        - listitem [level=1]
+                          - button "Diamondleaf (Guest) Has this document open" [ref=e63]
+                      - button "Comments" [ref=e48]
+                        - StaticText "Comments"
+                      - button "Mode Menu;Editing Selected" [expanded=false, ref=e57]
+                        - StaticText "Editing"
+                        - StaticText "Mode"
+                - tabpanel "Home"
+                  - generic
+                    - generic
+                      - group "Undo/Clipboard"
+                        - group
+                          - button "Undo" [disabled, ref=e74]
+                          - button "Undo Show More Options" [expanded=false, disabled, ref=e75]
+                        - button "Clipboard" [expanded=false, ref=e76]
+                        - button "Format Painter" [ref=e64]
+                          - StaticText "(Ctrl+Alt+C, Ctrl+Alt+V) To apply the formatting in multiple places, double-click Format Painter."
+                    - generic
+                      - group "Font"
+                        - generic
+                          - combobox "Font Name" [expanded=false, ref=e93]
+                          - button [ref=e94]
+                        - generic
+                          - generic
+                            - combobox "Font Size" [expanded=false, ref=e98]
+                            - button "Font Size" [ref=e99]
+                        - button "Grow Font Size" [ref=e65]
+                        - button "Shrink Font Size" [ref=e66]
+                        - button "Bold" [ref=e67]
+                        - button "Italic" [ref=e68]
+                        - button "Underline" [ref=e69]
+                        - group
+                          - button "Text Highlight Color Yellow" [ref=e77]
+                          - button "Text Highlight Color Yellow Show More Options" [expanded=false, ref=e78]
+                        - group
+                          - button "Font Color Red" [ref=e79]
+                          - button "Font Color Red Show More Options" [expanded=false, ref=e80]
+                    - generic
+                      - group "Paragraph"
+                        - group
+                          - button "Bullets" [ref=e81]
+                          - button "Bullets Show More Options" [expanded=false, ref=e82]
+                        - group
+                          - button "Numbering" [ref=e83]
+                          - button "Numbering Show More Options" [expanded=false, ref=e84]
+                        - button "Decrease Indent" [ref=e70]
+                        - button "Increase Indent" [ref=e71]
+                        - button "Text Alignment" [expanded=false, ref=e85]
+                        - group
+                          - button "Border Options" [ref=e86]
+                          - button "Border Options Show More Options" [expanded=false, ref=e87]
+                        - group
+                          - button "Paragraph Shading" [ref=e88]
+                          - button "Paragraph Shading Show More Options" [expanded=false, ref=e89]
+                        - button "Line Spacing" [expanded=false, ref=e90]
+                        - button "Paragraph Options" [ref=e72]
+                    - generic
+                      - group "Styles"
+                        - generic "Styles"
+                          - radio "Normal" [checked=true, ref=e91]
+                          - button "Headings and Other Styles" [expanded=false, ref=e92]
+                    - group "Editing"
+                    - group "Voice"
+                    - group "Proofing"
+                    - group "Add-ins"
+                    - generic
+                      - group "More Options"
+                        - button "More Options" [expanded=false, ref=e95]
+                  - button "Ribbon Display Options" [expanded=false, ref=e45]
+            - generic
+              - status
+              - status
+            - generic
+              - table "Loading additional document content"
+                - row
+                  - columnheader
+              - link "Loading additional document content" [ref=e13]
+              - heading "Loading additional document content" [level=1, ref=e14]
+              - heading "Loading additional document content" [level=2, ref=e15]
+              - heading "Loading additional document content" [level=3, ref=e16]
+              - heading "Loading additional document content" [level=4, ref=e17]
+              - heading "Loading additional document content" [level=5, ref=e18]
+              - heading "Loading additional document content" [level=6, ref=e19]
+              - heading "Loading additional document content" [level=7, ref=e20]
+              - heading "Loading additional document content" [level=8, ref=e21]
+              - heading "Loading additional document content" [level=9, ref=e22]
+              - generic
+                - generic "Document Contents"
+                  - generic
+                    - generic
+                      - generic: MÓDULO 1: Mentalidad, Preparación y Legado 👑 
+    Sección 1: El Espejo de la Emperatriz (Mi Historia) 
+    Tengo 49 años y tres hijos. Hace un tiempo, me encontré en una encrucijada que seguro conocés muy bien: la necesidad urgente de generar ingresos, de progresar, pero con la condición innegociable de necesitar un trabajo en casa. Quería estar para mis hijos, quería manejar mis horarios y no depender de un jefe ni de un empleo tradicional que me consumiera la vida a cambio de un sueldo básico. 
+    🧠 Los fantasmas: La edad, el cuerpo y el miedo al "qué dirán" 
+    Cuando decidí dedicarme al 100% a esto, aparecieron todos los miedos juntos. Me miraba al espejo y me preguntaba: ¿Tendré la edad para esto? ¿Qué pasará con mi cuerpo? El mercado nos vende la falsa idea de que este mundo es solo para chicas de 20 años con cuerpos de revista, y el primer gran trabajo es romper ese prejuicio en nuestra propia cabeza. 
+    Y el miedo más grande de todos: la privacidad. No quería que nadie me reconociera. No quería que un vecino, un familiar o un conocido del pasado se cruzara con mi perfil. Tenía pánico de perder el control de mi imagen. 
+    👤 El secreto del éxito: Promoción inteligente y anonimato local 
+    ¿Cómo superé ese miedo? Entendiendo que no hace falta exponer tu vida personal ante conocidos para tener un negocio millonario. Aprendí a jugar el juego de la promoción inteligente. Mientras mi perfil de OnlyFans es completamente profesional, mi estrategia de marketing se construye desde el anonimato hacia mi entorno: utilizando redes sociales dedicadas exclusivamente al negocio, sin vincular mi identidad real, y explotando plataformas de altísimo alcance internacional. 
+    Hoy miro hacia atrás y sé que cada miedo superado valió la pena. Gracias a haber tomado esa decisión con valentía, a haberme plantado con autoridad y a haber tratado esto como una empresa seria, mi vida cambió por completo. Solo me dedico a esto. Logré la independencia absoluta y, lo más hermoso de todo, pude mudarme y hoy vivo en el lugar que siempre soñé: un rincón mágico rodeado de bosque y mar. 
+    MÓDULO 2: De Cero a Creadora: Creación y Verificación de tu Cuenta 💻 
+    Sección 1: El Primer Paso  
+    El Peligro de las Apps Falsas: Si entrás a la PlayStore (Android) o AppStore (iPhone) y buscás la aplicación, vas a encontrar decenas de opciones falsas. Jamás las descargues ni pongas tus datos ahí; son aplicaciones creadas por estafadores para robarte las contraseñas, tu identidad o tus futuras ganancias. 
+    Cómo Ingresar Correctamente: Para entrar al sitio real, tenés que abrir el navegador de tu celular o de tu computadora (como Google Chrome) y escribir directamente la dirección oficial en la barra de URL (por ejemplo: www.onlyfans.com). 
+    La Pantalla de Inicio: Vas a ver un cuadro central para iniciar sesión o registrarte. 
+    Elegí tu Método: Podés registrarte vinculando directamente una cuenta de Google (tu Gmail) para hacerlo más rápido. Sin embargo, para mantener tu negocio totalmente separado de tu vida personal, mi recomendación de elite es que te registres abajo donde dice "Regístrate en OnlyFans" (Sign up for OnlyFans). 
+    Correo Electrónico: Poné un mail que uses exclusivamente para tu trabajo (create un Gmail nuevo con tu nombre artístico, por ejemplo: GoddesVictoria@gmail.com). Nunca uses tu correo personal de toda la vida. 
+    Contraseña: Elegí una clave segura que combine letras, números y algún símbolo. Anotala en un lugar seguro. 
+    Nombre de usuario provisorio: Poné cualquier nombre para avanzar; más adelante lo vamos a cambiar por tu nombre de marca definitivo. 
+    Aceptá los términos y condiciones y hacé clic en "Registrarse". La plataforma te va a mandar un correo de confirmación a tu mail; entrá a tu bandeja de entrada, hacé clic en el enlace que te enviaron y listo: tu cuenta base ya está abierta. 
+    Sección 2: La Verificación Perfecta (Cómo sacar tus fotos sin errores) 
+    Buscá buena luz: Ponete cerca de una ventana con luz natural. Evitá usar el flash de la cámara, porque suele rebotar en el plástico del DNI y tapa los números o tu fecha de nacimiento, lo que causa un rechazo automático. 
+    Encuadre completo: Apoyá el documento sobre una superficie lisa y oscura (una mesa de madera o un mantel oscuro). Al sacarle la foto, asegurate de que las cuatro esquinas del documento se vean perfectamente dentro de la pantalla. No recortes los bordes, ni edites la foto. 
+    Nitidez absoluta: Sostené el celular con las dos manos para que la foto no salga movida. Toda la letra del documento y tu foto de cara tienen que verse cristalinas. Sacale una foto al frente y otra al dorso. 
+    ⚠️ El secreto de elite: Prohibido usar la cámara delantera. Jamás te saques esta foto como una selfie común con la cámara frontal de tu celular. La cámara delantera invierte las imágenes (efecto espejo), lo que hace que las letras del DNI salgan al revés, pierdan nitidez y el sistema te la rechace de inmediato. 
+    Pedí ayuda: Para este paso, buscá a alguien y pedile que te saque la foto usando la cámara trasera de tu celular, que tiene el triple de definición y enfoque. 
+    El entorno perfecto: Ponete frente a un fondo limpio y una pared clara. Evitá que de fondo se vea ropa colgada, muebles desordenados o sombras extrañas. El foco visual tenés que ser vos y tu documento. 
+    La postura y tus dedos: Sostené el documento justo al lado de tu mejilla, al mismo nivel de tu rostro. Agarrá el plástico por los bordes con la punta de los dedos. Es un error muy común tapar con el pulgar tu fecha de nacimiento o tu nombre. Si tapás un solo dato, el sistema te rebota. 
+    Rostro despejado: Sacate la foto con la cara limpia, visible y buena luz natural de frente. Nada de anteojos de sol, gorras o pelo en la cara que te tape las facciones. 
+    🌐 3. El último empujón: La Red Social de Respaldo 
+    MÓDULO 3: El Panel de Control: Tu Centro de Mandos 🕹️ 
+    Sección 1: Tus Primeros Ajustes y el Menú Desplegable 
+    ¡Felicitaciones! Tu cuenta ya está activa y verificada. Al ingresar por primera vez, es muy probable que la plataforma te aparezca completamente en inglés. No te preocupes ni intentes adivinar qué significa cada palabra: lo primero que vamos a hacer es poner el sistema en nuestro idioma para que trabajes con total comodidad. 
+    Abrí el menú: Hacé clic en tu foto de perfil redonda que aparece arriba a la izquierda. Se va a desplegar una barra lateral con muchas opciones. 
+    Buscá la palabra Settings: En ese menú que se abrió, buscá el icono de la rueda dentada que dice "Settings" (Configuración) y hacé clic ahí. 
+    Cambia el idioma (Language): Dentro del nuevo menú, buscá la opción que dice "Language" (Idioma). Se va a abrir una lista con diferentes opciones: buscala y seleccioná "Español". 
+    REGLA DE ORO: Crea un nombre alternativo con el cual te sientas identificado y úsalo en todas tus plataformas. Ese será tu escudo de privacidad y tu mayor marca de poder, así podrán encontrarte no solo en la página azul sino también en todas las redes sociales. 
+    Al hacer clic acá, vas a ir directo a tu muro. Es el lugar donde los clientes entran a ver tu biografía, tus precios de suscripción y todo el contenido (fotos y videos) que vayas publicando. Es fundamental que entres seguido para revisar que la estética de tu marca se vea impecable. Asegúrate de cargar un mínimo de 15 a 20 publicaciones con contenido variado, magnético y sugerente, pero jamás explícito. La meta es que cuando un suscriptor ingrese, encuentre un catálogo atractivo que justifique su atención. Recordá siempre la regla de oro del negocio: el contenido explícito, los desnudos y los videos pesados ​​se reservan exclusivamente para la venta bajo candado (PPV) o propinas. El muro libre es solo para tentar al cliente, no para regalar tu mercadería. 
+    Truco de Visibilidad Continua: Asegúrate de tener siempre entre 3 y 4 historias activas en tu perfil. Las plataformas premian la constancia: mantener tus historias al día garantiza que aparecerás en los primeros lugares de la barra de inicio de tus suscriptores cada vez que abran su cuenta. 
+    este botón te muestra los números duros de tu negocio: gráficos de tus ganancias mensuales, cuántos suscriptores activos tenés, qué publicaciones tuvieron más "me gusta" y el rendimiento financiero de tus mensajes privados. 
+    Tu propio contenido: Podés dedicar un solo día de la semana a subir fotos o videos y dejarlos agendados para que se vayan publicando de forma automática. 
+    Publicidad cruzada (SFS): También es el lugar donde vas a ver y controlar las campañas de publicidad cruzada ( SFS) que coordines con otras creadoras para promocionarse mutuamente. Desde acá monitoreás qué días y en qué horarios salen esos anuncios compartidos para hacer crecer tu comunidad. 
+    Esta herramienta vale oro. Es un banco de almacenamiento masivo donde quedan guardadas de forma automática todas las fotos y videos que subís a tu muro, a tus mensajes masivos o a tus historias. Sirve para que no tengas que volver a cargar un archivo desde tu celular si querés reutilizarlo: entrás a la Bóveda y lo reenviás desde ahí en un segundo. 
+    Si tu miedo es que un familiar, vecino, conocido o alguien de tu ciudad te reconozca, tenés una herramienta de élite a tu disposición: el Bloqueo Geográfico (Geoblocking) . 
+    💵 Sección Especial: retiro de dinero (Cómo Cobrar tus Dólares) 
+    Una de las dudas más frecuentes al empezar es: "¿Cómo hago para que los dólares que gano me lleguen a mi mano y en mi moneda local?". Queremos darte la tranquilidad de que podés empezar a trabajar, recibir propinas y vender contenidos con candado desde el primer día, aunque todavía no tengas una cuenta bancaria asociada. Todo el dinero que generes se va a ir acumulando de forma segura dentro de tu billetera de la plataforma hasta que decidas retirarlo. 
+    🚨 ALERTA DE SEGURIDAD: Los Peligros de los Métodos Directos en Argentina 
+    ❌ 1. Trampa N°1: Transferencia Bancaria Local (Vía Pagomundo) 
+    El peligro del dólar Oficial: Al ingresar una transferencia del exterior a un banco argentino, las regulaciones locales obligan a pesificar esos fondos de forma automática. Te van a liquidar tus dólares al valor del dólar oficial, perdiendo casi la mitad de tu dinero en comparación con el mercado paralelo (blue o MEP). 
+    Alerta AFIP y Bloqueos: Recibir transferencias internacionales directas en un banco local o en Mercado Pago activa todas las alarmas impositivas. El banco te va a congelar los fondos de inmediato y te va a exigir facturas de exportación de servicios y trámites burocráticos complejos para poder liberar tu plata. 
+    ❌ 2. Trampa N°2: Transferencia Directa de VISA 
+    Pesificación Forzosa: Al igual que la transferencia bancaria, el dinero se convierte obligatoriamente a pesos a la peor cotización del mercado. 
+    Rechazos Automáticos: Los sistemas de seguridad de las tarjetas emisoras en Argentina suelen rebotar estos pagos internacionales por "movimientos sospechosos", dejándote la tarjeta inhabilitada y obligándote a pasar horas al teléfono con soporte técnico para recuperar tus fondos. 
+    👑 REGLA DE ORO DE DINASTÍA: En Argentina, todo lo que sea cobrar "directo" a cuentas locales es sinónimo de perder plata, regalar comisiones y arriesgar la privacidad de tu negocio. 
+    Para mantener tus ganancias protegidas, cobrar el valor real del dólar del día y operar con total tranquilidad bajo el radar, en la academia utilizamos la única estrategia de elite comprobada: El circuito Skrill ➡️ Binance ➡️ Cuenta Local. 
+    🛠️ PASO 1: Creación Correcta de tu Cuenta Skrill 
+    El Correo Electrónico: Registrate en Skrill utilizando el mismo mail exacto que usaste para crear tu cuenta de OnlyFans. 
+    Nombres en Mayúsculas: Al colocar tu nombre y apellido, escribilos TODO EN MAYÚSCULAS. Debe coincidir de forma idéntica con tu DNI y con los datos de verificación que pusiste al aprobar tu perfil de contenido. No omitas acentos, ni segundos nombres, ni letras. 
+    La Divisa: Al momento de elegir la moneda de tu cuenta, configurala sí o sí en DÓLARES (USD). 
+    💻 PASO 2: Activación y Primer Depósito  
+    🚨 ALERTA TÉCNICA DE DINASTÍA: Este paso de fondeo inicial tenés que realizarlo únicamente desde una computadora . Desde el navegador del celular el sistema suele fallar y podes tener problemas con los fondos. 
+    Qué NO hacer: No intentes depositar usando tarjetas de crédito o débito locales. El sistema financiero suele rebotarlas y te retienen el dinero.  
+    El método correcto: Entra a Skrill desde la PC, selecciona la opción "Pague en línea" o "Depósito" y elegí el método RAPIPAGO. (Evita Pago Fácil, ya que suele presentar demoras y errores de acreditación). 
+    El Pago: Coloca el equivalente a $5 USD, el sistema te va a generar un código o número de pago con el monto convertido a tus pesos locales. Sacale una foto a la pantalla, acercate a cualquier sucursal de Rapipago y abonalo en efectivo. Se te acreditará al instante en tu cuenta de Skrill en dólares. 
+    📱 PASO 3: Verificación de Identidad y Blindaje 
+    Identidad: La app te pedirá tomarle una foto a tu DNI de frente y dorso, y una selfie para corroborar que sos una persona real. 
+    Verificación de Domicilio: Te van a solicitar un documento que compruebe que vivís en la misma dirección que figura en tu documento. Podes subir: 
+    🔗 PASO 4: Vinculación final con tu Plataforma 
+    📺 ¿Cómo pasar tus dólares a pesos argentinos en tu cuenta bancaria o a Mercado Pago? Para hacer este último paso (el fondeo de Skrill a tu moneda local a través del mercado P2P de Binance), les dejamos este videotutorial exclusivo paso a paso para que se guíen de manera visual y no cometan errores: 👉 Ver Tutorial de Fondeo P2P en Binance 
+    💳 Instructivo de Elite: Cómo Vincular Skrill a Binance de Forma Directa (Vía Cripto) 
+    1️⃣ Paso 1: Obtener la dirección de depósito en Binance 
+    ⚠️ ALERTA DE SEGURIDAD DE DINASTÍA: Asegúrate de seleccionar únicamente la red Ethereum (ERC20) tanto en Binance como en Skrill. Si elegís cualquier otra red por error, los fondos se perderán en el camino y no se podrán recuperar. 
+    2️⃣ Paso 2: Enviar el dinero desde Skrill 
+    Moneda: USDT 
+    Red: Ethereum (ERC20) 
+    Cantidad: Coloca el monto en dólares que queres transferir. 
+    3️⃣ Paso 3: Acreditación y Recomendación de Elite 
+    Confirmación: La transacción puede tardar unos minutos en procesarse en la red. Una vez completada, vas a ver tus USDT impactados directamente en tu balance de Binance. 
+    💎 Consejo de Profesional: Antes de enviar montos grandes o retirar las ganancias de todo tu mes, hace siempre una prueba con una cantidad mínima (el mínimo que te permita la plataforma). Una vez que verifiques que llegó bien y que hiciste todo el caminito de forma correcta, recién ahí transferí el resto del capital. 
+    Sirve para crear encuestas interactivas para tus fans. Podés preguntarles cosas como: ¿Qué fetiche quieren ver en el próximo video? o ¿Qué outfit prefieren para mi sesión de fotos? Es ideal para generar  
+    Tu estrategia de elite:  Las Historias, se usan para el "día a día": una foto rápida mostrando tus uñas, tus zapatos, un saludo de buenos días, o un adelanto muy cortito de un video para dejarlos con las ganas. Es la herramienta perfecta para generar urgencia y hacer que los sumisos entren a tu perfil varias veces al día para ver qué subiste antes de que se borre. 
+    MÓDULO 5: Perfil e Identidad de Alto Valor 💎 
+    Sección 1: Identidad Digital y Seguridad Visual (Para perfiles Vainilla y Femdom) 
+    Tu cuenta ya está aprobada y sabes usar el panel, pero ahora está vacía. Es un lienzo en blanco. Antes de recibir a tu primer suscriptor, tenés que construir tu personaje, tu marca. En esta industria, tu nombre, tu foto de perfil y tu portada no son simples adornos: son las herramientas que van a definir tu estilo de contenido, filtrar al público correcto y hacer que los clientes quieran sacar la billetera. 
+    Si hacés contenido Vainilla (Modelaje, sensual, lencería): Busca nombres que suenen dulces, sexis, frescos o elegantes en inglés o de alcance internacional Podes combinarlo con un apellido artístico fantasioso o dejar el nombre solo si es llamativo. 
+    Si haces contenido FemDom (Dominación / Fetiche): Busca nombres imperativos, aristocráticos o mitológicos que denoten autoridad inmediata y se entiendan en el mercado global. El nombre ya tiene que marcar quién manda. 
+    🚨 El secreto de elite para el nombre de usuario (@usuario): Debe ser en inglés y muy fácil de encontrar para el suscriptor. Evitá a toda costa usar el guion bajo . El guion bajo hace que el nombre sea molesto de escribir, difícil de recordar y arruina las búsquedas cuando un cliente te quiere recomendar. Si tu nombre artístico ya está usado, en lugar de meterle guiones bajos o números, sumale palabras profesionales en inglés al final (ejemplo Goddess, Queen). Que suene limpio, fluido y de categoría superior. 
+    👤 2. Tu Foto de Perfil: Reglas Estrictas y Elección de Rostro 
+    Prohibido los desnudos: La foto de perfil jamás puede contener desnudos explícitos. Tiene que ser una foto apta para todo público. 
+    Prohibido fotos de espaldas: Al menos al principio, no pongas una foto totalmente de espaldas donde no se reconozca una silueta clara de frente o de perfil. La plataforma busca identificar que la cuenta pertenece a una creadora real en su carta de presentación. 
+    Sección 2: El Arte de Redactar tu Biografía (Tu Carta de Presentación) 
+    🌸 Opción A: La Biografía Vainilla (Sensual, Coqueta y Atractiva) 
+    El Gancho Inicial: Arrancá con un saludo beboteando o una frase que los haga sentir especiales por estar ahí. 
+    Una breve descripción de tu personalidad (ejemplo: “Beba tímida pero caliente de internet”). 
+    Una invitación clara a la acción (ejemplo: “Háblame al privado, estoy lista para jugar”). 
+    Opción B: La Biografía FemDom / Fetiche (Autoridad y Reglas del Local) 
+    El Filtro de Entrada: Lo primero que tenés que dejar claro es que no toleras perder el tiempo. 
+    Usá emojis con estrategia: No satures el texto de dibujitos. Usá emojis elegantes que sumen a la estética (flores o destellos para Vainilla; coronas, cadenas o billetes para FemDom). 
+    Menos, es más: No escribas un testamento. El cliente no lee textos largos; escanea. El mensaje tiene que ser directo, cortito y contundente. 
+    El Menú de Servicios: Al final de la biografía, es excelente dejar una lista rápida de lo que ofreces (ejemplo: Custom videos, Sexting, Audio notes), para que el usuario sepa de entrada todo lo que te puede comprar adentro.   
+    Sección 3: Estrategia de Apertura: El Poder de la Cuenta Gratis (Free) 
+    Al momento de lanzar tu perfil al mercado, existen dos caminos: abrir una cuenta paga o abrir una cuenta gratis. Para una creadora que inicia desde el absoluto cero, sin seguidores previos y sin una comunidad que la conozca, la recomendación de elite es comenzar con una Cuenta Gratis (Free). 
+    Derriba la barrera de entrada: Los usuarios en internet no pagan por ver el contenido de alguien que no conocen. Una cuenta gratis te permite recibir un flujo masivo de suscriptores curiosos en tiempo récord.  
+    Tu base de datos de clientes: Es mucho más fácil convencer a una persona de que le dé clic al botón de "Suscribirse gratis" para empezar a ver tu perfil. Así es como vas a construir tus primeros cientos de fans de la nada. 
+    Dónde se hace la verdadera plata: Que la cuenta sea gratis no significa que regales tu trabajo. El muro libre es solo el anzuelo. El verdadero dinero de este negocio se genera adentro: vendiendo videos exclusivos con candado a través de los mensajes privados, ofreciendo contenido personalizado y recibiendo propinas o tributos de los fans que quieren interactuar con vos.  
+    ⚙️ Paso a Paso: Cómo Configurar tu Mensaje de Bienvenida Automatizado 
+    💡 Nota de la Academia: No te preocupes si todavía no sabés cuál es tu perfil ideal. Más adelante en la academia vamos a ver en detalle cuáles son los diferentes perfiles que existen y cuáles son los que más monetizan. Además, vas a tener una charla personalizada conmigo para analizar tu caso, guiarte paso a paso y elegir juntas el personaje que mejor se adapte a vos y a tu personalidad. 
+    MÓDULO 6: Guía de Tarifas y Estrategia de Venta Dinámica 
+    Videos Femdom 🔑 (SPH, humillación, sissy, cuck, etc.) : Entre $35 y $45 USD por 2 minutos para arrancar. Si el cliente responde bien y sigue comprando, le vas aumentando el valor en los próximos paquetes o pidiéndole propinas ( tips ). 
+    Videos Explícitos 💦 : $35 USD por cada minuto de video. 
+    Packs de Fotos 📸 : Entre $3 y $5 USD cada 5 fotos aproximadamente. 
+    ⚠️ REGLA DE ORO DE LA EMPERATRIZ: NUNCA grabes ni envía un contenido personalizado si no te pagaron la TOTALIDAD por adelantado mediante una propina. Evite pérdidas de tiempo y estafas. Primero la plata, después el trabajo. 
+    Femdom Custom 🔑 : $60 a $80 USD por un video de 2 a 3 minutos. 
+    Explícito personalizado 💦 : $80 a $120 USD por un video de 2 minutos aprox. 
+    Sexting (Chat Hot) 🔥 : $50 a $60 USD la media hora de interacción por texto. Incluye el ida y vuelta, 2 o 3 fotitos sugerentes y algunos clips muy cortos sacados de tu bóveda. 
+    5 minutos: $80 USD 
+    10 minutos: $100 USD 
+    15 minutos: $140 USD 
+    Promoción Cruzada (SFS): Recordá lo que vimos en el menú "Archivo". Vas a contactar a otras creadoras y van a programar publicaciones compartidas. Vos promocionas su link en tu muro y ella promociona el tuyo en el suyo. Así se intercambian fans constantemente, además HXH (Historia por historia) o mensajes masivos entre las creadoras. 
+    Redes de Tráfico Orgánico: Utilizarás plataformas como Reddit, Twitter (X) o Telegram, instagram para publicar pequeñas muestras de tu contenido estético (siempre respetando las normas de cada lugar) y dejando el enlace directo a tu cuenta gratis para que vayan a suscribirse de inmediato. 
+    🔒 Nota de Seguridad y Privacidad de Elite: Queremos darte la tranquilidad absoluta de que en ninguna de estas redes sociales externas (Reddit, Twitter, Telegram o Instagram) estás obligada a mostrar tu rostro. Podes armar campañas publicitarias, crear cuentas nuevas sumamente exitosas, estéticas y magnéticas manteniendo tu cara en total anonimato si así lo elegís. 
+    📚 Importante: Recordá que cada una de estas redes tiene sus propias reglas, algoritmos y estrategias específicas para crecer. Cómo utilizar y optimizar al máximo cada plataforma para atraer miles de fans sin cometer errores será dictado en un curso avanzado e independiente más adelante. Ahora, nuestro foco es dejar tu centro de mandos listo para facturar. 
+    Llegaste al final de este manual básico, pero este no es el destino: es apenas el día uno de tu nueva Dinastía. 
+    📚 TEMARIO GENERAL EJECUTIVO: ACADEMIA DINASTÍA 
+    MÓDULO 1: Mentalidad y Preparación de Alto Valor 
+    Mindset de elite: De creadora amateur a dueña de negocio. 
+    MÓDULO 2: Registro y Verificación de Identidad 
+    MÓDULO 3: El Sistema de Retiros en Argentina 
+    Alerta: Peligros de la Transferencia Bancaria Local y Tarjeta VISA. 
+    Circuito de retiros sin dejar rastros: Skrill ➡️ Binance (USDT) ➡️ Cuenta Local. 
+    MÓDULO 4: Perfil de Elite 
+    MÓDULO 5: Herramientas del Panel Lateral 
+    La verdad de "Mis referencias" : Estadísticas reales de origen de tráfico. 
+    El poder de las "Colecciones" : Listas para segmentar usuarios por fetiches. 
+    📈 FASE IV: Lanzamiento y Ventas 
+    MÓDULO 6: Cuenta Gratis y Embudo de Ventas 
+    Cuidado de la mercadería: Qué mostrar y qué guardar en el feed libre. 
+    MÓDULO 7: Estrategias de Tráfico y Difusión 
+    MÓDULO 8: Escalabilidad y Cierre de Curso 
+    Upselling: Comunidad de Discord, Asesorías 1-a-1 y preventa del Curso de Fetiches. 
+    
+     
+                        - paragraph
+                          - StaticText "MÓDULO 1: Mentalidad, Preparación y Legado "
+                          - StaticText "👑"
+                        - paragraph
+                          - StaticText "Sección 1: El Espejo de la Emperatriz (Mi Historia)"
+                        - paragraph
+                          - StaticText "Si estás leyendo estas páginas, quiero que te detengas un segundo. "
+                          - StaticText "Olvidate"
+                          - StaticText " de las pantallas, de las redes y del ruido exterior. Quiero hablarte de mujer a mujer, de madre a madre, de emprendedora a emprendedora."
+                        - paragraph
+                          - StaticText "Hoy me "
+                          - StaticText "conocés"
+                          - StaticText " como "
+                          - StaticText "Emperatriz"
+                          - StaticText ", la mentora detrás de "
+                          - StaticText "Dinastía "
+                          - StaticText "Academy"
+                          - StaticText ". Manejo mi propio negocio digital, tomo mis propias decisiones y soy la dueña absoluta de mi tiempo y de mis ingresos. Pero mi Imperio no se construyó en un día, y mucho menos nació desde la comodidad."
+                        - paragraph
+                          - StaticText "🏠"
+                          - StaticText " El motor del cambio"
+                        - paragraph
+                          - StaticText "Tengo 49 años y tres hijos. Hace un tiempo, me encontré en una encrucijada que seguro "
+                          - StaticText "conocés"
+                          - StaticText " muy bien: la necesidad urgente de generar ingresos, de progresar, pero con la condición innegociable de "
+                          - StaticText "necesitar un trabajo en casa"
+                          - StaticText ". Quería estar para mis hijos, quería manejar mis horarios y no depender de un jefe ni de un empleo tradicional que me consumiera la vida a cambio de un sueldo básico."
+                        - paragraph
+                          - StaticText "Fue ahí cuando decidí dar el paso hacia la creación de contenido premium. Pero te mentiría si te dijera que no tuve dudas. Al contrario, estaba llena de ellas."
+                        - paragraph
+                          - StaticText "🧠"
+                          - StaticText " Los fantasmas: La edad, el cuerpo y el miedo al \"qué dirán\""
+                        - paragraph
+                          - StaticText "Cuando decidí dedicarme al 100% a esto, aparecieron todos los miedos juntos. Me miraba al espejo y me preguntaba: "
+                          - StaticText "¿Tendré la edad para esto? ¿Qué pasará con mi cuerpo?"
+                          - StaticText " El mercado nos vende la falsa idea de que este mundo es solo para chicas de 20 años con cuerpos de revista, y el primer gran trabajo es romper ese prejuicio en nuestra propia cabeza."
+                        - paragraph
+                          - StaticText "Y el miedo más grande de todos: "
+                          - StaticText "la privacidad"
+                          - StaticText ". No quería que nadie me reconociera. No quería que un vecino, un familiar o un conocido del pasado se cruzara con mi perfil. Tenía pánico de perder el control de mi imagen."
+                        - paragraph
+                          - StaticText "👤"
+                          - StaticText " El secreto del éxito: Promoción inteligente y anonimato local"
+                        - paragraph
+                          - StaticText "¿Cómo superé ese miedo? Entendiendo que no hace falta exponer tu vida personal ante conocidos para tener un negocio millonario. Aprendí a jugar el juego de la promoción inteligente. Mientras mi perfil de "
+                          - StaticText "OnlyFans"
+                          - StaticText " es completamente profesional, mi estrategia de marketing se construye desde el anonimato hacia mi entorno: utilizando redes sociales dedicadas exclusivamente al negocio"
+                          - StaticText ","
+                          - StaticText " sin vincular mi identidad real, y explotando plataformas de altísimo alcance internacional."
+                        - paragraph
+                          - StaticText "Es decir, te "
+                          - StaticText "promocionás"
+                          - StaticText " de forma estratégica hacia afuera, buscando al cliente ideal en el mercado global, mientras tu entorno local permanece completamente a oscuras gracias al "
+                          - StaticText "Geoblocking"
+                          - StaticText ". Además, me especialicé en el nicho del "
+                          - StaticText "FemDom"
+                          - StaticText " (Dominación Femenina) y los fetiches"
+                          - StaticText ", un mercado de alta rentabilidad donde la psicología, la autoridad y el control valen oro. El método de Dinast"
+                          - StaticText "y"
+                          - StaticText " Academy te va a enseñar a atraer a esos clientes de elite sin comprometer jamás la tranquilidad de tu vida diaria."
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                          - StaticText "🌲🌊"
+                          - StaticText " La recompensa"
+                        - paragraph
+                          - StaticText "Hoy miro hacia atrás y sé que cada miedo superado valió la pena. Gracias a haber tomado esa decisión con valentía, a haberme plantado con autoridad y a haber tratado esto como una empresa seria, mi vida cambió por completo. Solo me dedico a esto. Logré la independencia absoluta y, lo más hermoso de todo, "
+                          - StaticText "pude mudarme y hoy vivo en el lugar que siempre soñé: un rincón mágico rodeado de bosque y mar."
+                        - paragraph
+                          - StaticText "Si yo pude cambiar mi realidad a los 49 años, con tres hijos, partiendo desde casa y protegiendo mi privacidad desde las sombras, "
+                          - StaticText "vos también "
+                          - StaticText "podés"
+                          - StaticText " hacerlo"
+                          - StaticText ". No importa tu edad, no importa tu cuerpo, no importa de dónde arranques hoy. Lo único que "
+                          - StaticText "necesitás"
+                          - StaticText " es la determinación de querer construir tu propio Imperio."
+                        - paragraph
+                          - StaticText "Bienvenida a tu nueva era. Bienvenida a Dinasty Academy."
+                        - paragraph
+                        - paragraph
+                          - StaticText "MÓDULO 2: De Cero a Creadora: Creación y Verificación de tu Cuenta "
+                          - StaticText "💻"
+                        - paragraph
+                          - StaticText "Sección 1: El Primer Paso"
+                        - paragraph
+                          - StaticText "Antes de hablar de configuración o privacidad, "
+                          - StaticText "tenés"
+                          - StaticText " que saber dónde y cómo vas a construir tu Imperio. Hay un mito muy común entre las principiantes y el primer error que "
+                          - StaticText "tenés"
+                          - StaticText " que evitar es buscar esto en la tienda de tu celular."
+                        - paragraph
+                          - StaticText "🌐"
+                          - StaticText " 1. La Plataforma No es una App, es una Web"
+                        - paragraph
+                          - StaticText "Lo primero que "
+                          - StaticText "tenés"
+                          - StaticText " que entender es que las plataformas de contenido premium para adultos (como "
+                          - StaticText "OnlyFans"
+                          - StaticText ") "
+                          - StaticText "no tienen una aplicación oficial para descargar en el celular"
+                          - StaticText ". Debido a las políticas de censura de Apple y Google, estas plataformas funcionan de forma 100% segura únicamente a través de su "
+                          - StaticText "página web oficial"
+                          - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "El Peligro de las Apps Falsas:"
+                              - StaticText " Si "
+                              - StaticText "entrás"
+                              - StaticText " a la "
+                              - StaticText "PlayStore"
+                              - StaticText " (Android) o "
+                              - StaticText "AppStore"
+                              - StaticText " (iPhone) y "
+                              - StaticText "buscás"
+                              - StaticText " la aplicación, vas a encontrar decenas de opciones falsas. "
+                              - StaticText "Jamás las descargues ni pongas tus datos ahí; son aplicaciones creadas por estafadores para robarte las contraseñas, tu identidad o tus futuras ganancias."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Cómo Ingresar Correctamente:"
+                              - StaticText " Para entrar al sitio real, "
+                              - StaticText "tenés"
+                              - StaticText " que abrir el navegador de tu celular o de tu computadora (como Google Chrome) y escribir directamente la dirección oficial en la barra de URL (por ejemplo: www.onlyfans.com)."
+                        - paragraph
+                          - StaticText "🔑"
+                          - StaticText " 2. Cómo Crear tu Cuenta desde Cero"
+                        - paragraph
+                          - StaticText "Una vez que estás adentro de la página web oficial, el proceso para registrarte como creadora es muy "
+                          - StaticText "sencillo"
+                          - StaticText " pero requiere atención:"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "La Pantalla de Inicio:"
+                              - StaticText " Vas a ver un cuadro central para iniciar sesión o registrarte."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Elegí tu Método:"
+                              - StaticText " "
+                              - StaticText "Podés"
+                              - StaticText " registrarte vinculando directamente una cuenta de Google (tu Gmail) para hacerlo más rápido. Sin embargo, para mantener tu negocio totalmente separado de tu vida personal, mi recomendación de elite es que te registres abajo donde dice "
+                              - StaticText "\"Regístrate en "
+                              - StaticText "OnlyFans"
+                              - StaticText "\""
+                              - StaticText " ("
+                              - StaticText "Sign"
+                              - StaticText " up "
+                              - StaticText "for"
+                              - StaticText " "
+                              - StaticText "OnlyFans"
+                              - StaticText ")."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Tus Datos de Acceso:"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Correo Electrónico:"
+                              - StaticText " "
+                              - StaticText "Poné"
+                              - StaticText " un mail que uses exclusivamente para tu trabajo ("
+                              - StaticText "create"
+                              - StaticText " un Gmail nuevo con tu nombre artístico, por ejemplo: GoddesVictoria@gmail.com). Nunca uses tu correo personal de toda la vida."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Contraseña:"
+                              - StaticText " Elegí una clave segura que "
+                              - StaticText "combine"
+                              - StaticText " letras, números y algún símbolo. "
+                              - StaticText "Anotala"
+                              - StaticText " en un lugar seguro."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Nombre de usuario provisorio:"
+                              - StaticText " "
+                              - StaticText "Poné"
+                              - StaticText " cualquier nombre para avanzar; más adelante lo vamos a cambiar por tu nombre de marca definitivo."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Aceptá"
+                              - StaticText " los términos y condiciones y "
+                              - StaticText "hacé"
+                              - StaticText " clic en "
+                              - StaticText "\"Registrarse\""
+                              - StaticText ". La plataforma te va a mandar un correo de confirmación a tu mail; "
+                              - StaticText "entrá"
+                              - StaticText " a tu bandeja de entrada, "
+                              - StaticText "hacé"
+                              - StaticText " clic en el enlace que te enviaron y listo: tu cuenta base ya está abierta."
+                        - paragraph
+                          - StaticText "Transformar tu Perfil a Cuenta de Creadora y Verificación de Identidad"
+                        - paragraph
+                          - StaticText "Una vez que creaste tu cuenta básica con tu correo electrónico y tu contraseña, tu perfil se encuentra en modo \"Usuario\" (comprador). Para activar tu negocio y tener acceso a las herramientas de monetización, "
+                          - StaticText "tenés"
+                          - StaticText " que cambiar tu rol al de "
+                          - StaticText "Creadora de Contenido"
+                          - StaticText " y validar que "
+                          - StaticText "sos"
+                          - StaticText " una persona real."
+                        - paragraph
+                          - StaticText "Seguí esta guía paso a paso para hacer el proceso de forma correcta y evitar que la plataforma te "
+                          - StaticText "rec"
+                          - StaticText "hac"
+                          - StaticText "e"
+                          - StaticText " el trámite:"
+                        - paragraph
+                          - StaticText "⚙️"
+                          - StaticText " 1. Activación del Modo Creador"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Ingresá"
+                              - StaticText " a la plataforma con tu correo y contraseña."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Haz clic en el ícono de tu perfil (arriba a la derecha en la PC, o en el menú desplegable del celular) para abrir el centro de mandos."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Busca y selecciona la opción que dice "
+                              - StaticText "\""
+                              - StaticText "Become"
+                              - StaticText " a "
+                              - StaticText "Creator"
+                              - StaticText "\" (Convertirse en creador)"
+                              - StaticText " o "
+                              - StaticText "\"Verificación\""
+                              - StaticText " "
+                              - StaticText "o en banco "
+                              - StaticText "(para ganar)"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Al hacer clic ahí por primera vez, el sistema habilitará de forma automática el formulario oficial de seguridad para que comience tu proceso de verificación."
+                        - paragraph
+                        - paragraph
+                          - StaticText "Sección 2: La Verificación Perfecta (Cómo sacar tus fotos sin errores)"
+                        - paragraph
+                          - StaticText "Una vez que confirmaste tu correo electrónico, la plataforma te va a pedir que verifiques tu identidad para comprobar que "
+                          - StaticText "sos"
+                          - StaticText " una persona real y mayor de edad. Este paso es "
+                          - StaticText "obligatorio y 100% confidencial"
+                          - StaticText "; tus datos reales quedan guardados bajo estrictas normas de seguridad internacional y ningún cliente o usuario va a tener acceso a ellos jamás."
+                        - paragraph
+                          - StaticText "Para que el sistema te apruebe la cuenta a la primera y no pierdas días rebotada, "
+                          - StaticText "tenés"
+                          - StaticText " que preparar tus fotos siguiendo estas reglas de elite:"
+                        - paragraph
+                          - StaticText "1. La Foto de tu Documento ("
+                          - StaticText "🪪"
+                          - StaticText " DNI o Pasaporte)"
+                        - paragraph
+                          - StaticText "El sistema utiliza inteligencia artificial para escanear tus datos, así que la foto de tu documento tiene que ser impecable."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Buscá"
+                              - StaticText " buena luz:"
+                              - StaticText " "
+                              - StaticText "Ponete"
+                              - StaticText " cerca de una ventana con luz natural. "
+                              - StaticText "Evitá"
+                              - StaticText " usar el "
+                              - StaticText "flash"
+                              - StaticText " de la cámara, porque suele rebotar en el plástico del DNI y tapa los números o tu fecha de nacimiento, lo que causa un rechazo automático."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Encuadre completo:"
+                              - StaticText " "
+                              - StaticText "Apoyá"
+                              - StaticText " el documento sobre una superficie lisa y oscura (una mesa de madera o un mantel oscuro). Al sacarle la foto, "
+                              - StaticText "asegurate"
+                              - StaticText " de que "
+                              - StaticText "las cuatro esquinas del documento se vean perfectamente"
+                              - StaticText " dentro de la pantalla. No recortes los bordes"
+                              - StaticText ", ni edites la foto."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Nitidez absoluta:"
+                              - StaticText " "
+                              - StaticText "Sostené"
+                              - StaticText " el celular con las dos manos para que la foto no salga movida. Toda la letra del documento y tu foto de cara tienen que verse cristalinas. "
+                              - StaticText "Sacale"
+                              - StaticText " una foto al frente y otra al dorso."
+                        - paragraph
+                          - StaticText "📸"
+                          - StaticText " 2. La \""
+                          - StaticText "Selfie"
+                          - StaticText "\" de Verificación (Tu cara con el documento)"
+                        - paragraph
+                          - StaticText "Este es el paso donde la mayoría comete errores y se traba por días. La plataforma te va a pedir una foto de tu rostro sosteniendo tu documento de identidad al lado de tu cara para comprobar que "
+                          - StaticText "sos"
+                          - StaticText " vos."
+                        - paragraph
+                        - paragraph
+                          - StaticText "⚠️"
+                          - StaticText " El secreto de elite: Prohibido usar la cámara delantera. Jamás te saques esta foto como una "
+                          - StaticText "selfie"
+                          - StaticText " común con la cámara frontal de tu celular. La cámara delantera invierte las imágenes (efecto espejo), lo que hace que las letras del DNI salgan al revés, pierdan nitidez y el sistema te la rechace de inmediato."
+                        - paragraph
+                        - paragraph
+                          - StaticText "Pedí ayuda: Para este paso, "
+                          - StaticText "buscá"
+                          - StaticText " a alguien y "
+                          - StaticText "pedile"
+                          - StaticText " que te "
+                          - StaticText "saque"
+                          - StaticText " la foto usando la cámara trasera de tu celular, que tiene el triple de definición y enfoque."
+                        - paragraph
+                          - StaticText "El entorno perfecto: "
+                          - StaticText "Ponete"
+                          - StaticText " frente a un fondo limpio y una pared clara. "
+                          - StaticText "Evitá"
+                          - StaticText " que de fondo se vea ropa colgada, muebles desordenados o sombras extrañas. El foco visual "
+                          - StaticText "tenés"
+                          - StaticText " que ser vos y tu documento."
+                        - paragraph
+                          - StaticText "La postura y tus dedos: "
+                          - StaticText "Sostené"
+                          - StaticText " el documento justo al lado de tu mejilla, al mismo nivel de tu rostro. "
+                          - StaticText "Agarrá"
+                          - StaticText " el plástico por los bordes con la punta de los dedos. Es un error muy común tapar con el pulgar tu fecha de nacimiento o tu nombre. Si "
+                          - StaticText "tapás"
+                          - StaticText " un solo dato, el sistema te rebota."
+                        - paragraph
+                          - StaticText "Rostro despejado: "
+                          - StaticText "Sacate"
+                          - StaticText " la foto con la cara limpia, visible y buena luz natural de frente. Nada de anteojos de sol, gorras o pelo en la cara que te tape las facciones."
+                        - paragraph
+                        - paragraph
+                          - StaticText "🌐"
+                          - StaticText " 3. El último empujón: La Red Social de Respaldo"
+                        - paragraph
+                          - StaticText "Antes de enviar la solicitud, la plataforma te va a pedir que dejes el enlace a una red social externa (puede ser Instagram). Esto lo hacen para comprobar que "
+                          - StaticText "sos"
+                          - StaticText " una "
+                          - StaticText "persona"
+                          - StaticText " real y no un robot"
+                          - StaticText ", debes dejar la cuenta "
+                          - StaticText "pública"
+                          - StaticText ", con fotos tuyas hasta que te verifiquen."
+                        - paragraph
+                          - StaticText "⏳"
+                          - StaticText " 4. La espera (¡No te asustes!)"
+                        - paragraph
+                          - StaticText "Una vez que "
+                          - StaticText "apretás"
+                          - StaticText " el botón de enviar, tus datos entran en revisión."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "El proceso de aprobación suele tardar entre "
+                              - StaticText "24 y 48 horas"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Te va a llegar un correo electrónico avisándote si tu cuenta fue aprobada con éxito."
+                              - StaticText " Si seguiste todos los consejos anteriores (la cámara trasera, la pared clara y el documento nítido), vas a ver el cartel verde de "
+                              - StaticText "Aprobada"
+                              - StaticText " a la primera"
+                              - StaticText " y sino "
+                              - StaticText "volves"
+                              - StaticText " a intentarlo."
+                        - paragraph
+                        - paragraph
+                          - StaticText "MÓDULO 3: El Panel de Control: Tu Centro de Mandos "
+                          - StaticText "🕹️"
+                        - paragraph
+                          - StaticText "Sección 1: Tus Primeros Ajustes y el Menú Desplegable"
+                        - paragraph
+                          - StaticText "¡Felicitaciones! Tu cuenta ya está activa y verificada. Al ingresar por primera vez, es muy probable que la plataforma te aparezca completamente en inglés. No te preocupes ni intentes adivinar qué significa cada palabra: lo primero que vamos a hacer es poner el sistema en nuestro idioma para que trabajes con total comodidad."
+                        - paragraph
+                          - StaticText "Cómo cambiar la plataforma a "
+                          - StaticText "Español"
+                        - paragraph
+                          - StaticText "Para cambiar el idioma, vas a seguir esta ruta de tres clics:"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Abrí el menú:"
+                              - StaticText " "
+                              - StaticText "Hacé"
+                              - StaticText " clic en tu foto de perfil redonda que aparece arriba a la izquierda. "
+                              - StaticText "Se va a desplegar una barra lateral con muchas opciones."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Buscá"
+                              - StaticText " la palabra "
+                              - StaticText "Settings"
+                              - StaticText ":"
+                              - StaticText " En ese menú que se abrió, "
+                              - StaticText "buscá"
+                              - StaticText " el icono de la rueda dentada que dice "
+                              - StaticText "\""
+                              - StaticText "Settings"
+                              - StaticText "\""
+                              - StaticText " (Configuración) y "
+                              - StaticText "hacé"
+                              - StaticText " clic ahí."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Cambia el idioma ("
+                              - StaticText "Language"
+                              - StaticText "):"
+                              - StaticText " Dentro del nuevo menú, "
+                              - StaticText "buscá"
+                              - StaticText " la opción que dice "
+                              - StaticText "\""
+                              - StaticText "Language"
+                              - StaticText "\""
+                              - StaticText " (Idioma). Se va a abrir una lista con diferentes opciones: "
+                              - StaticText "buscala"
+                              - StaticText " y "
+                              - StaticText "seleccioná"
+                              - StaticText " "
+                              - StaticText "\""
+                              - StaticText "Español"
+                              - StaticText "\""
+                              - StaticText "."
+                        - paragraph
+                          - StaticText "¡Listo! "
+                          - StaticText "De forma automática, toda la página web se va a recargar en castellano."
+                          - StaticText " Ahora sí, cuando vuelvas a hacer clic en tu foto de perfil, vas a ver tu menú de control idéntico al que te voy a explicar acá abajo."
+                          - StaticText " "
+                          - StaticText "Paso a paso, para qué sirve cada rincón indispensable de tu plataforma:"
+                        - paragraph
+                          - StaticText "REGLA DE ORO:"
+                          - StaticText " Crea un nombre alternativo con el cual te sientas identificado y úsalo en todas tus plataformas. Ese será tu escudo de privacidad y tu mayor marca de poder"
+                          - StaticText ", así podrán encontrarte no solo en la "
+                          - StaticText "página"
+                          - StaticText " azul sino también en todas "
+                          - StaticText "las redes sociales."
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                          - StaticText "👤"
+                          - StaticText " 1. Mi Perfil"
+                        - paragraph
+                          - StaticText "Este es tu local, tu vidriera principal."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Al hacer clic acá, vas a ir directo a tu muro. Es el lugar donde los clientes entran a ver tu biografía, tus precios de suscripción y todo el contenido (fotos y videos) que vayas publicando. Es fundamental que entres seguido para revisar que la "
+                              - StaticText "estética de tu marca se vea impecable."
+                              - StaticText " "
+                              - StaticText "A"
+                              - StaticText "segúrate"
+                              - StaticText " de cargar un mínimo de 15 a 20 publicaciones con contenido variado, magnético y sugerente, pero jamás explícito. La meta es que cuando un suscriptor ingrese, encuentre un catálogo atractivo que justifique su atención. "
+                              - StaticText "Recordá"
+                              - StaticText " siempre la regla de oro del negocio: el contenido explícito, los desnudos y los videos pesados "
+                              - StaticText "se reservan exclusivamente para la venta bajo candado (PPV) o propinas. El muro libre es solo para tentar al cliente, no para regalar tu mercadería."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Truco de Visibilidad Continua:"
+                              - StaticText " "
+                              - StaticText "Asegúrate"
+                              - StaticText " de tener siempre entre 3 y 4 historias activas en tu perfil. Las plataformas premian la constancia: mantener tus historias al día garantiza que aparecerás en los primeros lugares de la barra de inicio de tus suscriptores cada vez que abran su cuenta."
+                        - paragraph
+                          - StaticText "👥"
+                          - StaticText " 2. Mis Referencias"
+                        - paragraph
+                          - StaticText "este botón te muestra los números duros de tu negocio: gráficos de tus ganancias mensuales, cuántos suscriptores activos "
+                          - StaticText "tenés"
+                          - StaticText ", qué publicaciones tuvieron más \"me gusta\" y el rendimiento financiero de tus mensajes privados."
+                        - paragraph
+                          - StaticText "🔖"
+                          - StaticText " 3. Colecciones"
+                        - paragraph
+                          - StaticText "Esta sección es una de las herramientas de marketing más potentes que vas a tener dentro de tu panel de creador."
+                          - StaticText " Sirve para clasificar, ordenar y etiquetar a tus suscriptores en base a su comportamiento, sus gustos y el dinero que gastan."
+                        - paragraph
+                          - StaticText "📅"
+                          - StaticText " 4. Archivo "
+                          - StaticText "( Contenido"
+                          - StaticText " Programado)"
+                        - paragraph
+                          - StaticText "Tu agenda de automatización y calendario de publicaciones."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Este rincón es clave para organizar tu tiempo. "
+                              - StaticText "Acá va"
+                              - StaticText " "
+                              - StaticText "todo lo que dejaste programado con día y hora exacta para que se publique solo"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Tu propio contenido:"
+                              - StaticText " "
+                              - StaticText "Podés"
+                              - StaticText " dedicar un solo día de la semana a subir fotos o videos y dejarlos agendados para que se vayan publicando de forma automática."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Publicidad cruzada (SFS):"
+                              - StaticText " También es el lugar donde vas a ver y controlar las campañas de publicidad cruzada "
+                              - StaticText "( SFS"
+                              - StaticText ") que coordines con otras creadoras para promocionarse mutuamente. Desde acá "
+                              - StaticText "monitoreás"
+                              - StaticText " qué días y en qué horarios salen esos anuncios compartidos para hacer crecer tu comunidad."
+                        - paragraph
+                        - paragraph
+                          - StaticText "🗄️"
+                          - StaticText " 5. Bóveda (Vault)"
+                        - paragraph
+                          - StaticText "Tu disco rígido secreto y el corazón del contenido."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Esta herramienta vale oro. Es un banco de almacenamiento masivo donde quedan guardadas de forma automática todas las fotos y videos que subís a tu muro, a tus mensajes masivos o a tus historias. Sirve para que no tengas que "
+                              - StaticText "volver a cargar un archivo desde tu celular si "
+                              - StaticText "querés"
+                              - StaticText " reutilizarlo: "
+                              - StaticText "entrás"
+                              - StaticText " a la Bóveda y lo "
+                              - StaticText "reenviás"
+                              - StaticText " desde ahí en un segundo."
+                        - paragraph
+                          - StaticText "⚙️"
+                          - StaticText " 6. Configuración"
+                        - paragraph
+                          - StaticText "El cerebro técnico y de seguridad de tu cuenta."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Desde acá controlamos todo lo que le da vida al negocio. Es el rincón sagrado donde vas a ir para ponerle el precio a tu suscripción mensual, configurar tu cuenta bancaria para cobrar y, lo más importante de todo, activar el "
+                              - StaticText "Geoblocking"
+                              - StaticText " (bloqueo geográfico) para blindar tu cuenta y que nadie de "
+                              - StaticText "tu"
+                              - StaticText " país pueda encontrarte."
+                        - paragraph
+                          - StaticText "Configuración de "
+                          - StaticText "Geobloqueo"
+                          - StaticText " (Tu Escudo de Privacidad)"
+                        - paragraph
+                          - StaticText "Si tu miedo es que un familiar, vecino, conocido o alguien de tu ciudad te reconozca, "
+                          - StaticText "tenés"
+                          - StaticText " una herramienta de élite a tu disposición: el "
+                          - StaticText "Bloqueo Geográfico ("
+                          - StaticText "Geoblocking"
+                          - StaticText ")"
+                          - StaticText " ."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Antes de subir tu primera foto, "
+                              - StaticText "andá"
+                              - StaticText " a la configuración"
+                              - StaticText ", privacidad y"
+                              - StaticText " seguridad y"
+                              - StaticText " luego bloque"
+                              - StaticText "ar país …"
+                              - StaticText "bloqueará por completo a tu país de residencia"
+                        - paragraph
+                        - paragraph
+                          - StaticText "🎙️"
+                          - StaticText " 7. Transmisiones (Live)"
+                        - paragraph
+                          - StaticText "Tus "
+                          - StaticText "shows"
+                          - StaticText " y encuentros en vivo."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Te permite transmitir video en tiempo real para tus suscriptores. Es una herramienta muy potente ya que "
+                              - StaticText "podés"
+                              - StaticText " hacer transmisiones privadas o públicas "
+                              - StaticText "donde te"
+                              - StaticText " pagan propinas en vivo por minuto"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "📑"
+                              - StaticText " 8. Declaraciones ("
+                              - StaticText "Statements"
+                              - StaticText ")"
+                        - paragraph
+                          - StaticText "Tu contador virtual y el registro de tu dinero."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Acá es donde vas a ver los números reales de tu empresa. Te muestra el historial detallado de cada dólar que ganaste, las propinas que te dejaron en los mensajes, los pagos de suscripciones y, lo más importante, el dinero que "
+                              - StaticText "tenés"
+                              - StaticText " acumulado disponible para retirar a tu cuenta bancaria."
+                        - paragraph
+                          - StaticText "📊"
+                          - StaticText " 9. Estadísticas"
+                        - paragraph
+                          - StaticText "El termómetro de tu negocio."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Te da los gráficos de rendimiento de tu perfil. Te muestra cuántos fans nuevos ganaste esta semana, qué "
+                              - StaticText "posteos"
+                              - StaticText " tuvieron más interacciones y de dónde viene el mayor flujo de dinero. Te sirve para entender qué le gusta más a tu audiencia y dónde apretar el acelerador para facturar más."
+                        - paragraph
+                          - StaticText "✍️"
+                          - StaticText " 10. Formularios de Liberación"
+                        - paragraph
+                          - StaticText "El blindaje legal para contenido compartido."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Si en algún momento decidís subir una foto o video donde aparezca otra persona (por ejemplo, los pies de un sumiso, las manos de otra creadora o una colaboración), la plataforma te exige por ley que esa persona firme un formulario de autorización. En esta sección es donde se gestionan y se suben esos permisos para que la página no te borre el contenido ni te penalice la cuent"
+                              - StaticText "a, también "
+                              - StaticText "podes"
+                              - StaticText " etiquetar directamente a otro creador o creadora y no se necesita el formulario."
+                        - paragraph
+                          - StaticText "💳"
+                          - StaticText " 11. Tus tarjetas"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "En esta sección es donde se carga una tarjeta de crédito o débito si vos "
+                              - StaticText "querés"
+                              - StaticText " comprar el contenido o suscribirte al perfil de otra creadora"
+                              - StaticText ". "
+                              - StaticText "Para tu rol como creadora no la vas a usar para recibir pagos, ya que esto es solo para "
+                              - StaticText "gastar"
+                              - StaticText " dentro de la plataforma."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "🏦"
+                              - StaticText " 12. Banco (para ganar)"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "El motor financiero de tu negocio."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Este es el botón más importante para tu bolsillo. Aquí es donde vas a realizar el proceso de vinculación de tu cuenta bancaria internacional, o el método de pago que elijas para que la plataforma te transfiera tus ganancias acumuladas. Una vez configurado este sector, el dinero que factures pasará directo de la pantalla a tu cuenta real."
+                              - StaticText " (lo explico "
+                              - StaticText "más"
+                              - StaticText " adelante)"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "❓"
+                              - StaticText " 13. Ayuda y soporte técnico"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Tu canal directo con la empresa."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Si "
+                              - StaticText "tenés"
+                              - StaticText " algún problema técnico, si un pago se retrasa, o si "
+                              - StaticText "tenés"
+                              - StaticText " alguna duda sobre las normas de la página. Te "
+                              - StaticText "comunicas"
+                              - StaticText " directamente."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "🌗"
+                              - StaticText " 14. Modo de luz / Modo oscuro"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "El ajuste visual para tus ojos."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Cambia el diseño estético de la pantalla. "
+                              - StaticText "Podes"
+                              - StaticText " elegir el fondo blanco (Modo de luz) o el fondo negro mate (Modo oscuro)."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "🚪"
+                              - StaticText " 15. Cerrar sesión"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "El botón de salida y seguridad."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Te desconecta completamente de la plataforma."
+                        - paragraph
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "💵"
+                              - StaticText " Sección Especial: "
+                              - StaticText "retiro de dinero"
+                              - StaticText " "
+                              - StaticText "(Cómo Cobrar tus "
+                              - StaticText "Dólares"
+                              - StaticText ")"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Una de las dudas más frecuentes al empezar es: "
+                              - StaticText "\"¿Cómo hago para que los dólares que gano me lleguen a mi mano y en mi moneda local?\""
+                              - StaticText ". Queremos darte la tranquilidad de que "
+                              - StaticText "podés"
+                              - StaticText " empezar a trabajar, recibir propinas y vender contenidos con candado desde el primer día"
+                              - StaticText ", aunque todavía no tengas una cuenta bancaria asociada. Todo el dinero que generes se va a ir acumulando de forma segura dentro de tu billetera de la plataforma hasta que decidas retirarlo."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Para las creadoras en Latinoamérica, la vía más rápida, segura y utilizada para retirar las ganancias es a través de la plataforma "
+                              - StaticText "Skrill"
+                              - StaticText ", para luego pasarlo a "
+                              - StaticText "Binance"
+                              - StaticText " y finalmente recibirlo en tu banco o billetera virtual local (como "
+                              - StaticText "Brubank"
+                              - StaticText ", Mercado Pago, etc.)."
+                        - paragraph
+                          - StaticText "🚨"
+                          - StaticText " ALERTA DE SEGURIDAD: Los Peligros de los Métodos Directos en Argentina"
+                        - paragraph
+                          - StaticText "Antes de pasar a configurar tu billetera internacional para retirar tus ganancias, es fundamental que hablemos de un error crítico que cometen el 90% de las creadoras principiantes por falta de información."
+                        - paragraph
+                          - StaticText "Cuando entras por primera vez a la sección "
+                          - StaticText "\"Banco (para ganar)"
+                          - StaticText "”,"
+                          - StaticText " la plataforma te va a mostrar opciones que parecen muy cómodas y tentadoras a simple vista, como "
+                          - StaticText "\"Transferencia bancaria local\""
+                          - StaticText " o "
+                          - StaticText "\"Transferencia directa de VISA"
+                          - StaticText "”."
+                        - paragraph
+                          - StaticText "A continuación, te explicamos por qué estas opciones son una verdadera trampa financiera para cualquier creador que resida en Argentina:"
+                        - paragraph
+                          - StaticText "❌"
+                          - StaticText " 1. Trampa N°1: Transferencia Bancaria Local (Vía "
+                          - StaticText "Pagomundo"
+                          - StaticText ")"
+                        - paragraph
+                          - StaticText "Esta opción te promete enviar tus dólares directamente a tu cuenta bancaria tradicional (como Banco Provincia, Galicia, Santander) o"
+                          - StaticText " "
+                          - StaticText "a billeteras virtuales como Mercado Pago."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "El peligro del "
+                              - StaticText "dólar"
+                              - StaticText " Oficial:"
+                              - StaticText " Al ingresar una transferencia del exterior a un banco argentino, las regulaciones locales obligan a pesificar esos fondos de forma automática. Te van a liquidar tus dólares al valor del "
+                              - StaticText "dólar "
+                              - StaticText "oficial"
+                              - StaticText ","
+                              - StaticText " perdiendo casi la mitad de tu dinero en comparación con el mercado paralelo (blue o MEP)."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Alerta AFIP y Bloqueos:"
+                              - StaticText " Recibir transferencias internacionales directas en un banco local o en Mercado Pago activa todas las alarmas impositivas. "
+                              - StaticText "El banco te va a congelar los fondos de inmediato y te va a exigir facturas de exportación de servicios y trámites burocráticos complejos para poder liberar tu plata."
+                        - paragraph
+                          - StaticText "❌"
+                          - StaticText " 2. Trampa N°2: Transferencia Directa de VISA"
+                        - paragraph
+                          - StaticText "Esta herramienta te ofrece transferir tus ganancias directo a tu tarjeta de débito o crédito VISA de siempre."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Pesificación Forzosa:"
+                              - StaticText " Al igual que la transferencia bancaria, el dinero se convierte obligatoriamente a pesos a la peor cotización del mercado."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Rechazos Automáticos:"
+                              - StaticText " Los sistemas de seguridad de las tarjetas emisoras en Argentina suelen rebotar estos pagos internacionales por \"movimientos sospechosos\", dejándote la tarjeta inhabilitada y obligándote a pasar horas al teléfono con soporte técnico para recuperar tus fondos."
+                        - paragraph
+                          - StaticText "👑"
+                          - StaticText " "
+                          - StaticText "REGLA DE ORO DE DINASTÍA:"
+                          - StaticText " En Argentina, todo lo que sea cobrar \"directo\" a cuentas locales es sinónimo de perder plata, regalar comisiones y arriesgar la privacidad de tu negocio."
+                        - paragraph
+                          - StaticText "Para mantener tus ganancias protegidas, cobrar el valor real del dólar del día y operar con total tranquilidad bajo el radar, en la academia utilizamos la única estrategia de elite comprobada: "
+                          - StaticText "El circuito "
+                          - StaticText "Skrill"
+                          - StaticText " "
+                          - StaticText "➡️"
+                          - StaticText " "
+                          - StaticText "Binance"
+                          - StaticText " "
+                          - StaticText "➡️"
+                          - StaticText " Cuenta Local."
+                        - paragraph
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "A continuación, "
+                              - StaticText "tenés"
+                              - StaticText " la guía de elite paso a paso para configurar tu pasarela de pagos sin cometer errores técnicos."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "🛠️"
+                              - StaticText " PASO 1: Creación Correcta de tu Cuenta Skrill"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "El mayor motivo por el cual las plataformas rebotan los pagos es por discrepancias en los datos de identidad. Para blindar tu cuenta, seguí estas reglas estrictas:"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "El Correo Electrónico:"
+                              - StaticText " "
+                              - StaticText "Registrate"
+                              - StaticText " en "
+                              - StaticText "Skrill"
+                              - StaticText " utilizando "
+                              - StaticText "el mismo mail exacto"
+                              - StaticText " que usaste para crear tu cuenta de "
+                              - StaticText "OnlyFans"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Nombres en Mayúsculas:"
+                              - StaticText " Al colocar tu nombre y apellido, "
+                              - StaticText "escribilos"
+                              - StaticText " "
+                              - StaticText "TODO EN MAYÚSCULAS"
+                              - StaticText ". Debe coincidir de forma idéntica con tu DNI y con los datos de verificación que pusiste al aprobar tu perfil de contenido. No omitas acentos, ni segundos nombres, ni letras."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "La Divisa:"
+                              - StaticText " Al momento de elegir la moneda de tu cuenta, "
+                              - StaticText "configurala"
+                              - StaticText " "
+                              - StaticText "sí o sí en DÓLARES (USD)"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "💻"
+                              - StaticText " PASO 2: Activación y Primer Depósito"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Para que "
+                              - StaticText "Skrill"
+                              - StaticText " se active y te permita verificar tu identidad, la plataforma te pide realizar un primer depósito inicial de seguridad de aproximadamente $5 USD."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "🚨"
+                              - StaticText " "
+                              - StaticText "ALERTA TÉCNICA DE DINASTÍA:"
+                              - StaticText " Este paso de fondeo inicial "
+                              - StaticText "tenés"
+                              - StaticText " que realizarlo "
+                              - StaticText "únicamente desde una "
+                              - StaticText "computadora "
+                              - StaticText "."
+                              - StaticText " Desde el navegador del celular el sistema suele fallar y "
+                              - StaticText "podes"
+                              - StaticText " tener problemas con los fondos."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Qué NO hacer:"
+                              - StaticText " No intentes depositar usando tarjetas de crédito o débito locales. El sistema financiero suele rebotarlas"
+                              - StaticText " y "
+                              - StaticText "te retienen el dinero"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "El método correcto:"
+                              - StaticText " "
+                              - StaticText "Entra"
+                              - StaticText " a "
+                              - StaticText "Skrill"
+                              - StaticText " desde la PC, "
+                              - StaticText "selecciona"
+                              - StaticText " la opción "
+                              - StaticText "\""
+                              - StaticText "Pague"
+                              - StaticText " en línea\""
+                              - StaticText " o "
+                              - StaticText "\"Depósito\""
+                              - StaticText " y elegí el método "
+                              - StaticText "RAPIPAGO"
+                              - StaticText ". ("
+                              - StaticText "Evita"
+                              - StaticText " Pago Fácil, ya que suele presentar demoras y errores de acreditación)."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "El Pago:"
+                              - StaticText " "
+                              - StaticText "Coloca"
+                              - StaticText " el equivalente a $5 USD, el sistema te va a generar un código o número de pago con el monto convertido a tus pesos locales. "
+                              - StaticText "Sacale"
+                              - StaticText " una foto a la pantalla, "
+                              - StaticText "acercate"
+                              - StaticText " a cualquier sucursal de Rapipago y "
+                              - StaticText "abonalo"
+                              - StaticText " en efectivo. Se te acreditará al instante en tu cuenta de "
+                              - StaticText "Skrill"
+                              - StaticText " en dólares."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "📱"
+                              - StaticText " PASO 3: Verificación de Identidad y Blindaje"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Una vez que ves los $5 USD reflejados en tu balance, vas a descargar la aplicación de "
+                              - StaticText "Skrill"
+                              - StaticText " en tu celular para completar la seguridad de tu cuenta:"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Identidad:"
+                              - StaticText " La "
+                              - StaticText "app"
+                              - StaticText " te pedirá tomarle una foto a tu DNI de frente y dorso, y una "
+                              - StaticText "selfie"
+                              - StaticText " para corroborar que "
+                              - StaticText "sos"
+                              - StaticText " una persona real."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Verificación de Domicilio:"
+                              - StaticText " Te van a solicitar un documento que compruebe que vivís en la misma dirección que figura en tu documento. "
+                              - StaticText "Podes"
+                              - StaticText " subir:"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Un resumen de tarjeta de crédito o débito."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Un impuesto público a tu nombre (luz, gas, internet)."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Cuando tu perfil de Skrill sea aprobado de forma oficial, vas a ver un "
+                              - StaticText "círculo verde"
+                              - StaticText " al lado de tu usuario. ¡Felicidades! Tu pasarela ya está blindada."
+                        - paragraph
+                          - StaticText "🔗"
+                          - StaticText " PASO 4: Vinculación final con tu Plataforma"
+                        - paragraph
+                          - StaticText "Con tu cuenta de "
+                          - StaticText "Skrill"
+                          - StaticText " activa y verificada, el último paso es conectarla a tu centro de mandos para empezar a retirar:"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Entrá"
+                              - StaticText " a tu panel de "
+                              - StaticText "On"
+                              - StaticText "lyFans"
+                              - StaticText ", abrí el menú lateral y dirígete a la sección que dice "
+                              - StaticText "Banco"
+                              - StaticText " (Add Bank / "
+                              - StaticText "Banking"
+                              - StaticText ")."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Seleccioná"
+                              - StaticText " el método de pago alternativo "
+                              - StaticText "Skrill"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Colocá"
+                              - StaticText " los datos y el correo de tu cuenta de "
+                              - StaticText "Skrill"
+                              - StaticText " verificada."
+                        - paragraph
+                          - StaticText "¡Listo! A partir de acá, los dólares de tus propinas, suscripciones y chats se transferirán a tu cuenta de "
+                          - StaticText "Skrill"
+                          - StaticText ". Desde ahí, utilizando la plataforma "
+                          - StaticText "Binance"
+                          - StaticText ", vas a poder pasar esos dólares al mercado P2P para enviártelos directo a tu banco de preferencia en pesos (como "
+                          - StaticText "Brubank"
+                          - StaticText ", Mercado Pago o tu CBU local) al valor del dólar del día."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "📺"
+                              - StaticText " "
+                              - StaticText "¿Cómo pasar tus dólares a pesos argentinos en tu cuenta bancaria o "
+                              - StaticText "a Mercado Pago"
+                              - StaticText "?"
+                              - StaticText " Para hacer este último paso (el fondeo de "
+                              - StaticText "Skrill"
+                              - StaticText " a tu moneda local a través del mercado P2P de "
+                              - StaticText "Binance"
+                              - StaticText "), les dejamos este videotutorial exclusivo paso a paso para que se guíen de manera visual y no cometan errores: "
+                              - StaticText "👉"
+                              - StaticText " "
+                              - link "Ver Tutorial de Fondeo P2P en Binance" [ref=e96]
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - link "https://www.youtube.com/watch?v=tK7roX-D6HE&t=229s" [ref=e97]
+                        - paragraph
+                          - StaticText "💳"
+                          - StaticText " Instructivo de Elite: Cómo Vincular "
+                          - StaticText "Skrill"
+                          - StaticText " a "
+                          - StaticText "Binance"
+                          - StaticText " de Forma Directa (Vía Cripto)"
+                        - paragraph
+                          - StaticText "Si preferís no usar el mercado P2P y "
+                          - StaticText "querés"
+                          - StaticText " retirar tus dólares de "
+                          - StaticText "Skrill"
+                          - StaticText " directo a "
+                          - StaticText "Binance"
+                          - StaticText " convertidos en criptomonedas, "
+                          - StaticText "podés"
+                          - StaticText " hacer una transferencia directa usando "
+                          - StaticText "USDT (Tether)"
+                          - StaticText ", que es el dólar digital."
+                        - paragraph
+                          - StaticText "Seguí este paso a paso para hacer la vinculación sin errores:"
+                        - paragraph
+                          - StaticText "1️"
+                          - StaticText "⃣"
+                          - StaticText " Paso 1: Obtener la dirección de depósito en "
+                          - StaticText "Binance"
+                        - paragraph
+                          - StaticText "Para que "
+                          - StaticText "Skrill"
+                          - StaticText " sepa a dónde enviar tus fondos, primero "
+                          - StaticText "necesitas"
+                          - StaticText " buscar tu \"código de caja\" dentro de "
+                          - StaticText "Binance"
+                          - StaticText ":"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Ingresa"
+                              - StaticText " a tu aplicación de "
+                              - StaticText "Binance"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Anda"
+                              - StaticText " a la opción "
+                              - StaticText "Depositar"
+                              - StaticText " y luego "
+                              - StaticText "selecciona"
+                              - StaticText " "
+                              - StaticText "Depositar Cripto"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "En el buscador de "
+                              - StaticText "Moneda"
+                              - StaticText ", elegí "
+                              - StaticText "USDT"
+                              - StaticText " (Tether)."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "En la selección de "
+                              - StaticText "Red"
+                              - StaticText ", elegí sí o sí "
+                              - StaticText "Ethereum (ERC20)"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "El sistema te va a mostrar un código largo de números y letras (tu dirección de depósito). "
+                              - StaticText "Toca"
+                              - StaticText " el botón de "
+                              - StaticText "Copiar dirección"
+                              - StaticText "."
+                        - paragraph
+                          - StaticText "⚠️"
+                          - StaticText " "
+                          - StaticText "ALERTA DE SEGURIDAD DE DINASTÍA:"
+                          - StaticText " "
+                          - StaticText "Asegúrate"
+                          - StaticText " de seleccionar únicamente la red "
+                          - StaticText "Ethereum (ERC20)"
+                          - StaticText " tanto en "
+                          - StaticText "Binance"
+                          - StaticText " como en "
+                          - StaticText "Skrill"
+                          - StaticText ". Si elegís cualquier otra red por error, los fondos se perderán en el camino y no se podrán recuperar."
+                        - paragraph
+                          - StaticText "2️"
+                          - StaticText "⃣"
+                          - StaticText " Paso 2: Enviar el dinero desde "
+                          - StaticText "Skrill"
+                        - paragraph
+                          - StaticText "Con la dirección ya copiada, vas a realizar el envío desde tu billetera de cobros:"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Ingresa"
+                              - StaticText " a tu cuenta de "
+                              - StaticText "Skrill"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Hace"
+                              - StaticText " clic en el botón "
+                              - StaticText "Enviar"
+                              - StaticText " y "
+                              - StaticText "selecciona"
+                              - StaticText " "
+                              - StaticText "Cartera de criptomonedas"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Configura"
+                              - StaticText " los datos del envío de la siguiente manera:"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Moneda:"
+                              - StaticText " USDT"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Red:"
+                              - StaticText " Ethereum (ERC20)"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Cantidad:"
+                              - StaticText " "
+                              - StaticText "Coloca"
+                              - StaticText " el monto en dólares que "
+                              - StaticText "quer"
+                              - StaticText "e"
+                              - StaticText "s"
+                              - StaticText " transferir."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "En el tipo de destino, "
+                              - StaticText "selecciona"
+                              - StaticText " "
+                              - StaticText "Binance"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Pegá"
+                              - StaticText " la dirección de depósito que copiaste en el Paso 1."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "revisa"
+                              - StaticText " que todo coincida, "
+                              - StaticText "confirma"
+                              - StaticText " la operación y presion"
+                              - StaticText "a"
+                              - StaticText " "
+                              - StaticText "Enviar"
+                              - StaticText "."
+                        - paragraph
+                          - StaticText "3️"
+                          - StaticText "⃣"
+                          - StaticText " Paso 3: Acreditación y Recomendación de Elite"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Confirmación:"
+                              - StaticText " La transacción puede tardar unos minutos en procesarse en la red. Una vez completada, vas a ver tus USDT impactados directamente en tu balance de "
+                              - StaticText "Binance"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "💎"
+                              - StaticText " "
+                              - StaticText "Consejo de Profesional:"
+                              - StaticText " Antes de enviar montos grandes o retirar las ganancias de todo tu mes, "
+                              - StaticText "hace"
+                              - StaticText " siempre una prueba con una cantidad mínima (el mínimo que te permita la plataforma). "
+                              - StaticText "Una vez que verifiques que llegó bien y que hiciste todo el caminito de forma correcta, recién ahí transferí el resto del capital."
+                        - paragraph
+                          - StaticText "."
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                          - StaticText "Modulo 4"
+                          - StaticText " La Barra de Herramientas (Cómo armar tus publicaciones)"
+                        - paragraph
+                          - StaticText "Cuando vayas a tu perfil o al inicio y hagas clic en el recuadro que dice "
+                          - StaticText "\"Escribir nueva publicación...\""
+                          - StaticText ", se va a desplegar una fila de pequeños iconos abajo del texto. Esta barra de herramientas es tu timón para cargar contenido, ponerle precio, armar encuestas o dejar el material programado."
+                        - paragraph
+                          - StaticText "Acá "
+                          - StaticText "tenés"
+                          - StaticText " el mapa de izquierda a derecha para que sepas qué hace cada icono:"
+                        - paragraph
+                          - StaticText "🖼️"
+                          - StaticText " 1. Icono de Imagen (Paisaje)"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Es el botón para subir fotos directamente desde la galería de tu celular o de tu computadora. "
+                              - StaticText "Podes"
+                              - StaticText " seleccionar una o varias imágenes para armar una galería en un mismo posteo."
+                        - paragraph
+                          - StaticText "📹"
+                          - StaticText " 2. Icono de Cámara de Video"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Sirve para cargar tus archivos de video. Al igual que con las fotos, "
+                              - StaticText "seleccionas"
+                              - StaticText " el video que grabaste y se sube a la publicación."
+                        - paragraph
+                          - StaticText "🎙️"
+                          - StaticText " 3. Icono de Micrófono"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Te permite grabar o subir notas de voz."
+                        - paragraph
+                          - StaticText "🗄️"
+                          - StaticText " 4. Icono de Bóveda (Foto con un reloj/candado)"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Este botón te da acceso directo a tu "
+                              - StaticText "Bóveda"
+                              - StaticText ". Si "
+                              - StaticText "querés"
+                              - StaticText " republicar una foto vieja, o usar un video que ya tenías guardado en tu base de datos sin tener que volver a gastar datos subiéndolo desde el celular, toc"
+                              - StaticText "as"
+                              - StaticText " acá, lo elegís de tu carpeta y se carga al instante."
+                        - paragraph
+                          - StaticText "📊"
+                          - StaticText " 5. Icono de Gráfico de Barras (Encuesta)"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Sirve para crear encuestas interactivas para tus fans. "
+                              - StaticText "Podés"
+                              - StaticText " preguntarles cosas como: "
+                              - StaticText "¿Qué fetiche quieren ver en el próximo video?"
+                              - StaticText " o "
+                              - StaticText "¿Qué outfit prefieren para mi sesión de "
+                              - StaticText "fotos?"
+                              - StaticText " Es ideal para generar"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "❓"
+                              - StaticText " 6. Icono de Pregunta"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Te permite configurar publicaciones con"
+                              - StaticText " encuestas"
+                              - StaticText " donde el usuario "
+                              - StaticText "puede interactuar"
+                              - StaticText "."
+                        - paragraph
+                          - StaticText "⏳"
+                          - StaticText " 7. Icono de Reloj de Arena (Vencimiento del Post)"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Sirve para ponerle una \"fecha de caducidad\" a tu publicación. Si "
+                              - StaticText "querés"
+                              - StaticText " subir una foto que solo esté disponible por 24 o 48 horas (como una promoción relámpago o un adelanto exclusivo), "
+                              - StaticText "tocás"
+                              - StaticText " acá y "
+                              - StaticText "configuras"
+                              - StaticText " el tiempo. Pasado ese plazo, el posteo se borra solo del muro."
+                              - StaticText " Sirve también para hacer SFS."
+                        - paragraph
+                          - StaticText "📅"
+                          - StaticText " 8. Icono de Calendario con Tilde (Programar Publicación)"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Este botón conecta directo con lo que vimos en la sección anterior sobre el "
+                              - StaticText "Archivo"
+                              - StaticText ". Al tocar este calendario, elegís el día y la hora exacta del futuro en la que "
+                              - StaticText "querés"
+                              - StaticText " que se suba este posteo. Le das \"Aceptar\" y la plataforma lo guarda en la lista de espera para publicarlo solo."
+                        - paragraph
+                          - StaticText "💬"
+                          - StaticText " 9. Los Tres Puntos (...)"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Abre opciones secundarias de la publicación, como añadir "
+                              - StaticText "precio a una "
+                              - StaticText "publicación,objetivo"
+                              - StaticText " de "
+                              - StaticText "recaudación, etiquetar a otros creadores o formato de texto"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "🎙️"
+                              - StaticText " 10. TRANSMISIÓN EN VIVO ((•))"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Es el botón de acceso rápido para prender la cámara e iniciar un "
+                              - StaticText "Show"
+                              - StaticText " Live en vivo para tus suscriptores en ese preciso momento, notificando a todos tus fans para que entren a verte."
+                        - paragraph
+                          - StaticText "📸"
+                          - StaticText " 11. Cómo subir una Historia ("
+                          - StaticText "Stories"
+                          - StaticText ")"
+                        - paragraph
+                          - StaticText "Aunque no aparezca directamente adentro del cuadro de texto común, al lado de tu foto de perfil en la pantalla de inicio o en tu muro vas a ver un círculo con el signo "
+                          - StaticText "\"+\""
+                          - StaticText " que dice "
+                          - StaticText "\"Añadir a mi historia\""
+                          - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Sirve para subir fotos o videos cortos que "
+                              - StaticText "solo duran 24 horas visibles"
+                              - StaticText " y después desaparecen por completo."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Tu estrategia de elite:"
+                              - StaticText " "
+                              - StaticText "Las Historias,"
+                              - StaticText " "
+                              - StaticText "se usan para el \"día a día\": una foto rápida mostrando tus uñas, tus zapatos, un saludo de buenos días, o un adelanto muy cortito de un video para dejarlos con las ganas. Es la herramienta perfecta para generar urgencia y hacer que los sumisos entren a tu perfil varias veces al día para ver qué subiste antes de que se borre."
+                        - paragraph
+                          - StaticText "MÓDULO "
+                          - StaticText "5"
+                          - StaticText ":"
+                          - StaticText " "
+                          - StaticText "Perfil e Identidad de Alto Valor "
+                          - StaticText "💎"
+                        - paragraph
+                          - StaticText "Sección 1: Identidad Digital y Seguridad Visual (Para perfiles Vainilla y "
+                          - StaticText "Femdom"
+                          - StaticText ")"
+                        - paragraph
+                          - StaticText "Tu cuenta ya está aprobada y "
+                          - StaticText "sabes"
+                          - StaticText " usar el panel, pero ahora está vacía. Es un lienzo en blanco. Antes de recibir a tu primer suscriptor, "
+                          - StaticText "tenés"
+                          - StaticText " que construir tu personaje"
+                          - StaticText ","
+                          - StaticText " "
+                          - StaticText "tu"
+                          - StaticText " marca. En esta industria, tu nombre, tu foto de perfil y tu portada no son simples adornos: son las herramientas que van a definir tu estilo de contenido, filtrar al público correcto y hacer que los clientes quieran sacar la billetera."
+                        - paragraph
+                          - StaticText "🎭"
+                          - StaticText " 1. El Nombre Artístico (Tu Nombre de Marca)"
+                        - paragraph
+                          - StaticText "Elegi"
+                          - StaticText " "
+                          - StaticText "un pseudónimo "
+                          - StaticText "o nombre "
+                          - StaticText "que se adapte perfectamente al tipo de perfil que vas a tener:"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Si "
+                              - StaticText "hacés"
+                              - StaticText " contenido Vainilla (Modelaje, sensual, lencería):"
+                              - StaticText " "
+                              - StaticText "Busca"
+                              - StaticText " nombres que suenen dulces, sexis, frescos o elegantes en inglés o de alcance internacional "
+                              - StaticText "Podes"
+                              - StaticText " combinarlo con un apellido artístico fantasioso o dejar el nombre solo si es llamativo."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Si "
+                              - StaticText "haces"
+                              - StaticText " contenido "
+                              - StaticText "FemDom"
+                              - StaticText " (Dominación / Fetiche):"
+                              - StaticText " "
+                              - StaticText "Busca"
+                              - StaticText " nombres imperativos, aristocráticos o mitológicos que denoten autoridad inmediata y se entiendan en el mercado "
+                              - StaticText "global. El"
+                              - StaticText " nombre ya tiene que marcar quién manda."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "🚨"
+                              - StaticText " El secreto de elite para el nombre de usuario (@usuario):"
+                              - StaticText " Debe ser "
+                              - StaticText "en inglés"
+                              - StaticText " y muy fácil de encontrar para el suscriptor. "
+                              - StaticText "Evitá"
+                              - StaticText " a toda costa usar el guion "
+                              - StaticText "bajo "
+                              - StaticText "."
+                              - StaticText " El guion bajo hace que el nombre sea molesto de escribir, difícil de recordar y arruina las búsquedas cuando un cliente te quiere recomendar. Si tu nombre artístico ya está usado, en lugar de meterle guiones bajos o números, "
+                              - StaticText "sumale"
+                              - StaticText " palabras profesionales en inglés al final (ejemplo"
+                              - StaticText " "
+                              - StaticText "Goddes"
+                              - StaticText "s"
+                              - StaticText ", Queen"
+                              - StaticText "). Que suene limpio, fluido y de categoría superior."
+                        - paragraph
+                          - StaticText "👤"
+                          - StaticText " 2. Tu Foto de Perfil: Reglas Estrictas y Elección de Rostro"
+                        - paragraph
+                          - StaticText "Mostrar o no mostrar el rostro es "
+                          - StaticText "100% una elección personal de cada alumna"
+                          - StaticText ". "
+                          - StaticText "Podes"
+                          - StaticText " armar un perfil súper exitoso dando la cara desde el primer día, o "
+                          - StaticText "podés"
+                          - StaticText " elegir el camino del misterio si preferís resguardar tu privacidad. Ambas opciones son totalmente válidas y facturan de igual manera."
+                        - paragraph
+                          - StaticText "Sin embargo, para la foto de "
+                          - StaticText "perfil"
+                          - StaticText ", "
+                          - StaticText "la"
+                          - StaticText " plataforma tiene "
+                          - StaticText "reglas muy estrictas "
+                          - StaticText "que "
+                          - StaticText "tenés"
+                          - StaticText " que cumplir para que no te penalicen la cuenta:"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Prohibido los desnudos:"
+                              - StaticText " La foto de perfil jamás puede contener desnudos explícitos. Tiene que ser una foto apta para todo público."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Prohibido fotos de espaldas:"
+                              - StaticText " Al menos al principio, no pongas una foto totalmente de espaldas donde no se reconozca una silueta clara de frente o de perfil. La plataforma busca identificar que la cuenta pertenece a una creadora real en su carta de presentación"
+                              - StaticText "."
+                        - paragraph
+                          - StaticText "🖼️"
+                          - StaticText " 3. La Foto de Portada (Banner)"
+                        - paragraph
+                          - StaticText "La portada es el cartel gigante de tu local a la calle. Es lo primero que impacta visualmente al usuario cuando hace clic en tu enlace."
+                        - paragraph
+                          - StaticText "Sin importar el nicho"
+                          - StaticText " que elijas"
+                          - StaticText ", la imagen tiene que ser de alta definición y estar adaptada al formato horizontal estirado de la web. Un banner pixelado, borroso o mal recortado destruye instantáneamente el valor de tu suscripción."
+                        - paragraph
+                          - StaticText "Sección 2: El Arte de Redactar tu Biografía (Tu Carta de Presentación)"
+                        - paragraph
+                          - StaticText "Una vez que el cliente entró atraído por tus fotos de perfil y portada, lo primero que va a leer es tu biografía. Si este texto es aburrido, genérico o está mal escrito, la venta se cae. Tu descripción tiene que ser magnética, concisa, estar "
+                          - StaticText "en inglés"
+                          - StaticText " (para el mercado internacional"
+                          - StaticText ", que es el que nos importa"
+                          - StaticText ") y reflejar con exactitud qué tipo de experiencia va a encontrar el suscriptor en tu muro."
+                        - paragraph
+                          - StaticText "🌸"
+                          - StaticText " Opción A: La Biografía Vainilla (Sensual, Coqueta y Atractiva)"
+                        - paragraph
+                          - StaticText "Si tu perfil está enfocado al contenido se"
+                          - StaticText "x"
+                          - StaticText "ual tradicional, tu biografía debe transmitir"
+                          - StaticText " eso"
+                          - StaticText ". El suscriptor tiene que sentir que al pagar la entrada va a acceder a tu lado más íntimo y privado."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "El Gancho Inicial:"
+                              - StaticText " "
+                              - StaticText "Arrancá"
+                              - StaticText " con un saludo "
+                              - StaticText "beboteando"
+                              - StaticText " o una frase que los haga sentir especiales por estar ahí."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Qué incluir en el texto:"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Una breve descripción de tu personalidad (ejemplo: "
+                              - StaticText "“"
+                              - StaticText "Beba"
+                              - StaticText " tímida pero "
+                              - StaticText "caliente"
+                              - StaticText " de internet”"
+                              - StaticText ")."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Qué van a encontrar adentro (fotos exclusivas, videos "
+                              - StaticText "privados"
+                              - StaticText ", charlas "
+                              - StaticText "calientes "
+                              - StaticText "por mensaje privado)."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Una invitación clara a la acción (ejemplo: "
+                              - StaticText "“"
+                              - StaticText "Háblame"
+                              - StaticText " al privado,"
+                              - StaticText " estoy lista para jugar"
+                              - StaticText "”"
+                              - StaticText ")."
+                        - paragraph
+                          - StaticText "Opción B: La Biografía "
+                          - StaticText "FemDom"
+                          - StaticText " / Fetiche (Autoridad y Reglas del Local)"
+                        - paragraph
+                          - StaticText "En el universo de la dominación y los fetiches, la biografía cambia radicalmente. Aquí no "
+                          - StaticText "buscás"
+                          - StaticText " ser dulce ni cercana; "
+                          - StaticText "busca"
+                          - StaticText "s "
+                          - StaticText "marcar la cancha de entrada"
+                          - StaticText ". Tu texto debe destilar superioridad, autoridad y dejar en claro que el acceso a vos es un privilegio"
+                          - StaticText "."
+                        - paragraph
+                          - StaticText "El Filtro de Entrada:"
+                          - StaticText " Lo primero que "
+                          - StaticText "tenés"
+                          - StaticText " que dejar claro es que no "
+                          - StaticText "toleras"
+                          - StaticText " perder el tiempo."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Qué incluir en el texto:"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Tu título de autoridad (Goddess, "
+                              - StaticText "Mistress"
+                              - StaticText ", E)."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Las reglas estrictas del perfil"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Los fetiches o temáticas principales que "
+                              - StaticText "manejas"
+                              - StaticText " en tu muro ("
+                              - StaticText "Findom"
+                              - StaticText ", "
+                              - StaticText "SPH"
+                              - StaticText ","
+                              - StaticText "JOI"
+                              - StaticText ", CEI"
+                              - StaticText " Adoración de pies, Chas"
+                              - StaticText "tity"
+                              - StaticText ", etc.)."
+                        - paragraph
+                          - StaticText "📌"
+                          - StaticText " Tips de Elite para Ambas Biografías"
+                        - paragraph
+                          - StaticText "Usá"
+                          - StaticText " emojis con estrategia: No satures el texto de dibujitos. "
+                          - StaticText "Usá"
+                          - StaticText " emojis elegantes que sumen a la estética (flores o destellos para Vainilla; coronas, cadenas o billetes para "
+                          - StaticText "FemDom"
+                          - StaticText ")."
+                        - paragraph
+                          - StaticText "Menos,"
+                          - StaticText " es más: No escribas un testamento. El cliente no lee textos largos; escanea. El mensaje tiene que ser directo, cortito y contundente."
+                        - paragraph
+                          - StaticText "El Menú de Servicios: Al final de la biografía, es excelente dejar una lista rápida de lo que ofreces (ejemplo: "
+                          - StaticText "Custom"
+                          - StaticText " videos, Sexting, Audio notes), para que el usuario sepa de entrada todo lo que te puede comprar adentro."
+                        - paragraph
+                          - StaticText "Sección 3: Estrategia de Apertura: El Poder de la Cuenta Gratis (Free)"
+                        - paragraph
+                          - StaticText "Al momento de lanzar tu perfil al mercado, existen dos caminos: abrir una cuenta paga o abrir una cuenta gratis. Para una creadora que inicia desde el absoluto cero, sin seguidores previos y sin una comunidad que la conozca, la recomendación de elite es comenzar con una Cuenta Gratis (Free)."
+                        - paragraph
+                        - paragraph
+                          - StaticText "🧲"
+                          - StaticText " ¿Por qué comenzar con una Cuenta Free?"
+                        - paragraph
+                          - StaticText "Derriba la barrera de entrada: Los usuarios en internet no pagan por ver el contenido de alguien que no conocen. Una cuenta gratis te permite recibir un flujo masivo de suscriptores curiosos en tiempo récord."
+                        - paragraph
+                          - StaticText "Tu base de datos de clientes: Es mucho más fácil convencer a una persona de que le dé clic al botón de \"Suscribirse gratis\" para empezar a ver tu perfil. "
+                          - StaticText "Así es como vas a construir tus primeros cientos de fans de la nada."
+                        - paragraph
+                          - StaticText "Dónde se hace la verdadera plata: Que la cuenta sea gratis no significa que regales tu trabajo. El muro libre es solo el anzuelo. El verdadero dinero de este negocio se genera adentro: vendiendo videos exclusivos con candado a través de los mensajes privados, ofreciendo contenido personalizado y recibiendo propinas o tributos de los fans que quieren interactuar con vos."
+                        - paragraph
+                          - StaticText "🚨"
+                          - StaticText " La Regla de Oro del "
+                          - StaticText "Feed"
+                          - StaticText " Público"
+                        - paragraph
+                          - StaticText "El hecho de que tu cuenta sea gratuita implica que cualquiera puede entrar a mirar tu muro principal. Por lo tanto, "
+                          - StaticText "tenés"
+                          - StaticText " que cuidar tu"
+                          - StaticText "s publicaciones"
+                          - StaticText ":"
+                        - paragraph
+                          - StaticText "En tu "
+                          - StaticText "feed"
+                          - StaticText " principal no "
+                          - StaticText "podés"
+                          - StaticText " publicar absolutamente nada que esté regalado."
+                        - paragraph
+                          - StaticText "El "
+                          - StaticText "feed"
+                          - StaticText " se usa para mostrar contenido sugerente, fotos estéticas en lencería, adelantos muy cortitos, encuestas o textos atrapantes. Todo lo demás, va bloqueado con candado para que paguen por verlo."
+                        - paragraph
+                        - paragraph
+                          - StaticText "⚙️"
+                          - StaticText " Paso a Paso: Cómo Configurar tu Mensaje de Bienvenida Automatizado"
+                        - paragraph
+                          - StaticText "Para automatizar tu perfil y recibir a cada usuario que se une a tu cuenta gratis, vas a dejar programado un mensaje que la plataforma les enviará de forma automática apenas se suscriban. Esto sirve para abrir el canal de comunicación de inmediato."
+                        - paragraph
+                          - StaticText "Seguí estos pasos en tu panel:"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "entra"
+                              - StaticText " a tu cuenta y abrí el menú lateral izquierdo."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Busca"
+                              - StaticText " la sección de "
+                              - StaticText "Configuración"
+                              - StaticText " ("
+                              - StaticText "Settings"
+                              - StaticText ") y luego "
+                              - StaticText "ingresa"
+                              - StaticText " a "
+                              - StaticText "conversaciones"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Activa"
+                              - StaticText " la opción que dice "
+                              - StaticText "\"Mensaje de Bienvenida automatizado para nuevos suscriptores\""
+                              - StaticText " ("
+                              - StaticText "Automated"
+                              - StaticText " Welcome "
+                              - StaticText "Message"
+                              - StaticText ")."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "En el cuadro de texto, vas a redactar un saludo inicial "
+                              - StaticText "en inglés"
+                              - StaticText " según el estilo de tu perfil."
+                        - paragraph
+                          - StaticText "🚨"
+                          - StaticText " "
+                          - StaticText "REGLA DE ORO DE ELITE (Lo que NO te aconsejo hacer):"
+                        - paragraph
+                          - StaticText "Enviar un contenido con candado (PPV) pago en este primer mensaje. Creer que porque se suscribieron te van a pagar un candado de entrada a ciegas es un error que destruye tu negocio. Si les "
+                          - StaticText "pones"
+                          - StaticText " un pago de entrada, el usuario se asusta, no te habla y la comunicación se corta antes de empezar. "
+                          - StaticText "El primer mensaje debe ser abierto, libre y magnético, diseñado exclusivamente para que el cliente te responda y empiece la interacción."
+                        - paragraph
+                          - StaticText "📝"
+                          - StaticText " ¿Qué poner en el mensaje de bienvenida?"
+                        - paragraph
+                          - StaticText "Tu saludo automático tiene que estar alineado con la identidad y el personaje que decidiste armar para tu marca"
+                          - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Una vez redactado tu saludo de apertura, dale clic a "
+                              - StaticText "Guardar cambios"
+                              - StaticText "."
+                        - paragraph
+                          - StaticText "💡"
+                          - StaticText " "
+                          - StaticText "Nota de la Academia:"
+                          - StaticText " No te preocupes si todavía no "
+                          - StaticText "sabés"
+                          - StaticText " cuál es tu perfil ideal. "
+                          - StaticText "Más adelante en la academia vamos a ver en detalle cuáles son los diferentes perfiles que existen y cuáles son los que más monetizan."
+                          - StaticText " "
+                          - StaticText "Además, vas a tener una charla personalizada conmigo para analizar tu caso, guiarte paso a paso y elegir juntas el personaje que mejor se adapte a vos y a tu personalidad."
+                        - paragraph
+                          - StaticText "MÓDULO "
+                          - StaticText "6"
+                          - StaticText ": Guía de Tarifas y Estrategia de Venta Dinámica"
+                        - paragraph
+                          - StaticText "🗄️"
+                          - StaticText " 1. Tarifas de Bóveda (Contenido Pregrabado)"
+                        - paragraph
+                          - StaticText "Este es el material que ya "
+                          - StaticText "tenés"
+                          - StaticText " listo y guardado. Lo "
+                          - StaticText "enviás"
+                          - StaticText " por chat masivo o privado como venta directa (PPV):"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Videos "
+                              - StaticText "Femdom"
+                              - StaticText " "
+                              - StaticText "🔑"
+                              - StaticText " "
+                              - StaticText "(SPH, humillación, "
+                              - StaticText "sissy"
+                              - StaticText ", "
+                              - StaticText "cuck"
+                              - StaticText ", etc."
+                              - StaticText ")"
+                              - StaticText " :"
+                              - StaticText " Entre "
+                              - StaticText "$35 y $45 USD por 2 minutos"
+                              - StaticText " para arrancar. Si el cliente responde bien y sigue comprando, le vas aumentando el valor en los próximos paquetes o pidiéndole propinas "
+                              - StaticText "( "
+                              - StaticText "tips"
+                              - StaticText " )."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Videos Explícitos "
+                              - StaticText "💦"
+                              - StaticText " :"
+                              - StaticText " "
+                              - StaticText "$35 USD por cada minuto"
+                              - StaticText " de video."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Packs de Fotos "
+                              - StaticText "📸"
+                              - StaticText " :"
+                              - StaticText " Entre "
+                              - StaticText "$3 y $5 USD cada 5 fotos"
+                              - StaticText " aproximadamente."
+                        - paragraph
+                          - StaticText "🎨"
+                          - StaticText " 2. Contenido personalizado (Pedidos Personalizados)"
+                        - paragraph
+                          - StaticText "Son videos especiales a pedido, donde el cliente elige la temática o quiere que digas su nombre."
+                        - paragraph
+                          - StaticText "⚠️"
+                          - StaticText " "
+                          - StaticText "REGLA DE ORO DE LA EMPERATRIZ:"
+                          - StaticText " NUNCA grabes ni envía un contenido personalizado si no te pagaron la "
+                          - StaticText "TOTALIDAD"
+                          - StaticText " por adelantado mediante una propina. Evite pérdidas de tiempo y estafas. Primero la plata, después el trabajo."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Femdom"
+                              - StaticText " "
+                              - StaticText "Custom"
+                              - StaticText " "
+                              - StaticText "🔑"
+                              - StaticText " :"
+                              - StaticText " "
+                              - StaticText "$60 a $80 USD"
+                              - StaticText " por un video de 2 a 3 minutos."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Explícito personalizado "
+                              - StaticText "💦"
+                              - StaticText " :"
+                              - StaticText " "
+                              - StaticText "$80 a $120 USD"
+                              - StaticText " por un video de 2 minutos aprox."
+                        - paragraph
+                          - StaticText "💬"
+                          - StaticText " 3. Servicios en Tiempo Real"
+                        - paragraph
+                          - StaticText "Monetizará tu interacción directa y el minuto a minuto:"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Sexting (Chat Hot) "
+                              - StaticText "🔥"
+                              - StaticText " :"
+                              - StaticText " "
+                              - StaticText "$50 a $60 USD la media hora"
+                              - StaticText " de interacción por texto. Incluye el ida y vuelta, 2 o 3 fotitos sugerentes y algunos clips muy cortos sacados de tu bóveda."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Videollamadas "
+                              - StaticText "📲"
+                              - StaticText " :"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "5 minutos:"
+                              - StaticText " $80 USD"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "10 minutos:"
+                              - StaticText " $100 USD"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "15 minutos:"
+                              - StaticText " $140 USD"
+                        - paragraph
+                          - StaticText "De igual forma no tengan miedo de enviar contenido mucho "
+                          - StaticText "más"
+                          - StaticText " barato con tal de hacer una venta con algún cliente rata"
+                          - StaticText "."
+                        - paragraph
+                        - paragraph
+                          - StaticText "Modulo 7"
+                          - StaticText " ¿Cómo obtener tus primeros suscriptores desde cero?"
+                        - paragraph
+                          - StaticText "Una vez que tu "
+                          - StaticText "feed"
+                          - StaticText " está armada, el siguiente paso es hacer que la gente se entere de que existís. Para conseguir tus primeros fans sin gastar un centavo, vas a utilizar los canales de difusión externos de la plataforma:"
+                        - paragraph
+                        - paragraph
+                          - StaticText "Promoción Cruzada (SFS): "
+                          - StaticText "Recordá"
+                          - StaticText " lo que vimos en el menú \"Archivo\". Vas a contactar a otras creadoras y van a programar publicaciones compartidas. Vos "
+                          - StaticText "promocionas"
+                          - StaticText " su "
+                          - StaticText "link"
+                          - StaticText " en tu muro y ella promociona el tuyo en el suyo. Así se intercambian fans constantemente"
+                          - StaticText ", además HXH (Historia por historia) o mensajes masivos"
+                          - StaticText " entre las creadoras."
+                        - paragraph
+                          - StaticText "Redes de Tráfico Orgánico: Utilizarás plataformas como Reddit, Twitter (X) o "
+                          - StaticText "Telegram"
+                          - StaticText ", "
+                          - StaticText "instagram"
+                          - StaticText " para publicar pequeñas muestras de tu contenido estético (siempre respetando las normas de cada lugar) y dejando el enlace directo a tu cuenta gratis para que vayan a suscribirse de inmediato."
+                        - paragraph
+                          - StaticText "🔒"
+                          - StaticText " Nota de Seguridad y Privacidad de Elite: Queremos darte la tranquilidad absoluta de que en ninguna de estas redes sociales externas (Reddit, Twitter, "
+                          - StaticText "Telegram"
+                          - StaticText " o Instagram) estás obligada a mostrar tu rostro. "
+                          - StaticText "Podes"
+                          - StaticText " armar campañas publicitarias, crear cuentas "
+                          - StaticText "nuevas sumamente"
+                          - StaticText " exitosas, estéticas y magnéticas manteniendo tu cara en total anonimato si así lo elegís."
+                        - paragraph
+                        - paragraph
+                          - StaticText "📚"
+                          - StaticText " Importante: "
+                          - StaticText "Recordá"
+                          - StaticText " que cada una de estas redes tiene sus propias reglas, algoritmos y estrategias específicas para crecer. Cómo utilizar y optimizar al máximo cada plataforma para atraer miles de fans sin cometer errores será dictado en un curso avanzado e independiente más adelante. Ahora, nuestro foco es dejar tu centro de mandos listo para facturar."
+                        - paragraph
+                          - StaticText "Bienvenida a tu Nueva Era"
+                        - paragraph
+                          - StaticText "Llegaste al final de este manual básico, pero este no es el destino: "
+                          - StaticText "es apenas el día uno de tu nueva Dinastía."
+                        - paragraph
+                          - StaticText "Construir una marca de alto valor, animarte a monetizar tu sensualidad, tu creatividad o tu autoridad no es un camino fácil. Exige disciplina, romper con prejuicios y pararte frente al mundo sabiendo exactamente cuánto vale tu tiempo. Ya "
+                          - StaticText "diste"
+                          - StaticText " el paso más difícil, que es arrancar y ordenar tu vidriera. Ahora te toca salir a conquistar el mercado."
+                        - paragraph
+                          - StaticText "Si estás lista para no quedarte sola en el camino y "
+                          - StaticText "querés"
+                          - StaticText " acelerar tu proceso para multiplicar tus ingresos, "
+                          - StaticText "tenés"
+                          - StaticText " la oportunidad de acceder a nuestras herramientas y espacios de categoría superior"
+                          - StaticText "."
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                          - StaticText "No viniste hasta aquí para ser una creadora más del montón; viniste a construir un imperio bajo tus propios términos. Ponte la corona, "
+                          - StaticText "adueñate"
+                          - StaticText " de tu espacio y salí a reclamar lo que es tuyo. El mercado es enorme, los dólares están ahí afuera y tu nueva era empieza hoy. ¡A facturar, reina!"
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                        - paragraph
+                          - StaticText "📚"
+                          - StaticText " TEMARIO GENERAL EJECUTIVO: ACADEMIA DINASTÍA"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "MÓDULO 1: Mentalidad y Preparación de Alto Valor"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Conceptos clave de la industria y mercado internacional."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Mindset"
+                              - StaticText " de elite: De creadora "
+                              - StaticText "amateur"
+                              - StaticText " a dueña de negocio."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Preparación tecnológica y correos electrónicos blindados."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "MÓDULO 2: Registro y Verificación de Identidad"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Creación de cuenta inicial básica."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Activación de cuenta creadora."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Paso a paso para la"
+                              - StaticText " "
+                              - StaticText "verificacion"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "MÓDULO 3: El Sistema de Retiros en Argentina"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Alerta: Peligros de la Transferencia Bancaria Local y Tarjeta VISA."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Configuración de "
+                              - StaticText "Skrill"
+                              - StaticText " en dólares"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Circuito de retiros sin dejar rastros: "
+                              - StaticText "Skrill"
+                              - StaticText " "
+                              - StaticText "➡️"
+                              - StaticText " "
+                              - StaticText "Binance"
+                              - StaticText " (USDT) "
+                              - StaticText "➡️"
+                              - StaticText " Cuenta Local."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "MÓDULO 4: Perfil de Elite"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Elección de nombre d"
+                              - StaticText "e "
+                              - StaticText "nombre y personaje"
+                              - StaticText "."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Estrategia de anonimato del rostro y límites de censura."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Redacción publicitaria (Vainilla y "
+                              - StaticText "FemDom"
+                              - StaticText ")."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "MÓDULO 5: Herramientas del Panel Lateral"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "La verdad de "
+                              - StaticText "\"Mis referencias"
+                              - StaticText "\""
+                              - StaticText " :"
+                              - StaticText " Estadísticas reales de origen de tráfico."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "El panel de Estadísticas financieras de facturación."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "El poder de las "
+                              - StaticText "\"Colecciones"
+                              - StaticText "\""
+                              - StaticText " :"
+                              - StaticText " Listas para segmentar usuarios por fetiches."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Estrategia de mensajes masivos privados con candado (PPV)."
+                        - paragraph
+                          - StaticText "📈"
+                          - StaticText " FASE IV: Lanzamiento y Ventas"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "MÓDULO 6: Cuenta Gratis y Embudo de Ventas"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Estrategia de Cuenta Gratis para la captación masiva."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Mensaje de bienvenida automatizado y prohibición de candados al saludar."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Cuidado de la mercadería: Qué mostrar y qué guardar en el "
+                              - StaticText "feed"
+                              - StaticText " libre."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "MÓDULO 7: Estrategias de Tráfico y Difusión"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Promoción Cruzada (SFS) con creadoras aliadas."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Tráfico orgánico externo desde Reddit, Twitter, "
+                              - StaticText "Telegram"
+                              - StaticText " e Instagram."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "MÓDULO 8: Escalabilidad y Cierre de Curso"
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Plan de acción diario para la alumna egresada."
+                        - list
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "Upselling"
+                              - StaticText ": Comunidad de "
+                              - StaticText "Discord"
+                              - StaticText ", Asesorías 1-a-1 y preventa del Curso de Fetiches."
+                        - paragraph
+                      - generic "Page 1"
+                        - generic
+                          - generic
+                            - generic
+                              - paragraph
+                                - StaticText "MÓDULO 1: Mentalidad, Preparación y Legado "
+                            - paragraph
+                              - StaticText "Sección 1: El Espejo de la Emperatriz (Mi Historia)"
+                            - paragraph
+                            - paragraph
+                            - paragraph
+                            - paragraph
+                              - StaticText " muy bien: la necesidad urgente de generar ingresos, de progresar, pero con la condición innegociable de "
+                            - paragraph
+                            - paragraph
+                              - StaticText " Los fantasmas: La edad, el cuerpo y el miedo al \"qué dirán\""
+                            - paragraph
+                              - StaticText "Cuando decidí dedicarme al 100% a esto, aparecieron todos los miedos juntos. Me miraba al espejo y me preguntaba: "
+                            - paragraph
+                              - StaticText "Y el miedo más grande de todos: "
+                            - paragraph
+                              - StaticText " El secreto del éxito: Promoción inteligente y anonimato local"
+                            - paragraph
+                              - StaticText " es completamente profesional, mi estrategia de marketing se construye desde el anonimato hacia mi entorno: utilizando redes sociales dedicadas exclusivamente al negocio"
+                            - paragraph
+                          - button "New Comment" [ref=e73]
+                            - image
+                        - StaticText "1"
+                      - generic "Page 23"
+                        - generic
+                          - listitem [level=2]
+                            - paragraph
+                          - listitem [level=2]
+                            - paragraph
+                              - StaticText "Cuidado de la mercadería: Qué mostrar y qué guardar en el "
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "MÓDULO 7: Estrategias de Tráfico y Difusión"
+                          - listitem [level=2]
+                            - paragraph
+                          - listitem [level=2]
+                            - paragraph
+                          - listitem [level=1]
+                            - paragraph
+                              - StaticText "MÓDULO 8: Escalabilidad y Cierre de Curso"
+                          - listitem [level=2]
+                            - paragraph
+                          - listitem [level=2]
+                            - paragraph
+                              - StaticText ": Comunidad de "
+              - table "Loading additional document content"
+              - link "Loading additional document content" [ref=e23]
+              - heading "Loading additional document content" [level=1, ref=e24]
+              - heading "Loading additional document content" [level=2, ref=e25]
+              - heading "Loading additional document content" [level=3, ref=e26]
+              - heading "Loading additional document content" [level=4, ref=e27]
+              - heading "Loading additional document content" [level=5, ref=e28]
+              - heading "Loading additional document content" [level=6, ref=e29]
+              - heading "Loading additional document content" [level=7, ref=e30]
+              - heading "Loading additional document content" [level=8, ref=e31]
+              - heading "Loading additional document content" [level=9, ref=e32]
+            - generic
+              - status
+              - status
+            - generic
+              - button "Page 1 of 23" [ref=e33]
+              - button "7,813 of 7,815 words" [ref=e34]
+              - button "Spanish (Argentina)" [ref=e35]
+              - button "Editor Suggestions: Showing" [ref=e36]
+                - StaticText "Editor Suggestions: Showing"
+            - generic
+              - button "Separate Pages" [ref=e37]
+              - button "Zoom Out" [ref=e38]
+              - generic
+                - slider "Zoom" [ref=e46]: 100
+              - button "Zoom In" [ref=e39]
+              - button "100%" [ref=e40]
+              - button "Fit" [ref=e41]
+              - button "Give Feedback to Microsoft" [ref=e42]
+          - marquee
+            - StaticText "Press Alt Shift A for accessibility help."
+      - generic
+        - generic
+      - menu
+        - group
+          - menuitem "Autosaved online to Autosaved online to OneDrive" [ref=e2]
+            - generic
+              - menuitem "Autosaved online to OneDrive" [ref=e12]
+          - menuitem "Open" [expanded=false, ref=e3]
+        - group
+          - menuitem "Share" [expanded=false, ref=e4]
+          - menuitem "Create a Copy" [expanded=false, ref=e5]
+          - menuitem "Export" [expanded=false, ref=e6]
+          - menuitem "Print" [ref=e7]
+        - group
+          - menuitem "Rename" [ref=e8]
+          - menuitem "Move File" [disabled, ref=e9]
+          - menuitem "Delete" [disabled, ref=e10]
+          - menuitem "Info" [expanded=false, ref=e11]
