@@ -102,12 +102,16 @@ export default function AdminLayout({
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' })
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' })
     } catch {
-      // Fallback: try to clear cookie manually
+      // Fallback: try to clear cookie manually (won't work for httpOnly but doesn't hurt)
       document.cookie = 'da_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
     }
-    router.push('/admin/login')
+    // Clear user state immediately
+    setUser(null)
+    // Force a full page reload to ensure the cookie is properly cleared
+    // and the middleware re-checks auth on the server side
+    window.location.href = '/admin/login'
   }
 
   // Login page - no sidebar layout

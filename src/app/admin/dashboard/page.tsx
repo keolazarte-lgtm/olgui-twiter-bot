@@ -7,7 +7,7 @@ import {
   Users, Check, X, Loader2, Shield, BookOpen, Crown,
   LayoutDashboard, UserCheck, UserX, RefreshCw, Search,
   ChevronDown, Calendar, Mail, ToggleLeft, ToggleRight,
-  DollarSign, TrendingUp, ArrowUpRight, Banknote
+  DollarSign, TrendingUp, ArrowUpRight, Banknote, Plus, UserCircle
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -88,6 +88,15 @@ export default function AdminDashboardPage() {
   const [togglingId, setTogglingId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [activeTab, setActiveTab] = useState('overview')
+  const [showSaleForm, setShowSaleForm] = useState(false)
+  const [saleForm, setSaleForm] = useState({
+    userId: '',
+    amount: '',
+    currency: 'ARS',
+    mpPaymentId: '',
+    status: 'approved',
+  })
+  const [creatingSale, setCreatingSale] = useState(false)
   const { toast } = useToast()
 
   // Load all data
@@ -176,6 +185,63 @@ export default function AdminDashboardPage() {
       toast({ title: 'Error de conexión', variant: 'destructive' })
     } finally {
       setTogglingId(null)
+    }
+  }
+
+  // Create a new sale
+  const handleCreateSale = async () => {
+    if (!saleForm.userId || !saleForm.amount) return
+
+    setCreatingSale(true)
+    try {
+      const res = await fetch('/api/admin/sales', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: saleForm.userId,
+          amount: parseFloat(saleForm.amount),
+          currency: saleForm.currency,
+          mpPaymentId: saleForm.mpPaymentId || null,
+          status: saleForm.status,
+        }),
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        // Add new sale to list
+        setSales(prev => [data.sale, ...prev])
+        // Refresh sales stats
+        try {
+          const statsRes = await fetch('/api/admin/sales')
+          if (statsRes.ok) {
+            const statsData = await statsRes.json()
+            setSalesStats(statsData.stats || null)
+          }
+        } catch {}
+
+        // Reset form
+        setSaleForm({
+          userId: '',
+          amount: '',
+          currency: 'ARS',
+          mpPaymentId: '',
+          status: 'approved',
+        })
+        setShowSaleForm(false)
+
+        toast({
+          title: 'Venta registrada',
+          description: `Se registró la venta de $${parseFloat(saleForm.amount).toLocaleString('es-AR')} ${saleForm.currency}`,
+        })
+      } else {
+        const data = await res.json()
+        toast({ title: data.error || 'Error al registrar venta', variant: 'destructive' })
+      }
+    } catch (error) {
+      console.error('Create sale error:', error)
+      toast({ title: 'Error de conexión', variant: 'destructive' })
+    } finally {
+      setCreatingSale(false)
     }
   }
 
@@ -714,6 +780,143 @@ export default function AdminDashboardPage() {
 
           {/* ─── SALES TAB ─── */}
           <TabsContent value="sales" className="space-y-4">
+            {/* Register Sale Button */}
+            <div className="flex justify-end">
+              <Button
+                onClick={() => setShowSaleForm(true)}
+                className="bg-gradient-to-r from-amber-600 to-yellow-500 hover:from-amber-500 hover:to-yellow-400 text-black font-cinzel text-xs tracking-wider h-9"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                REGISTRAR VENTA
+              </Button>
+            </div>
+
+            {/* Sale Form Modal */}
+            {showSaleForm && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+              >
+                <Card className="bg-white/[0.03] border-amber-500/20 overflow-hidden">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="font-cinzel text-white text-sm tracking-wider flex items-center gap-2">
+                        <DollarSign className="w-4 h-4 text-amber-400" />
+                        REGISTRAR NUEVA VENTA
+                      </CardTitle>
+                      <button
+                        onClick={() => setShowSaleForm(false)}
+                        className="text-white/30 hover:text-white/60 transition-colors"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0 space-y-4">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      {/* User Selection */}
+                      <div className="space-y-2">
+                        <label className="font-cinzel text-amber-500/60 text-[10px] tracking-wider">CLIENTE</label>
+                        <div className="relative">
+                          <UserCircle className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500/30" />
+                          <select
+                            value={saleForm.userId}
+                            onChange={(e) => setSaleForm(prev => ({ ...prev, userId: e.target.value }))}
+                            className="w-full bg-white/5 border border-amber-500/10 text-white rounded-md h-10 pl-10 pr-3 font-inter text-sm focus:border-amber-500/40 focus:outline-none appearance-none cursor-pointer"
+                          >
+                            <option value="" className="bg-[#0a0a0a]">Seleccionar cliente...</option>
+                            {users.filter(u => u.role !== 'admin').map(u => (
+                              <option key={u.id} value={u.id} className="bg-[#0a0a0a]">
+                                {u.name || u.email} {u.active ? '' : '(Inactivo)'}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Amount */}
+                      <div className="space-y-2">
+                        <label className="font-cinzel text-amber-500/60 text-[10px] tracking-wider">MONTO</label>
+                        <div className="relative">
+                          <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-amber-500/30" />
+                          <Input
+                            type="number"
+                            placeholder="0"
+                            value={saleForm.amount}
+                            onChange={(e) => setSaleForm(prev => ({ ...prev, amount: e.target.value }))}
+                            className="bg-white/5 border-amber-500/10 text-white placeholder:text-white/20 focus:border-amber-500/40 h-10 pl-10 font-inter text-sm"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Currency */}
+                      <div className="space-y-2">
+                        <label className="font-cinzel text-amber-500/60 text-[10px] tracking-wider">MONEDA</label>
+                        <select
+                          value={saleForm.currency}
+                          onChange={(e) => setSaleForm(prev => ({ ...prev, currency: e.target.value }))}
+                          className="w-full bg-white/5 border border-amber-500/10 text-white rounded-md h-10 px-3 font-inter text-sm focus:border-amber-500/40 focus:outline-none appearance-none cursor-pointer"
+                        >
+                          <option value="ARS" className="bg-[#0a0a0a]">ARS (Pesos Argentinos)</option>
+                          <option value="USD" className="bg-[#0a0a0a]">USD (Dólares)</option>
+                        </select>
+                      </div>
+
+                      {/* Status */}
+                      <div className="space-y-2">
+                        <label className="font-cinzel text-amber-500/60 text-[10px] tracking-wider">ESTADO DEL PAGO</label>
+                        <select
+                          value={saleForm.status}
+                          onChange={(e) => setSaleForm(prev => ({ ...prev, status: e.target.value }))}
+                          className="w-full bg-white/5 border border-amber-500/10 text-white rounded-md h-10 px-3 font-inter text-sm focus:border-amber-500/40 focus:outline-none appearance-none cursor-pointer"
+                        >
+                          <option value="approved" className="bg-[#0a0a0a]">Aprobado</option>
+                          <option value="pending" className="bg-[#0a0a0a]">Pendiente</option>
+                          <option value="rejected" className="bg-[#0a0a0a]">Rechazado</option>
+                        </select>
+                      </div>
+
+                      {/* MP Payment ID (full width) */}
+                      <div className="space-y-2 sm:col-span-2">
+                        <label className="font-cinzel text-amber-500/60 text-[10px] tracking-wider">ID DE PAGO MERCADO PAGO (OPCIONAL)</label>
+                        <Input
+                          type="text"
+                          placeholder="Ej: 1234567890"
+                          value={saleForm.mpPaymentId}
+                          onChange={(e) => setSaleForm(prev => ({ ...prev, mpPaymentId: e.target.value }))}
+                          className="bg-white/5 border-amber-500/10 text-white placeholder:text-white/20 focus:border-amber-500/40 h-10 font-inter text-sm"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Form Actions */}
+                    <div className="flex justify-end gap-3 pt-2">
+                      <Button
+                        onClick={() => setShowSaleForm(false)}
+                        variant="ghost"
+                        className="text-white/40 hover:text-white/70 font-cinzel text-xs tracking-wider h-9"
+                      >
+                        CANCELAR
+                      </Button>
+                      <Button
+                        onClick={handleCreateSale}
+                        disabled={creatingSale || !saleForm.userId || !saleForm.amount}
+                        className="bg-gradient-to-r from-amber-600 to-yellow-500 hover:from-amber-500 hover:to-yellow-400 text-black font-cinzel text-xs tracking-wider h-9 disabled:opacity-50"
+                      >
+                        {creatingSale ? (
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        ) : (
+                          <Check className="w-4 h-4 mr-2" />
+                        )}
+                        {creatingSale ? 'REGISTRANDO...' : 'CONFIRMAR VENTA'}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+
             {/* Sales Stats Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <Card className="bg-white/[0.02] border-amber-500/[0.08] hover:border-amber-500/20 transition-colors">
