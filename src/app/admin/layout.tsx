@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Crown, Users, BookOpen, LogOut, LayoutDashboard,
-  Menu, X, Loader2, Shield, ChevronRight
+  Menu, X, Loader2, Shield, ChevronRight, DollarSign
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useRouter, usePathname } from 'next/navigation'
@@ -36,6 +36,7 @@ export const useAdmin = () => useContext(AdminContext)
 // Sidebar navigation items
 const NAV_ITEMS = [
   { label: 'Dashboard', icon: LayoutDashboard, href: '/admin/dashboard' },
+  { label: 'Ventas', icon: DollarSign, href: '/admin/dashboard?tab=sales' },
   { label: 'Usuarios', icon: Users, href: '/admin/dashboard?tab=users' },
   { label: 'Módulos', icon: BookOpen, href: '/admin/dashboard?tab=modules' },
 ]
@@ -99,8 +100,13 @@ export default function AdminLayout({
     }
   }
 
-  const handleLogout = () => {
-    document.cookie = 'da_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+    } catch {
+      // Fallback: try to clear cookie manually
+      document.cookie = 'da_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+    }
     router.push('/admin/login')
   }
 

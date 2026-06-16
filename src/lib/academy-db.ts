@@ -80,6 +80,21 @@ export async function initSchema() {
       FOREIGN KEY (lesson_id) REFERENCES lessons(id)
     )
   `)
+
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS sales (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      user_email TEXT NOT NULL,
+      user_name TEXT,
+      amount REAL NOT NULL,
+      currency TEXT DEFAULT 'ARS',
+      mp_payment_id TEXT,
+      status TEXT DEFAULT 'approved',
+      created_at TEXT DEFAULT (datetime('now')),
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+  `)
 }
 
 // ─── User Helpers ─────────────────────────────────────────
@@ -126,6 +141,21 @@ export async function activateUser(userId: string, mpPaymentId?: string) {
     sql: `UPDATE users SET active = 1, mp_payment_id = ?, updated_at = datetime('now') WHERE id = ?`,
     args: [mpPaymentId || null, userId]
   })
+
+  // Also record the sale
+  const user = await getUserById(userId)
+  if (user) {
+    await recordSale({
+      userId,
+      userEmail: user.email as string,
+      userName: user.name as string | null,
+      amount: 15000,
+      currency: 'ARS',
+      mpPaymentId: mpPaymentId || null,
+      status: 'approved',
+    })
+  }
+
   return getUserById(userId)
 }
 
@@ -232,6 +262,57 @@ export async function toggleLessonProgress(userId: string, lessonId: string) {
   }
 
   return getUserProgress(userId)
+}
+
+// ─── Sales Helpers ────────────────────────────────────────
+
+export async function recordSale(data: {
+  userId: string
+  userEmail: string
+  userName: string | null
+  amount: number
+  currency: string
+  mpPaymentId: string | null
+  status: string
+}) {
+  const db = getDb()
+  const id = crypto.randomUUID()
+  await db.execute({
+    sql: `INSERT INTO sales (id, user_id, user_email, user_name, amount, currency, mp_payment_id, status)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    args: [id, data.userId, data.userEmail, data.userName, data.amount, data.currency, data.mpPaymentId, data.status]
+  })
+  return getSaleById(id)
+}
+
+export async function getSaleById(id: string) {
+  const db = getDb()
+  const result = await db.execute({
+    sql: 'SELECT * FROM sales WHERE id = ?',
+    args: [id]
+  })
+  return result.rows[0] || null
+}
+
+export async function getAllSales() {
+  const db = getDb()
+  const result = await db.execute('SELECT * FROM sales ORDER BY created_at DESC')
+  return result.rows
+}
+
+export async function getSalesStats() {
+  const db = getDb()
+  const totalResult = await db.execute('SELECT COUNT(*) as count, COALESCE(SUM(amount), 0) as total FROM sales WHERE status = \'approved\'')
+  const todayResult = await db.execute('SELECT COUNT(*) as count, COALESCE(SUM(amount), 0) as total FROM sales WHERE status = \'approved\' AND date(created_at) = date(\'now\')')
+  const monthResult = await db.execute('SELECT COUNT(*) as count, COALESCE(SUM(amount), 0) as total FROM sales WHERE status = \'approved\' AND strftime(\'%Y-%m\', created_at) = strftime(\'%Y-%m\', \'now\')')
+  const weekResult = await db.execute('SELECT COUNT(*) as count, COALESCE(SUM(amount), 0) as total FROM sales WHERE status = \'approved\' AND created_at >= datetime(\'now\', \'-7 days\')')
+
+  return {
+    total: { count: totalResult.rows[0].count as number, amount: totalResult.rows[0].total as number },
+    today: { count: todayResult.rows[0].count as number, amount: todayResult.rows[0].total as number },
+    thisWeek: { count: weekResult.rows[0].count as number, amount: weekResult.rows[0].total as number },
+    thisMonth: { count: monthResult.rows[0].count as number, amount: monthResult.rows[0].total as number },
+  }
 }
 
 // ─── Seed Helpers ─────────────────────────────────────────

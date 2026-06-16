@@ -6,7 +6,8 @@ import { motion } from 'framer-motion'
 import {
   Users, Check, X, Loader2, Shield, BookOpen, Crown,
   LayoutDashboard, UserCheck, UserX, RefreshCw, Search,
-  ChevronDown, Calendar, Mail, ToggleLeft, ToggleRight
+  ChevronDown, Calendar, Mail, ToggleLeft, ToggleRight,
+  DollarSign, TrendingUp, ArrowUpRight, Banknote
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -55,6 +56,25 @@ interface Stats {
   totalLessons: number
 }
 
+interface SaleItem {
+  id: string
+  userId: string
+  userEmail: string
+  userName: string | null
+  amount: number
+  currency: string
+  mpPaymentId: string | null
+  status: string
+  createdAt: string
+}
+
+interface SalesStats {
+  total: { count: number; amount: number }
+  today: { count: number; amount: number }
+  thisWeek: { count: number; amount: number }
+  thisMonth: { count: number; amount: number }
+}
+
 // ─── Component ──────────────────────────────────────
 
 export default function AdminDashboardPage() {
@@ -62,6 +82,8 @@ export default function AdminDashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null)
   const [users, setUsers] = useState<UserItem[]>([])
   const [modules, setModules] = useState<ModuleItem[]>([])
+  const [sales, setSales] = useState<SaleItem[]>([])
+  const [salesStats, setSalesStats] = useState<SalesStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [togglingId, setTogglingId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
@@ -71,10 +93,11 @@ export default function AdminDashboardPage() {
   // Load all data
   const loadData = useCallback(async () => {
     try {
-      const [statsRes, usersRes, modulesRes] = await Promise.all([
+      const [statsRes, usersRes, modulesRes, salesRes] = await Promise.all([
         fetch('/api/admin/stats'),
         fetch('/api/admin/users'),
         fetch('/api/modules'),
+        fetch('/api/admin/sales'),
       ])
 
       if (statsRes.ok) {
@@ -90,6 +113,12 @@ export default function AdminDashboardPage() {
       if (modulesRes.ok) {
         const modulesData = await modulesRes.json()
         setModules(modulesData.modules || [])
+      }
+
+      if (salesRes.ok) {
+        const salesData = await salesRes.json()
+        setSales(salesData.sales || [])
+        setSalesStats(salesData.stats || null)
       }
     } catch (error) {
       console.error('Dashboard load error:', error)
@@ -107,7 +136,7 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const tab = params.get('tab')
-    if (tab && ['overview', 'users', 'modules'].includes(tab)) {
+    if (tab && ['overview', 'users', 'modules', 'sales'].includes(tab)) {
       setActiveTab(tab)
     }
   }, [])
@@ -289,6 +318,13 @@ export default function AdminDashboardPage() {
               <BookOpen className="w-4 h-4 mr-2" />
               MÓDULOS
             </TabsTrigger>
+            <TabsTrigger
+              value="sales"
+              className="font-cinzel text-xs tracking-wider data-[state=active]:bg-amber-500/15 data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/20 text-white/40 px-4 py-2"
+            >
+              <DollarSign className="w-4 h-4 mr-2" />
+              VENTAS
+            </TabsTrigger>
           </TabsList>
 
           {/* ─── OVERVIEW TAB ─── */}
@@ -352,33 +388,30 @@ export default function AdminDashboardPage() {
               <Card className="bg-white/[0.02] border-amber-500/[0.08]">
                 <CardHeader className="pb-3">
                   <CardTitle className="font-cinzel text-white text-sm tracking-wider flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-amber-400" />
-                    MÓDULOS DE LA ACADEMIA
+                    <DollarSign className="w-4 h-4 text-green-400" />
+                    RESUMEN DE VENTAS
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <div className="space-y-2 max-h-80 overflow-y-auto">
-                    {modules.map((mod) => (
-                      <div
-                        key={mod.id}
-                        className="flex items-center justify-between gap-3 p-2.5 rounded-lg bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
-                      >
-                        <div className="min-w-0 flex-1">
-                          <p className="font-inter text-white text-xs font-medium truncate">
-                            Módulo {mod.orderNum}: {mod.title}
-                          </p>
-                          <p className="font-inter text-white/30 text-[10px] truncate">
-                            {mod.lessons.length} lecciones
-                          </p>
-                        </div>
-                        <Badge className="bg-white/5 text-white/50 border-white/10 text-[9px] px-2 shrink-0">
-                          {mod.lessons.length} CLASES
-                        </Badge>
-                      </div>
-                    ))}
-                    {modules.length === 0 && (
-                      <p className="font-inter text-white/20 text-xs text-center py-6">No hay módulos disponibles</p>
-                    )}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 rounded-lg bg-green-500/5 border border-green-500/10">
+                      <p className="font-inter text-white/40 text-[10px]">TOTAL FACTURADO</p>
+                      <p className="font-cinzel-decorative text-lg font-bold text-green-400 mt-1">
+                        ${salesStats?.total?.amount?.toLocaleString('es-AR') || 0}
+                      </p>
+                      <p className="font-inter text-white/25 text-[10px] mt-0.5">
+                        {salesStats?.total?.count || 0} ventas
+                      </p>
+                    </div>
+                    <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/10">
+                      <p className="font-inter text-white/40 text-[10px]">ESTE MES</p>
+                      <p className="font-cinzel-decorative text-lg font-bold text-amber-400 mt-1">
+                        ${salesStats?.thisMonth?.amount?.toLocaleString('es-AR') || 0}
+                      </p>
+                      <p className="font-inter text-white/25 text-[10px] mt-0.5">
+                        {salesStats?.thisMonth?.count || 0} ventas
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -677,6 +710,186 @@ export default function AdminDashboardPage() {
                 <p className="font-inter text-white/20 text-xs">No hay módulos disponibles</p>
               </div>
             )}
+          </TabsContent>
+
+          {/* ─── SALES TAB ─── */}
+          <TabsContent value="sales" className="space-y-4">
+            {/* Sales Stats Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <Card className="bg-white/[0.02] border-amber-500/[0.08] hover:border-amber-500/20 transition-colors">
+                <CardContent className="p-4 text-center">
+                  <DollarSign className="w-5 h-5 text-amber-400/60 mx-auto mb-2" />
+                  <p className="font-cinzel-decorative text-2xl font-bold text-white">
+                    {salesStats?.total?.count || 0}
+                  </p>
+                  <p className="font-cinzel text-amber-500/40 text-[10px] tracking-wider mt-1">VENTAS TOTALES</p>
+                  <p className="font-inter text-amber-400 text-[10px] mt-1">
+                    ${salesStats?.total?.amount?.toLocaleString('es-AR') || 0}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white/[0.02] border-amber-500/[0.08] hover:border-amber-500/20 transition-colors">
+                <CardContent className="p-4 text-center">
+                  <TrendingUp className="w-5 h-5 text-green-400/60 mx-auto mb-2" />
+                  <p className="font-cinzel-decorative text-2xl font-bold text-green-400">
+                    {salesStats?.today?.count || 0}
+                  </p>
+                  <p className="font-cinzel text-amber-500/40 text-[10px] tracking-wider mt-1">HOY</p>
+                  <p className="font-inter text-green-400 text-[10px] mt-1">
+                    ${salesStats?.today?.amount?.toLocaleString('es-AR') || 0}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white/[0.02] border-amber-500/[0.08] hover:border-amber-500/20 transition-colors">
+                <CardContent className="p-4 text-center">
+                  <ArrowUpRight className="w-5 h-5 text-blue-400/60 mx-auto mb-2" />
+                  <p className="font-cinzel-decorative text-2xl font-bold text-blue-400">
+                    {salesStats?.thisWeek?.count || 0}
+                  </p>
+                  <p className="font-cinzel text-amber-500/40 text-[10px] tracking-wider mt-1">ESTA SEMANA</p>
+                  <p className="font-inter text-blue-400 text-[10px] mt-1">
+                    ${salesStats?.thisWeek?.amount?.toLocaleString('es-AR') || 0}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white/[0.02] border-amber-500/[0.08] hover:border-amber-500/20 transition-colors">
+                <CardContent className="p-4 text-center">
+                  <Banknote className="w-5 h-5 text-purple-400/60 mx-auto mb-2" />
+                  <p className="font-cinzel-decorative text-2xl font-bold text-purple-400">
+                    {salesStats?.thisMonth?.count || 0}
+                  </p>
+                  <p className="font-cinzel text-amber-500/40 text-[10px] tracking-wider mt-1">ESTE MES</p>
+                  <p className="font-inter text-purple-400 text-[10px] mt-1">
+                    ${salesStats?.thisMonth?.amount?.toLocaleString('es-AR') || 0}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Sales List */}
+            <Card className="bg-white/[0.02] border-amber-500/[0.08] overflow-hidden">
+              <CardHeader className="pb-3">
+                <CardTitle className="font-cinzel text-white text-sm tracking-wider flex items-center gap-2">
+                  <DollarSign className="w-4 h-4 text-amber-400" />
+                  HISTORIAL DE VENTAS
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                {/* Desktop Table */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-amber-500/10">
+                        <th className="text-left p-3 font-cinzel text-amber-500/40 text-[10px] tracking-wider">CLIENTE</th>
+                        <th className="text-left p-3 font-cinzel text-amber-500/40 text-[10px] tracking-wider">EMAIL</th>
+                        <th className="text-left p-3 font-cinzel text-amber-500/40 text-[10px] tracking-wider">MONTO</th>
+                        <th className="text-left p-3 font-cinzel text-amber-500/40 text-[10px] tracking-wider">ESTADO</th>
+                        <th className="text-left p-3 font-cinzel text-amber-500/40 text-[10px] tracking-wider">PAGO MP</th>
+                        <th className="text-left p-3 font-cinzel text-amber-500/40 text-[10px] tracking-wider">FECHA</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sales.map((sale) => (
+                        <tr key={sale.id} className="border-b border-amber-500/5 hover:bg-white/[0.01] transition-colors">
+                          <td className="p-3">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
+                                <DollarSign className="w-4 h-4 text-green-400" />
+                              </div>
+                              <span className="font-inter text-white text-xs font-medium">
+                                {sale.userName || 'Sin nombre'}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="p-3">
+                            <span className="font-inter text-white/50 text-xs">{sale.userEmail}</span>
+                          </td>
+                          <td className="p-3">
+                            <span className="font-inter text-green-400 text-xs font-semibold">
+                              ${sale.amount?.toLocaleString('es-AR')} {sale.currency}
+                            </span>
+                          </td>
+                          <td className="p-3">
+                            {sale.status === 'approved' ? (
+                              <Badge className="bg-green-500/10 text-green-400 border-green-500/20 text-[10px]">
+                                <Check className="w-3 h-3 mr-1" />
+                                APROBADO
+                              </Badge>
+                            ) : sale.status === 'pending' ? (
+                              <Badge className="bg-yellow-500/10 text-yellow-400 border-yellow-500/20 text-[10px]">
+                                PENDIENTE
+                              </Badge>
+                            ) : (
+                              <Badge className="bg-red-500/10 text-red-400 border-red-500/20 text-[10px]">
+                                <X className="w-3 h-3 mr-1" />
+                                RECHAZADO
+                              </Badge>
+                            )}
+                          </td>
+                          <td className="p-3">
+                            <span className="font-inter text-white/30 text-[10px]">
+                              {sale.mpPaymentId || '—'}
+                            </span>
+                          </td>
+                          <td className="p-3">
+                            <div className="flex items-center gap-1.5">
+                              <Calendar className="w-3 h-3 text-white/20" />
+                              <span className="font-inter text-white/30 text-xs">{formatDate(sale.createdAt)}</span>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden space-y-2 max-h-[500px] overflow-y-auto">
+                  {sales.map((sale) => (
+                    <div
+                      key={sale.id}
+                      className="p-3 rounded-lg bg-white/[0.02] border border-amber-500/[0.05] space-y-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="w-7 h-7 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
+                            <DollarSign className="w-3.5 h-3.5 text-green-400" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-inter text-white text-xs font-medium truncate">{sale.userName || 'Sin nombre'}</p>
+                            <p className="font-inter text-white/30 text-[10px] truncate">{sale.userEmail}</p>
+                          </div>
+                        </div>
+                        <span className="font-inter text-green-400 text-xs font-semibold shrink-0">
+                          ${sale.amount?.toLocaleString('es-AR')}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        {sale.status === 'approved' ? (
+                          <Badge className="bg-green-500/10 text-green-400 border-green-500/20 text-[9px]">APROBADO</Badge>
+                        ) : sale.status === 'pending' ? (
+                          <Badge className="bg-yellow-500/10 text-yellow-400 border-yellow-500/20 text-[9px]">PENDIENTE</Badge>
+                        ) : (
+                          <Badge className="bg-red-500/10 text-red-400 border-red-500/20 text-[9px]">RECHAZADO</Badge>
+                        )}
+                        <span className="font-inter text-white/25 text-[10px]">{formatDate(sale.createdAt)}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {sales.length === 0 && (
+                  <div className="p-8 text-center">
+                    <DollarSign className="w-8 h-8 text-amber-500/20 mx-auto mb-3" />
+                    <p className="font-inter text-white/20 text-xs">No hay ventas registradas todavía</p>
+                    <p className="font-inter text-white/10 text-[10px] mt-1">Las ventas aparecerán cuando los alumnos paguen con Mercado Pago</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </motion.div>
