@@ -62,4 +62,5 @@ server.log
 /chrome/
 
 # Uploads
-/upload/
+/upload/download/
+upload/

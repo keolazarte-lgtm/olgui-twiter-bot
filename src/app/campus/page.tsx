@@ -480,7 +480,7 @@ export default function CampusPage() {
             className="mt-8"
           >
             <Button
-              onClick={() => router.push('/admin')}
+              onClick={() => router.push('/admin/dashboard')}
               className="bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 font-cinzel text-xs tracking-wider"
             >
               <Crown className="w-4 h-4 mr-2" />

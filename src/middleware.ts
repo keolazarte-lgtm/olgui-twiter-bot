@@ -14,6 +14,19 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // Allow admin login page
+  if (pathname === '/admin/login') {
+    // If already logged in as admin, redirect to dashboard
+    const token = request.cookies.get('da_token')?.value
+    if (token) {
+      const payload = await verifyToken(token)
+      if (payload && payload.role === 'admin') {
+        return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+      }
+    }
+    return NextResponse.next()
+  }
+
   // Protect /campus/* routes
   if (pathname.startsWith('/campus')) {
     const token = request.cookies.get('da_token')?.value
@@ -42,17 +55,22 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Protect /admin routes
+  // Protect /admin routes (except /admin/login which is handled above)
   if (pathname.startsWith('/admin')) {
     const token = request.cookies.get('da_token')?.value
 
     if (!token) {
-      return NextResponse.redirect(new URL('/login', request.url))
+      return NextResponse.redirect(new URL('/admin/login', request.url))
     }
 
     const payload = await verifyToken(token)
     if (!payload || payload.role !== 'admin') {
-      return NextResponse.redirect(new URL('/login', request.url))
+      // Non-admin users get redirected to their login or campus
+      const response = NextResponse.redirect(new URL('/admin/login', request.url))
+      if (!payload) {
+        response.cookies.delete('da_token')
+      }
+      return response
     }
 
     return NextResponse.next()
