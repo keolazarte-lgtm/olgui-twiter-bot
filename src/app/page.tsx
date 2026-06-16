@@ -9,7 +9,7 @@ import {
   MessageCircle, Send, Loader2, Crown, Sparkles, Users, Gem,
   Fingerprint, Banknote, TrendingUp, Award, X, Play, Timer,
   ShieldCheck, EyeOff, Wallet, HeartHandshake, Volume2, VolumeX,
-  Flame, Globe, Palette, Ghost
+  Flame, Globe, Palette, Ghost, Instagram
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -1116,6 +1116,17 @@ export default function DinastiaAcademy() {
             <a href="/login" className="inline-flex items-center gap-2 font-cinzel text-amber-400/50 hover:text-amber-400 text-xs tracking-widest transition-colors">
               <Crown className="w-3.5 h-3.5" />
               ACCEDER AL CAMPUS
+            </a>
+          </div>
+          {/* Social links */}
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <a
+              href="https://www.instagram.com/dinastyacadamy?igsh=a2NoNHRxdGgzeGVx"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/15 text-amber-400/60 hover:text-amber-400 hover:bg-amber-500/20 hover:border-amber-500/30 transition-all duration-300"
+            >
+              <Instagram className="w-4 h-4" />
             </a>
           </div>
           <p className="font-cinzel text-amber-500/20 text-xs tracking-[0.2em]">

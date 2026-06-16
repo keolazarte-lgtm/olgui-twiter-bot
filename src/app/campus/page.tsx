@@ -7,7 +7,7 @@ import {
   Shield, UserCheck, Lock, DollarSign, Brain, Banknote,
   Crown, LogOut, Loader2, BookOpen, CheckCircle2, Circle,
   ChevronRight, AlertTriangle, Clock, Flame, Globe,
-  Palette, Ghost, Sparkles
+  Palette, Ghost, Sparkles, Instagram
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -493,6 +493,17 @@ export default function CampusPage() {
       {/* Footer */}
       <footer className="mt-auto border-t border-amber-500/5 py-6 px-4">
         <div className="max-w-5xl mx-auto text-center">
+          {/* Social links */}
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <a
+              href="https://www.instagram.com/dinastyacadamy?igsh=a2NoNHRxdGgzeGVx"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/15 text-amber-400/60 hover:text-amber-400 hover:bg-amber-500/20 hover:border-amber-500/30 transition-all duration-300"
+            >
+              <Instagram className="w-4 h-4" />
+            </a>
+          </div>
           <p className="font-cinzel text-amber-500/20 text-xs tracking-[0.2em]">
             © 2026 DINASTY ACADEMY · TODOS LOS DERECHOS RESERVADOS
           </p>
