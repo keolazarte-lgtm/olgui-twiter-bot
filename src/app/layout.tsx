@@ -5,14 +5,14 @@ import { Toaster } from "@/components/ui/toaster";
 export const metadata: Metadata = {
   title: "DINASTY ACADEMY — Creadoras de Élite",
   description:
-    "Aprendé a crear contenido de élite, proteger tu identidad y cobrar — con o sin rostro. Manual completo de configuración y privacidad para OnlyFans.",
+    "Aprendé a crear contenido de élite, proteger tu identidad y cobrar — con o sin rostro. Curso completo de configuración y privacidad para OnlyFans.",
   keywords: [
     "onlyfans",
     "creadora de contenido",
     "privacidad",
     "geoblocking",
     "cobrar sin rostro",
-    "manual onlyfans",
+    "curso onlyfans",
     "dinasty academy",
   ],
   authors: [{ name: "Dinasty Academy" }],
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "DINASTY ACADEMY — Creadoras de Élite",
     description:
-      "Manual completo de configuración y privacidad. Aprendé a cobrar sin exponer tu identidad.",
+      "Curso completo de configuración y privacidad. Aprendé a cobrar sin exponer tu identidad.",
     type: "website",
   },
   appleWebApp: {

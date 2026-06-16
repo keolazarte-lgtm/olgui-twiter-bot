@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     const preferenceData = {
       items: [
         {
-          title: 'Dinasty Academy — Manual Completo + Campus Exclusivo',
+          title: 'Dinasty Academy — Curso Completo + Campus Exclusivo',
           description: 'Módulo 1: Configuración de Élite y Privacidad Total. 6 módulos de configuración de élite para OnlyFans.',
           quantity: 1,
           unit_price: 15000,

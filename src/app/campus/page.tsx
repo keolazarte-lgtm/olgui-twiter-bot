@@ -24,6 +24,7 @@ const PREMIUM_COURSES = [
   {
     icon: Flame,
     title: 'Curso Avanzado de Fetiches Psicológicos',
+    subtitle: 'Control mental, sumisión y monetización',
     desc: 'Explorá los fetiches más buscados y aprendé a crear contenido que conecte con la psicología de tus suscriptores. Técnicas avanzadas de seducción mental.',
     gradient: 'from-amber-700 to-red-800',
   },
@@ -322,7 +323,7 @@ export default function CampusPage() {
             </h3>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 gap-5">
             {PREMIUM_COURSES.map((item, i) => (
               <motion.div
                 key={i}
@@ -331,27 +332,63 @@ export default function CampusPage() {
                 transition={{ delay: 0.25 + i * 0.08 }}
               >
                 <Card className="bg-white/[0.02] border-amber-500/[0.08] hover:border-amber-500/25 transition-all duration-500 h-full group overflow-hidden relative">
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <CardContent className="p-5 sm:p-6 relative">
-                    <div className={`w-11 h-11 rounded-lg bg-gradient-to-br ${item.gradient} flex items-center justify-center mb-4 opacity-80 group-hover:opacity-100 transition-opacity`}>
-                      <item.icon className="w-5 h-5 text-white" />
+                  {/* Large gradient image area */}
+                  <div className={`relative h-36 sm:h-44 bg-gradient-to-br ${item.gradient} flex items-center justify-center overflow-hidden`}>
+                    {/* Decorative pattern */}
+                    <div className="absolute inset-0 opacity-10" style={{
+                      backgroundImage: `radial-gradient(circle at 20% 50%, rgba(255,255,255,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 40%)`,
+                    }} />
+                    <div className="absolute inset-0 opacity-[0.03]" style={{
+                      backgroundImage: `linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)`,
+                      backgroundSize: '30px 30px',
+                    }} />
+                    {/* Large icon */}
+                    <item.icon className="w-14 h-14 sm:w-18 sm:h-18 text-white/20 absolute" />
+                    {/* Title integrated in the image */}
+                    <div className="relative z-10 text-center px-5">
+                      <h4 className="font-cinzel text-white font-bold text-sm sm:text-base tracking-wide drop-shadow-lg leading-tight">
+                        {item.title}
+                      </h4>
+                      {item.subtitle && (
+                        <p className="font-inter text-white/70 text-[11px] sm:text-xs mt-1 drop-shadow-md">
+                          {item.subtitle}
+                        </p>
+                      )}
                     </div>
-                    <h4 className="font-cinzel text-white font-semibold text-sm mb-1 tracking-wide">
-                      {item.title}
-                    </h4>
-                    {item.subtitle && (
-                      <p className="font-inter text-amber-400/60 text-xs font-medium mb-2">
-                        {item.subtitle}
-                      </p>
-                    )}
-                    <p className="font-inter text-white/40 text-xs leading-relaxed">
-                      {item.desc}
-                    </p>
+                    {/* Próximamente badge */}
+                    <div className="absolute top-2.5 right-2.5 z-20">
+                      <span className="bg-black/50 backdrop-blur-sm text-amber-300 font-cinzel text-[9px] tracking-widest px-2.5 py-0.5 rounded-full border border-amber-400/30">
+                        PROXIMAMENTE
+                      </span>
+                    </div>
+                    {/* Lock overlay for inactive users */}
                     {!isActive && (
-                      <div className="mt-3 flex items-center gap-1.5 text-amber-500/30">
-                        <Lock className="w-3 h-3" />
-                        <span className="font-inter text-[10px]">Disponible al adquirir el material</span>
+                      <div className="absolute inset-0 bg-black/30 flex items-center justify-center z-20">
+                        <Lock className="w-6 h-6 text-amber-400/60" />
                       </div>
+                    )}
+                  </div>
+                  {/* Bottom section */}
+                  <CardContent className="p-4 relative">
+                    <div className="flex items-center gap-2.5">
+                      <div className={`w-8 h-8 rounded-md bg-gradient-to-br ${item.gradient} flex items-center justify-center shrink-0`}>
+                        <item.icon className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-cinzel text-white font-semibold text-xs tracking-wide truncate">
+                          {item.title}
+                        </h4>
+                        {item.subtitle && (
+                          <p className="font-inter text-amber-400/50 text-[10px] truncate">
+                            {item.subtitle}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    {!isActive && (
+                      <p className="font-inter text-amber-500/30 text-[10px] mt-2 text-center">
+                        Disponible al adquirir el curso
+                      </p>
                     )}
                   </CardContent>
                 </Card>

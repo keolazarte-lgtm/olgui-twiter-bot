@@ -60,7 +60,7 @@ const MODULE_ITEMS = [
 const TESTIMONIALS = [
   {
     name: 'Luna M.',
-    text: 'No tenía idea de cómo proteger mi identidad. Con este manual me sentí segura desde el día 1. Ahora cobro tranquila.',
+    text: 'No tenía idea de cómo proteger mi identidad. Con este curso me sentí segura desde el día 1. Ahora cobro tranquila.',
     role: 'Creadora OF',
   },
   {
@@ -70,7 +70,7 @@ const TESTIMONIALS = [
   },
   {
     name: 'Camila S.',
-    text: 'Pensé que era imposible cobrar sin que nadie supiera quién soy. Me equivoqué. Este manual cambia todo.',
+    text: 'Pensé que era imposible cobrar sin que nadie supiera quién soy. Me equivoqué. Este curso cambia todo.',
     role: 'Creadora OF',
   },
 ]
@@ -94,6 +94,7 @@ const PREMIUM_CONTENT = [
   {
     icon: Flame,
     title: 'Curso Avanzado de Fetiches Psicológicos',
+    subtitle: 'Control mental, sumisión y monetización',
     gradient: 'from-amber-700 to-red-800',
   },
   {
@@ -402,7 +403,7 @@ export default function DinastiaAcademy() {
   const faqs = [
     {
       q: '¿Necesito mostrar mi cara?',
-      a: 'No. Todo el manual está diseñado para que puedas trabajar con o sin rostro. La privacidad es prioridad número uno. Aprendé a ganar dinero sin que nadie sepa quién sos.',
+      a: 'No. Todo el curso está diseñado para que puedas trabajar con o sin rostro. La privacidad es prioridad número uno. Aprendé a ganar dinero sin que nadie sepa quién sos.',
     },
     {
       q: '¿Funciona para Argentina?',
@@ -711,11 +712,11 @@ export default function DinastiaAcademy() {
             </h2>
             <OrnamentalLine />
             <p className="font-playfair text-white/50 text-sm sm:text-base max-w-lg mx-auto italic">
-              Accedé a cursos exclusivos diseñados para llevar tu carrera al siguiente nivel
+              Cursos de alto nivel diseñados para llevar tu carrera al siguiente nivel. Mucho más que un simple cursillo.
             </p>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 gap-5">
             {PREMIUM_CONTENT.map((item, i) => (
               <motion.div
                 key={i}
@@ -725,19 +726,53 @@ export default function DinastiaAcademy() {
                 transition={{ delay: i * 0.1 }}
               >
                 <Card className="bg-white/[0.02] border-amber-500/[0.08] hover:border-amber-500/25 transition-all duration-500 h-full group overflow-hidden relative">
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <CardContent className="p-5 sm:p-6 relative">
-                    <div className={`w-11 h-11 rounded-lg bg-gradient-to-br ${item.gradient} flex items-center justify-center mb-4 opacity-80 group-hover:opacity-100 transition-opacity`}>
-                      <item.icon className="w-5 h-5 text-white" />
+                  {/* Large gradient image area */}
+                  <div className={`relative h-40 sm:h-48 bg-gradient-to-br ${item.gradient} flex items-center justify-center overflow-hidden`}>
+                    {/* Decorative pattern */}
+                    <div className="absolute inset-0 opacity-10" style={{
+                      backgroundImage: `radial-gradient(circle at 20% 50%, rgba(255,255,255,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 40%)`,
+                    }} />
+                    <div className="absolute inset-0 opacity-[0.03]" style={{
+                      backgroundImage: `linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)`,
+                      backgroundSize: '30px 30px',
+                    }} />
+                    {/* Large icon */}
+                    <item.icon className="w-16 h-16 sm:w-20 sm:h-20 text-white/20 absolute" />
+                    {/* Title integrated in the image */}
+                    <div className="relative z-10 text-center px-6">
+                      <h3 className="font-cinzel text-white font-bold text-base sm:text-lg tracking-wide drop-shadow-lg leading-tight">
+                        {item.title}
+                      </h3>
+                      {item.subtitle && (
+                        <p className="font-inter text-white/70 text-xs sm:text-sm mt-1.5 drop-shadow-md">
+                          {item.subtitle}
+                        </p>
+                      )}
                     </div>
-                    <h3 className="font-cinzel text-white font-semibold text-sm mb-1.5 tracking-wide">
-                      {item.title}
-                    </h3>
-                    {item.subtitle && (
-                      <p className="font-inter text-amber-400/50 text-xs leading-relaxed">
-                        {item.subtitle}
-                      </p>
-                    )}
+                    {/* Próximamente badge */}
+                    <div className="absolute top-3 right-3 z-20">
+                      <span className="bg-black/50 backdrop-blur-sm text-amber-300 font-cinzel text-[10px] tracking-widest px-3 py-1 rounded-full border border-amber-400/30">
+                        PROXIMAMENTE
+                      </span>
+                    </div>
+                  </div>
+                  {/* Bottom section */}
+                  <CardContent className="p-4 relative">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-8 h-8 rounded-md bg-gradient-to-br ${item.gradient} flex items-center justify-center shrink-0`}>
+                        <item.icon className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="font-cinzel text-white font-semibold text-xs tracking-wide truncate">
+                          {item.title}
+                        </h3>
+                        {item.subtitle && (
+                          <p className="font-inter text-amber-400/50 text-[10px] truncate">
+                            {item.subtitle}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -759,7 +794,7 @@ export default function DinastiaAcademy() {
               COMPARACIÓN
             </p>
             <h2 className="font-cinzel-decorative text-2xl sm:text-3xl font-bold text-white mb-3">
-              Sin el manual vs <span className="gold-text">Con el manual</span>
+              Sin los cursos de Dinasty vs <span className="gold-text">Con los cursos de Dinasty</span>
             </h2>
             <OrnamentalLine />
           </motion.div>
@@ -774,10 +809,10 @@ export default function DinastiaAcademy() {
               <div className="grid grid-cols-3 gap-0 border-b border-amber-500/10">
                 <div className="p-3 sm:p-4" />
                 <div className="p-3 sm:p-4 text-center border-x border-amber-500/10">
-                  <span className="font-cinzel text-white/30 text-xs tracking-wider">SIN MANUAL</span>
+                  <span className="font-cinzel text-white/30 text-xs tracking-wider">SIN CURSO</span>
                 </div>
                 <div className="p-3 sm:p-4 text-center bg-amber-500/5">
-                  <span className="font-cinzel text-amber-400 text-xs tracking-wider">CON MANUAL</span>
+                  <span className="font-cinzel text-amber-400 text-xs tracking-wider">CON CURSO</span>
                 </div>
               </div>
               {/* Table Rows */}
@@ -881,7 +916,7 @@ export default function DinastiaAcademy() {
                 <p className="font-playfair text-white/60 text-sm sm:text-base leading-relaxed mb-4 italic">
                   Nacimos de la necesidad real de creadoras que querían trabajar con seguridad y privacidad,
                   sin depender de nadie. Sabemos lo que es empezar con dudas, miedo a ser descubierta y
-                  sin saber cómo cobrar. Por eso armamos este manual: para que ninguna mujer tenga que
+                  sin saber cómo cobrar. Por eso armamos estos cursos: para que ninguna mujer tenga que
                   pasar por eso sola.
                 </p>
                 <p className="font-inter text-white/40 text-xs leading-relaxed">
@@ -938,12 +973,12 @@ export default function DinastiaAcademy() {
               <CardContent className="p-6 sm:p-8">
                 <ul className="space-y-4">
                   {[
-                    'Manual PDF completo — 6 módulos de configuración de élite',
+                    'Curso completo — 6 módulos de configuración de élite',
                     'Guía paso a paso de Geoblocking + Bloqueo de usuarios',
                     'Registro y Verificación sin errores',
                     'Métodos de retiro seguros y privados para Argentina y Latam',
                     'Acceso al campus exclusivo de Dinasty Academy',
-                    'Actualizaciones gratuitas del manual',
+                    'Actualizaciones gratuitas del curso',
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <div className="w-5 h-5 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center shrink-0 mt-0.5">
@@ -1144,7 +1179,7 @@ export default function DinastiaAcademy() {
                   {notification.city} · {notification.time}
                 </p>
                 <p className="font-inter text-white/40 text-[10px] mt-0.5">
-                  Adquirió el Manual Completo
+                  Adquirió el Curso Completo
                 </p>
               </div>
             </div>
@@ -1175,7 +1210,7 @@ export default function DinastiaAcademy() {
                   Finalizar Compra
                 </h3>
                 <p className="font-cinzel text-amber-500/50 text-xs tracking-wider mt-1">
-                  Manual Completo — $15.000 ARS
+                  Curso Completo — $15.000 ARS
                 </p>
               </div>
 
