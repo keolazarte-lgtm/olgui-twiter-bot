@@ -95,6 +95,54 @@ export async function initSchema() {
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `)
+
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS visits (
+      id TEXT PRIMARY KEY,
+      ip TEXT,
+      user_agent TEXT,
+      path TEXT NOT NULL,
+      referer TEXT,
+      method TEXT,
+      country TEXT,
+      city TEXT,
+      device TEXT,
+      browser TEXT,
+      is_bot INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT (datetime('now'))
+    )
+  `)
+
+  // Index for faster queries on common filters
+  await db.execute(`
+    CREATE INDEX IF NOT EXISTS idx_visits_created_at ON visits(created_at DESC)
+  `)
+  await db.execute(`
+    CREATE INDEX IF NOT EXISTS idx_visits_path ON visits(path)
+  `)
+  await db.execute(`
+    CREATE INDEX IF NOT EXISTS idx_visits_ip ON visits(ip)
+  `)
+
+  // Course pricing — one row per course (onlyfans, hombres, reddit)
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS course_pricing (
+      course TEXT PRIMARY KEY,
+      ars_amount REAL NOT NULL DEFAULT 15000,
+      ars_strike REAL,
+      usd_amount REAL NOT NULL DEFAULT 25,
+      usd_strike REAL,
+      mp_link TEXT,
+      binance_id TEXT,
+      binance_instructions TEXT,
+      is_featured INTEGER DEFAULT 0,
+      badge_text TEXT,
+      updated_at TEXT DEFAULT (datetime('now'))
+    )
+  `)
+
+  // Seed default pricing for the 3 courses if not exists
+  await seedDefaultPricing()
 }
 
 // ─── User Helpers ─────────────────────────────────────────
@@ -879,4 +927,167 @@ export async function seedAdmin() {
   }
 
   return { id: existing.rows[0].id, email: adminEmail, created: false }
+}
+
+// ─── Course Pricing Helpers ──────────────────────────────
+
+const DEFAULT_PRICING: {
+  course: string
+  ars_amount: number
+  ars_strike: number | null
+  usd_amount: number
+  usd_strike: number | null
+  mp_link: string | null
+  binance_id: string | null
+  binance_instructions: string | null
+  is_featured: number
+  badge_text: string | null
+}[] = [
+  {
+    course: 'reddit',
+    ars_amount: 25000,
+    ars_strike: 60000,
+    usd_amount: 35,
+    usd_strike: 90,
+    mp_link: null,
+    binance_id: null,
+    binance_instructions: null,
+    is_featured: 1,
+    badge_text: 'SUPER GOLD',
+  },
+  {
+    course: 'onlyfans',
+    ars_amount: 15000,
+    ars_strike: 50000,
+    usd_amount: 25,
+    usd_strike: 80,
+    mp_link: null,
+    binance_id: null,
+    binance_instructions: null,
+    is_featured: 0,
+    badge_text: null,
+  },
+  {
+    course: 'hombres',
+    ars_amount: 15000,
+    ars_strike: 50000,
+    usd_amount: 25,
+    usd_strike: 80,
+    mp_link: null,
+    binance_id: null,
+    binance_instructions: null,
+    is_featured: 0,
+    badge_text: null,
+  },
+]
+
+async function seedDefaultPricing() {
+  const db = getDb()
+  for (const p of DEFAULT_PRICING) {
+    try {
+      const existing = await db.execute({
+        sql: 'SELECT course FROM course_pricing WHERE course = ?',
+        args: [p.course],
+      })
+      if (existing.rows.length === 0) {
+        await db.execute({
+          sql: `INSERT INTO course_pricing (course, ars_amount, ars_strike, usd_amount, usd_strike, mp_link, binance_id, binance_instructions, is_featured, badge_text)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          args: [p.course, p.ars_amount, p.ars_strike, p.usd_amount, p.usd_strike, p.mp_link, p.binance_id, p.binance_instructions, p.is_featured, p.badge_text],
+        })
+      }
+    } catch (e) {
+      // ignore duplicates
+    }
+  }
+}
+
+export interface CoursePricing {
+  course: string
+  arsAmount: number
+  arsStrike: number | null
+  usdAmount: number
+  usdStrike: number | null
+  mpLink: string | null
+  binanceId: string | null
+  binanceInstructions: string | null
+  isFeatured: boolean
+  badgeText: string | null
+}
+
+export async function getAllPricing(): Promise<CoursePricing[]> {
+  const db = getDb()
+  const result = await db.execute('SELECT * FROM course_pricing ORDER BY is_featured DESC, course ASC')
+  return result.rows.map(r => ({
+    course: r.course as string,
+    arsAmount: r.ars_amount as number,
+    arsStrike: r.ars_strike as number | null,
+    usdAmount: r.usd_amount as number,
+    usdStrike: r.usd_strike as number | null,
+    mpLink: r.mp_link as string | null,
+    binanceId: r.binance_id as string | null,
+    binanceInstructions: r.binance_instructions as string | null,
+    isFeatured: Boolean(r.is_featured),
+    badgeText: r.badge_text as string | null,
+  }))
+}
+
+export async function getPricingByCourse(course: string): Promise<CoursePricing | null> {
+  const db = getDb()
+  const result = await db.execute({
+    sql: 'SELECT * FROM course_pricing WHERE course = ?',
+    args: [course],
+  })
+  if (result.rows.length === 0) return null
+  const r = result.rows[0]
+  return {
+    course: r.course as string,
+    arsAmount: r.ars_amount as number,
+    arsStrike: r.ars_strike as number | null,
+    usdAmount: r.usd_amount as number,
+    usdStrike: r.usd_strike as number | null,
+    mpLink: r.mp_link as string | null,
+    binanceId: r.binance_id as string | null,
+    binanceInstructions: r.binance_instructions as string | null,
+    isFeatured: Boolean(r.is_featured),
+    badgeText: r.badge_text as string | null,
+  }
+}
+
+export async function updatePricing(course: string, data: {
+  arsAmount?: number
+  arsStrike?: number | null
+  usdAmount?: number
+  usdStrike?: number | null
+  mpLink?: string | null
+  binanceId?: string | null
+  binanceInstructions?: string | null
+  isFeatured?: boolean
+  badgeText?: string | null
+}) {
+  const db = getDb()
+  const fields: string[] = []
+  const args: (string | number | null)[] = []
+
+  if (data.arsAmount !== undefined) { fields.push('ars_amount = ?'); args.push(data.arsAmount) }
+  if (data.arsStrike !== undefined) { fields.push('ars_strike = ?'); args.push(data.arsStrike) }
+  if (data.usdAmount !== undefined) { fields.push('usd_amount = ?'); args.push(data.usdAmount) }
+  if (data.usdStrike !== undefined) { fields.push('usd_strike = ?'); args.push(data.usdStrike) }
+  if (data.mpLink !== undefined) { fields.push('mp_link = ?'); args.push(data.mpLink) }
+  if (data.binanceId !== undefined) { fields.push('binance_id = ?'); args.push(data.binanceId) }
+  if (data.binanceInstructions !== undefined) { fields.push('binance_instructions = ?'); args.push(data.binanceInstructions) }
+  if (data.isFeatured !== undefined) { fields.push('is_featured = ?'); args.push(data.isFeatured ? 1 : 0) }
+  if (data.badgeText !== undefined) { fields.push('badge_text = ?'); args.push(data.badgeText) }
+
+  if (fields.length === 0) return getPricingByCourse(course)
+
+  fields.push("updated_at = datetime('now')")
+  args.push(course)
+
+  await db.execute({
+    sql: `UPDATE course_pricing SET ${fields.join(', ')} WHERE course = ?`,
+    args,
+  })
+
+  return getPricingByCourse(course)
 }

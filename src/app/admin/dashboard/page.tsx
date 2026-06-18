@@ -75,6 +75,19 @@ interface SalesStats {
   thisMonth: { count: number; amount: number }
 }
 
+interface PricingItem {
+  course: string
+  arsAmount: number
+  arsStrike: number | null
+  usdAmount: number
+  usdStrike: number | null
+  mpLink: string | null
+  binanceId: string | null
+  binanceInstructions: string | null
+  isFeatured: boolean
+  badgeText: string | null
+}
+
 // ─── Component ──────────────────────────────────────
 
 export default function AdminDashboardPage() {
@@ -97,16 +110,32 @@ export default function AdminDashboardPage() {
     status: 'approved',
   })
   const [creatingSale, setCreatingSale] = useState(false)
+  const [pricing, setPricing] = useState<PricingItem[]>([])
+  const [savingPricing, setSavingPricing] = useState<string | null>(null)
   const { toast } = useToast()
+
+  // Pricing form state — one entry per course
+  const [pricingForms, setPricingForms] = useState<Record<string, {
+    arsAmount: string
+    arsStrike: string
+    usdAmount: string
+    usdStrike: string
+    mpLink: string
+    binanceId: string
+    binanceInstructions: string
+    isFeatured: boolean
+    badgeText: string
+  }>>({})
 
   // Load all data
   const loadData = useCallback(async () => {
     try {
-      const [statsRes, usersRes, modulesRes, salesRes] = await Promise.all([
+      const [statsRes, usersRes, modulesRes, salesRes, pricingRes] = await Promise.all([
         fetch('/api/admin/stats'),
         fetch('/api/admin/users'),
         fetch('/api/modules'),
         fetch('/api/admin/sales'),
+        fetch('/api/admin/pricing'),
       ])
 
       if (statsRes.ok) {
@@ -129,6 +158,28 @@ export default function AdminDashboardPage() {
         setSales(salesData.sales || [])
         setSalesStats(salesData.stats || null)
       }
+
+      if (pricingRes.ok) {
+        const pricingData = await pricingRes.json()
+        const pricingList: PricingItem[] = pricingData.pricing || []
+        setPricing(pricingList)
+        // Initialize forms
+        const forms: Record<string, typeof pricingForms[string]> = {}
+        for (const p of pricingList) {
+          forms[p.course] = {
+            arsAmount: String(p.arsAmount ?? ''),
+            arsStrike: p.arsStrike ? String(p.arsStrike) : '',
+            usdAmount: String(p.usdAmount ?? ''),
+            usdStrike: p.usdStrike ? String(p.usdStrike) : '',
+            mpLink: p.mpLink || '',
+            binanceId: p.binanceId || '',
+            binanceInstructions: p.binanceInstructions || '',
+            isFeatured: Boolean(p.isFeatured),
+            badgeText: p.badgeText || '',
+          }
+        }
+        setPricingForms(forms)
+      }
     } catch (error) {
       console.error('Dashboard load error:', error)
       toast({ title: 'Error al cargar datos', variant: 'destructive' })
@@ -145,7 +196,7 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const tab = params.get('tab')
-    if (tab && ['overview', 'users', 'modules', 'sales'].includes(tab)) {
+    if (tab && ['overview', 'users', 'modules', 'sales', 'pricing'].includes(tab)) {
       setActiveTab(tab)
     }
   }, [])
@@ -242,6 +293,44 @@ export default function AdminDashboardPage() {
       toast({ title: 'Error de conexión', variant: 'destructive' })
     } finally {
       setCreatingSale(false)
+    }
+  }
+
+  // Save pricing for one course
+  const handleSavePricing = async (course: string) => {
+    const form = pricingForms[course]
+    if (!form) return
+    setSavingPricing(course)
+    try {
+      const res = await fetch('/api/admin/pricing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          course,
+          arsAmount: form.arsAmount,
+          arsStrike: form.arsStrike || null,
+          usdAmount: form.usdAmount,
+          usdStrike: form.usdStrike || null,
+          mpLink: form.mpLink || null,
+          binanceId: form.binanceId || null,
+          binanceInstructions: form.binanceInstructions || null,
+          isFeatured: form.isFeatured,
+          badgeText: form.badgeText || null,
+        }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setPricing(prev => prev.map(p => p.course === course ? data.pricing : p))
+        toast({ title: 'Precios guardados', description: `Curso ${course} actualizado` })
+      } else {
+        const data = await res.json()
+        toast({ title: data.error || 'Error al guardar', variant: 'destructive' })
+      }
+    } catch (error) {
+      console.error('Save pricing error:', error)
+      toast({ title: 'Error de conexión', variant: 'destructive' })
+    } finally {
+      setSavingPricing(null)
     }
   }
 
@@ -390,6 +479,13 @@ export default function AdminDashboardPage() {
             >
               <DollarSign className="w-4 h-4 mr-2" />
               VENTAS
+            </TabsTrigger>
+            <TabsTrigger
+              value="pricing"
+              className="font-cinzel text-xs tracking-wider data-[state=active]:bg-amber-500/15 data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/20 text-white/40 px-4 py-2"
+            >
+              <DollarSign className="w-4 h-4 mr-2" />
+              PRECIOS
             </TabsTrigger>
           </TabsList>
 
@@ -1091,6 +1187,237 @@ export default function AdminDashboardPage() {
                     <p className="font-inter text-white/10 text-[10px] mt-1">Las ventas aparecerán cuando los alumnos paguen con Mercado Pago</p>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* ─── PRICING TAB ─── */}
+          <TabsContent value="pricing" className="space-y-4">
+            <Card className="bg-white/[0.02] border-amber-500/[0.08]">
+              <CardHeader>
+                <CardTitle className="font-cinzel text-white text-sm tracking-wider flex items-center gap-2">
+                  <DollarSign className="w-4 h-4 text-amber-400" />
+                  PRECIOS POR CURSO
+                </CardTitle>
+                <p className="font-inter text-white/40 text-xs mt-1">
+                  Configurá el precio en ARS (MercadoPago) y USD (Binance Pay) para cada curso. El curso marcado como destacado aparecerá primero en el campus con el badge SUPER GOLD.
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-5">
+                {pricing.length === 0 && (
+                  <div className="text-center py-8">
+                    <DollarSign className="w-8 h-8 text-amber-500/20 mx-auto mb-3" />
+                    <p className="font-inter text-white/20 text-xs">Cargando precios...</p>
+                  </div>
+                )}
+
+                {pricing.map((p) => {
+                  const form = pricingForms[p.course]
+                  if (!form) return null
+                  const courseLabel = p.course === 'onlyfans' ? 'OnlyFans' : p.course === 'hombres' ? 'Hombres' : 'Reddit'
+                  const courseIcon = p.course === 'onlyfans' ? '👑' : p.course === 'hombres' ? '👥' : '🌐'
+                  const courseGradient = p.course === 'onlyfans'
+                    ? 'from-amber-600 to-yellow-500'
+                    : p.course === 'hombres'
+                    ? 'from-blue-700 to-purple-800'
+                    : 'from-orange-600 to-rose-700'
+
+                  return (
+                    <div key={p.course} className="rounded-xl bg-white/[0.02] border border-amber-500/10 overflow-hidden">
+                      {/* Course header */}
+                      <div className={`p-3 bg-gradient-to-r ${courseGradient} bg-opacity-20`}>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{courseIcon}</span>
+                            <span className="font-cinzel text-white font-semibold text-sm tracking-wide">
+                              {courseLabel}
+                            </span>
+                          </div>
+                          {p.isFeatured && (
+                            <span className="bg-amber-400 text-black text-[9px] font-cinzel font-black tracking-widest px-2 py-0.5 rounded">
+                              ⭐ SUPER GOLD
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="p-4 space-y-4">
+                        {/* Featured toggle + badge */}
+                        <div className="grid sm:grid-cols-2 gap-3">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={form.isFeatured}
+                              onChange={(e) => setPricingForms(prev => ({
+                                ...prev,
+                                [p.course]: { ...form, isFeatured: e.target.checked }
+                              }))}
+                              className="w-4 h-4 accent-amber-500"
+                            />
+                            <span className="font-cinzel text-amber-400/70 text-xs tracking-wider">
+                              DESTACADO (aparece primero + badge)
+                            </span>
+                          </label>
+                          <div>
+                            <label className="font-cinzel text-amber-500/50 text-[10px] tracking-wider block mb-1">
+                              TEXTO DEL BADGE (si está destacado)
+                            </label>
+                            <Input
+                              type="text"
+                              placeholder="SUPER GOLD"
+                              value={form.badgeText}
+                              onChange={(e) => setPricingForms(prev => ({
+                                ...prev,
+                                [p.course]: { ...form, badgeText: e.target.value }
+                              }))}
+                              className="bg-white/5 border-amber-500/10 text-white placeholder:text-white/20 focus:border-amber-500/40 h-9 font-inter text-sm"
+                            />
+                          </div>
+                        </div>
+
+                        {/* ARS section */}
+                        <div className="rounded-lg bg-amber-500/[0.03] border border-amber-500/10 p-3">
+                          <p className="font-cinzel text-amber-400 text-xs tracking-wider mb-3 flex items-center gap-2">
+                            <DollarSign className="w-3 h-3" />
+                            PAGO EN PESOS (ARS · MERCADOPAGO)
+                          </p>
+                          <div className="grid sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className="font-cinzel text-amber-500/50 text-[10px] tracking-wider block mb-1">
+                                MONTO ARS
+                              </label>
+                              <Input
+                                type="number"
+                                placeholder="15000"
+                                value={form.arsAmount}
+                                onChange={(e) => setPricingForms(prev => ({
+                                  ...prev,
+                                  [p.course]: { ...form, arsAmount: e.target.value }
+                                }))}
+                                className="bg-white/5 border-amber-500/10 text-white placeholder:text-white/20 focus:border-amber-500/40 h-9 font-inter text-sm"
+                              />
+                            </div>
+                            <div>
+                              <label className="font-cinzel text-amber-500/50 text-[10px] tracking-wider block mb-1">
+                                PRECIO TACHADO ARS (opcional)
+                              </label>
+                              <Input
+                                type="number"
+                                placeholder="50000"
+                                value={form.arsStrike}
+                                onChange={(e) => setPricingForms(prev => ({
+                                  ...prev,
+                                  [p.course]: { ...form, arsStrike: e.target.value }
+                                }))}
+                                className="bg-white/5 border-amber-500/10 text-white placeholder:text-white/20 focus:border-amber-500/40 h-9 font-inter text-sm"
+                              />
+                            </div>
+                            <div className="sm:col-span-2">
+                              <label className="font-cinzel text-amber-500/50 text-[10px] tracking-wider block mb-1">
+                                LINK MERCADOPAGO DIRECTO (opcional — si lo dejás vacío, se genera automático)
+                              </label>
+                              <Input
+                                type="url"
+                                placeholder="https://mpago.la/..."
+                                value={form.mpLink}
+                                onChange={(e) => setPricingForms(prev => ({
+                                  ...prev,
+                                  [p.course]: { ...form, mpLink: e.target.value }
+                                }))}
+                                className="bg-white/5 border-amber-500/10 text-white placeholder:text-white/20 focus:border-amber-500/40 h-9 font-inter text-sm"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* USD section */}
+                        <div className="rounded-lg bg-amber-500/[0.03] border border-amber-500/10 p-3">
+                          <p className="font-cinzel text-amber-400 text-xs tracking-wider mb-3 flex items-center gap-2">
+                            <DollarSign className="w-3 h-3" />
+                            PAGO EN DÓLARES (USD · BINANCE PAY)
+                          </p>
+                          <div className="grid sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className="font-cinzel text-amber-500/50 text-[10px] tracking-wider block mb-1">
+                                MONTO USD
+                              </label>
+                              <Input
+                                type="number"
+                                placeholder="25"
+                                value={form.usdAmount}
+                                onChange={(e) => setPricingForms(prev => ({
+                                  ...prev,
+                                  [p.course]: { ...form, usdAmount: e.target.value }
+                                }))}
+                                className="bg-white/5 border-amber-500/10 text-white placeholder:text-white/20 focus:border-amber-500/40 h-9 font-inter text-sm"
+                              />
+                            </div>
+                            <div>
+                              <label className="font-cinzel text-amber-500/50 text-[10px] tracking-wider block mb-1">
+                                PRECIO TACHADO USD (opcional)
+                              </label>
+                              <Input
+                                type="number"
+                                placeholder="80"
+                                value={form.usdStrike}
+                                onChange={(e) => setPricingForms(prev => ({
+                                  ...prev,
+                                  [p.course]: { ...form, usdStrike: e.target.value }
+                                }))}
+                                className="bg-white/5 border-amber-500/10 text-white placeholder:text-white/20 focus:border-amber-500/40 h-9 font-inter text-sm"
+                              />
+                            </div>
+                            <div className="sm:col-span-2">
+                              <label className="font-cinzel text-amber-500/50 text-[10px] tracking-wider block mb-1">
+                                BINANCE PAY ID (email, teléfono o ID de Binance)
+                              </label>
+                              <Input
+                                type="text"
+                                placeholder="olgui@example.com o 123456789"
+                                value={form.binanceId}
+                                onChange={(e) => setPricingForms(prev => ({
+                                  ...prev,
+                                  [p.course]: { ...form, binanceId: e.target.value }
+                                }))}
+                                className="bg-white/5 border-amber-500/10 text-white placeholder:text-white/20 focus:border-amber-500/40 h-9 font-inter text-sm"
+                              />
+                            </div>
+                            <div className="sm:col-span-2">
+                              <label className="font-cinzel text-amber-500/50 text-[10px] tracking-wider block mb-1">
+                                INSTRUCCIONES CUSTOM (opcional — si lo dejás vacío, se generan automático)
+                              </label>
+                              <textarea
+                                rows={3}
+                                placeholder="1. Abrí Binance...&#10;2. Enviá $X USD al...&#10;3. ..."
+                                value={form.binanceInstructions}
+                                onChange={(e) => setPricingForms(prev => ({
+                                  ...prev,
+                                  [p.course]: { ...form, binanceInstructions: e.target.value }
+                                }))}
+                                className="w-full bg-white/5 border border-amber-500/10 text-white placeholder:text-white/20 focus:border-amber-500/40 rounded-md p-2 font-inter text-sm resize-y"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Save button */}
+                        <div className="flex justify-end">
+                          <Button
+                            onClick={() => handleSavePricing(p.course)}
+                            disabled={savingPricing === p.course}
+                            className="gold-btn-glow text-black font-cinzel text-xs tracking-wider border-0 h-9 px-5"
+                          >
+                            {savingPricing === p.course ? (
+                              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> GUARDANDO...</>
+                            ) : (
+                              <><DollarSign className="w-4 h-4 mr-2" /> GUARDAR {courseLabel.toUpperCase()}</>
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
               </CardContent>
             </Card>
           </TabsContent>
