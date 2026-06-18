@@ -452,7 +452,7 @@ function CourseCard({
                   })}
                 </div>
 
-                {/* Buy card — ALWAYS visible under each course */}
+                {/* Buy card — ALWAYS visible under each course (even when collapsed) */}
                 {!isActive && (
                   <BuyCard
                     course={courseKey}
@@ -472,6 +472,21 @@ function CourseCard({
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Buy card OUTSIDE the accordion — ALWAYS visible, even when course is collapsed */}
+        {!isActive && !expanded && (
+          <div className="px-4 sm:px-5 pb-5 pt-1">
+            <BuyCard
+              course={courseKey}
+              pricing={pricing}
+              onBuyArs={onBuyArs}
+              onBuyUsd={onBuyUsd}
+            />
+            <p className="font-inter text-amber-500/40 text-[10px] text-center mt-2 italic">
+              ↑ Tocá el curso para ver el temario completo
+            </p>
+          </div>
+        )}
       </Card>
     </motion.div>
   )

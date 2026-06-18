@@ -52,9 +52,22 @@ export async function initSchema() {
       description TEXT,
       order_num INTEGER,
       icon TEXT,
+      course TEXT DEFAULT 'onlyfans',
       created_at TEXT DEFAULT (datetime('now'))
     )
   `)
+
+  // Migration: add `course` column if missing (existing DBs)
+  try {
+    const cols = await db.execute("PRAGMA table_info(modules)")
+    const hasCourse = cols.rows.some((c: any) => c.name === 'course')
+    if (!hasCourse) {
+      await db.execute("ALTER TABLE modules ADD COLUMN course TEXT DEFAULT 'onlyfans'")
+      console.log('✓ Added course column to modules table')
+    }
+  } catch (e) {
+    // ignore — column might already exist
+  }
 
   await db.execute(`
     CREATE TABLE IF NOT EXISTS lessons (
@@ -235,6 +248,7 @@ export async function getModulesWithLessons() {
     description: m.description as string | null,
     orderNum: m.order_num as number,
     icon: m.icon as string | null,
+    course: (m.course as string) || 'onlyfans',
     createdAt: m.created_at as string,
     lessons: lessons.rows
       .filter(l => l.module_id === m.id)

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Mockup</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #050505;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #fff;
+    padding: 0;
+    width: 720px;
+  }
+  .gold-text {
+    background: linear-gradient(135deg, #d4af37 0%, #f5d76e 50%, #d4af37 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(212,175,55,0.1);
+    background: rgba(5,5,5,0.9);
+  }
+  .header .logo { display: flex; align-items: center; gap: 12px; }
+  .header .logo .crest {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #d4af37, #f5d76e);
+    border-radius: 50%;
+  }
+  .header h1 { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; }
+  .header .sub { font-size: 10px; color: rgba(212,175,55,0.4); }
+  .header .user { text-align: right; }
+  .header .user .name { font-size: 12px; }
+  .header .user .email { font-size: 10px; color: rgba(212,175,55,0.4); }
+  .header .salir { color: rgba(212,175,55,0.4); font-size: 11px; margin-left: 16px; font-family: 'Cinzel', serif; letter-spacing: 0.1em; }
+
+  .main { padding: 32px 24px; }
+  .welcome { margin-bottom: 24px; }
+  .welcome h2 { font-family: 'Cinzel Decorative', serif; font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+  .welcome p { color: rgba(255,255,255,0.4); font-size: 13px; }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+  .stat {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(212,175,55,0.08);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat .v { font-family: 'Cinzel Decorative', serif; font-size: 24px; font-weight: 700; color: #d4af37; }
+  .stat .l { font-family: 'Cinzel', serif; font-size: 10px; color: rgba(212,175,55,0.4); letter-spacing: 0.15em; margin-top: 4px; }
+
+  /* Course card */
+  .course { margin-bottom: 20px; border-radius: 12px; overflow: hidden; position: relative; }
+  .course.featured {
+    background: linear-gradient(135deg, rgba(120,80,10,0.4) 0%, #0a0a0a 60%);
+    border: 2px solid rgba(212,175,55,0.5);
+    box-shadow: 0 0 30px rgba(212,175,55,0.25), 0 0 60px rgba(212,175,55,0.12);
+  }
+  .course.normal {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(212,175,55,0.08);
+  }
+  .featured-badge {
+    position: absolute;
+    top: 0; right: 0;
+    background: linear-gradient(90deg, #d4af37, #f5d76e);
+    color: #000;
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    padding: 5px 12px;
+    border-bottom-left-radius: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .course-header {
+    display: flex; align-items: center; gap: 16px;
+    padding: 18px 20px;
+    cursor: pointer;
+  }
+  .icon-box {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .icon-featured { background: linear-gradient(135deg, #d4af37, #f5d76e); color: #000; }
+  .icon-onlyfans { background: linear-gradient(135deg, #d97706, #eab308); color: #fff; }
+  .icon-hombres { background: linear-gradient(135deg, #1d4ed8, #6d28d9); color: #fff; }
+  .course-title { flex: 1; }
+  .course-title h3 { font-family: 'Cinzel Decorative', serif; font-size: 18px; font-weight: 700; }
+  .course-title .sub { font-size: 11px; color: rgba(212,175,55,0.5); margin-top: 2px; }
+  .course-title .meta { font-family: 'Cinzel', serif; font-size: 10px; color: rgba(212,175,55,0.7); letter-spacing: 0.1em; margin-top: 6px; }
+  .chevron { color: rgba(212,175,55,0.6); font-size: 20px; }
+
+  .course-body { padding: 0 20px 20px; }
+  .featured-hero {
+    margin-bottom: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, rgba(212,175,55,0.1), transparent);
+    border: 1px solid rgba(212,175,55,0.2);
+    text-align: center;
+    font-style: italic;
+    color: #fcd34d;
+    font-size: 12px;
+  }
+  .description { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 14px; }
+  .temario-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    color: rgba(212,175,55,0.6);
+    letter-spacing: 0.15em;
+    margin-bottom: 10px;
+  }
+  .module-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(212,175,55,0.05);
+    border-radius: 8px;
+    margin-bottom: 6px;
+  }
+  .module-item .m-icon {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.05);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .module-item .m-content { flex: 1; }
+  .module-item .m-title { font-family: 'Cinzel', serif; font-size: 12px; font-weight: 600; }
+  .module-item .m-num { color: rgba(212,175,55,0.6); font-size: 10px; margin-right: 6px; }
+  .module-item .m-desc { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+  .lock { font-size: 12px; color: rgba(212,175,55,0.2); }
+
+  /* BUY CARD — KEY: always visible below each course */
+  .buy-card {
+    margin-top: 16px;
+    background: linear-gradient(135deg, rgba(212,175,55,0.04), transparent);
+    border: 1px solid rgba(212,175,55,0.15);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .buy-card-label {
+    display: flex; align-items: center; gap: 6px;
+    color: rgba(212,175,55,0.8);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    margin-bottom: 12px;
+  }
+  .buy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .buy-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(212,175,55,0.15);
+    border-radius: 8px;
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .buy-box.usd { background: rgba(212,175,55,0.04); border-color: rgba(212,175,55,0.25); }
+  .buy-label { font-family: 'Cinzel', serif; font-size: 9px; color: rgba(212,175,55,0.6); letter-spacing: 0.15em; margin-bottom: 6px; }
+  .buy-price { font-family: 'Cinzel Decorative', serif; font-weight: 900; font-size: 22px; }
+  .buy-strike { font-size: 10px; color: rgba(255,255,255,0.25); text-decoration: line-through; margin-top: 4px; }
+  .buy-btn {
+    margin-top: 10px;
+    padding: 8px 0;
+    background: linear-gradient(90deg, #d4af37, #f5d76e);
+    color: #000;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    border-radius: 6px;
+    border: none;
+  }
+  .buy-method { font-size: 9px; color: rgba(212,175,55,0.3); margin-top: 6px; }
+
+  .buy-note { font-size: 10px; color: rgba(255,255,255,0.3); text-align: center; margin-top: 12px; line-height: 1.4; }
+
+  .footer {
+    margin-top: 32px;
+    border-top: 1px solid rgba(212,175,55,0.05);
+    padding: 24px;
+    text-align: center;
+  }
+  .footer .ig {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(212,175,55,0.1);
+    border: 1px solid rgba(212,175,55,0.15);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 12px;
+  }
+  .footer .copyright { font-family: 'Cinzel', serif; font-size: 11px; color: rgba(212,175,55,0.2); letter-spacing: 0.2em; }
+
+  /* Arrow annotations */
+  .annotation {
+    position: absolute;
+    color: #ef4444;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="crest"></div>
+    <div>
+      <h1><span class="gold-text">DINASTY</span> ACADEMY</h1>
+      <div class="sub">Campus Exclusivo</div>
+    </div>
+  </div>
+  <div class="user">
+    <div class="name">leo</div>
+    <div class="email">keolazarte@gmail.com</div>
+  </div>
+  <div class="salir">↩ SALIR</div>
+</div>
+
+<div class="main">
+
+  <div class="welcome">
+    <h2>Bienvenida, <span class="gold-text">leo</span></h2>
+    <p>Tocá un curso para ver su temario. Los botones de compra siempre están visibles debajo de cada curso.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="v">3</div><div class="l">CURSOS</div></div>
+    <div class="stat"><div class="v">18</div><div class="l">MÓDULOS</div></div>
+    <div class="stat"><div class="v">35</div><div class="l">LECCIONES</div></div>
+  </div>
+
+  <!-- ═══ CURSO 1: REDDIT — SUPER GOLD, primero, expandido ═══ -->
+  <div class="course featured">
+    <div class="featured-badge">★ SUPER GOLD</div>
+    <div class="course-header">
+      <div class="icon-box icon-featured">🌐</div>
+      <div class="course-title">
+        <h3 class="gold-text">Curso de Reddit</h3>
+        <div class="sub">Producto separado · Tráfico orgánico</div>
+        <div class="meta">6 MÓDULOS · 12 LECCIONES</div>
+      </div>
+      <div class="chevron">⌃</div>
+    </div>
+    <div class="course-body">
+      <div class="featured-hero">★ El curso estrella de Dinasty Academy ★<br/><span style="color:rgba(212,175,55,0.6);font-size:11px;">Estrategias para atraer miles de seguidores a tu contenido</span></div>
+      <div class="description">Anatomía de Reddit, Karma, nichos y fetiches, manual de operaciones, horarios pico, RedGifs y lista oficial de 26 categorías de comunidades NSFW.</div>
+      <div class="temario-label">TEMARIO</div>
+
+      <div class="module-item">
+        <div class="m-icon">🔥</div>
+        <div class="m-content">
+          <div class="m-title"><span class="m-num">M1</span>Anatomía de Reddit</div>
+          <div class="m-desc">Cómo funciona la plataforma, algoritmo y reach</div>
+        </div>
+        <div class="lock">🔒</div>
+      </div>
+      <div class="module-item">
+        <div class="m-icon">⭐</div>
+        <div class="m-content">
+          <div class="m-title"><span class="m-num">M2</span>Karma: la moneda de Reddit</div>
+          <div class="m-desc">Cómo conseguir karma y por qué es vital</div>
+        </div>
+        <div class="lock">🔒</div>
+      </div>
+      <div class="module-item">
+        <div class="m-icon">🎭</div>
+        <div class="m-content">
+          <div class="m-title"><span class="m-num">M3</span>Nichos y fetiches</div>
+          <div class="m-desc">Las categorías más rentables del mercado</div>
+        </div>
+        <div class="lock">🔒</div>
+      </div>
+
+      <!-- BUY CARD — siempre visible debajo del curso -->
+      <div class="buy-card">
+        <div class="buy-label">💰 DESBLOQUEAR ESTE CURSO</div>
+        <div class="buy-grid">
+          <div class="buy-box">
+            <div class="buy-label">PESOS ARGENTINOS</div>
+            <div class="buy-price gold-text">$25.000</div>
+            <div class="buy-strike">$35.000 ARS</div>
+            <button class="buy-btn">$ COMPRAR ARS</button>
+            <div class="buy-method">MercadoPago · Auto</div>
+          </div>
+          <div class="buy-box usd">
+            <div class="buy-label">DÓLARES</div>
+            <div class="buy-price gold-text">$35</div>
+            <div class="buy-strike">$50 USD</div>
+            <button class="buy-btn">₿ COMPRAR USD</button>
+            <div class="buy-method">Binance Pay · Manual</div>
+          </div>
+        </div>
+        <div class="buy-note">Al adquirir este curso, accedés a <strong style="color:rgba(212,175,55,0.7)">todos los módulos y lecciones</strong> de manera permanente.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CURSO 2: ONLYFANS — colapsado, pero con botones visibles ═══ -->
+  <div class="course normal">
+    <div class="course-header">
+      <div class="icon-box icon-onlyfans">👑</div>
+      <div class="course-title">
+        <h3 style="color:#fff;">Dinasty Academy — OnlyFans</h3>
+        <div class="sub">Curso principal · Mujeres creadoras</div>
+        <div class="meta">7 MÓDULOS · 15 LECCIONES</div>
+      </div>
+      <div class="chevron">⌄</div>
+    </div>
+    <!-- aunque esté colapsado, los botones de compra SE VEN -->
+    <div class="course-body">
+      <div class="buy-card">
+        <div class="buy-label">💰 DESBLOQUEAR ESTE CURSO</div>
+        <div class="buy-grid">
+          <div class="buy-box">
+            <div class="buy-label">PESOS ARGENTINOS</div>
+            <div class="buy-price gold-text">$15.000</div>
+            <div class="buy-strike">$22.000 ARS</div>
+            <button class="buy-btn">$ COMPRAR ARS</button>
+            <div class="buy-method">MercadoPago · Auto</div>
+          </div>
+          <div class="buy-box usd">
+            <div class="buy-label">DÓLARES</div>
+            <div class="buy-price gold-text">$25</div>
+            <div class="buy-strike">$40 USD</div>
+            <button class="buy-btn">₿ COMPRAR USD</button>
+            <div class="buy-method">Binance Pay · Manual</div>
+          </div>
+        </div>
+        <div class="buy-note">Tocá el curso arriba ↑ para ver el temario completo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CURSO 3: HOMBRES — colapsado, pero con botones visibles ═══ -->
+  <div class="course normal">
+    <div class="course-header">
+      <div class="icon-box icon-hombres">👥</div>
+      <div class="course-title">
+        <h3 style="color:#fff;">Curso para Hombres</h3>
+        <div class="sub">Producto separado · Creadores masculinos</div>
+        <div class="meta">5 MÓDULOS · 8 LECCIONES</div>
+      </div>
+      <div class="chevron">⌄</div>
+    </div>
+    <div class="course-body">
+      <div class="buy-card">
+        <div class="buy-label">💰 DESBLOQUEAR ESTE CURSO</div>
+        <div class="buy-grid">
+          <div class="buy-box">
+            <div class="buy-label">PESOS ARGENTINOS</div>
+            <div class="buy-price gold-text">$15.000</div>
+            <div class="buy-strike">$22.000 ARS</div>
+            <button class="buy-btn">$ COMPRAR ARS</button>
+            <div class="buy-method">MercadoPago · Auto</div>
+          </div>
+          <div class="buy-box usd">
+            <div class="buy-label">DÓLARES</div>
+            <div class="buy-price gold-text">$25</div>
+            <div class="buy-strike">$40 USD</div>
+            <button class="buy-btn">₿ COMPRAR USD</button>
+            <div class="buy-method">Binance Pay · Manual</div>
+          </div>
+        </div>
+        <div class="buy-note">Tocá el curso arriba ↑ para ver el temario completo</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="ig">📷</div>
+  <div class="copyright">© 2026 DINASTY ACADEMY · TODOS LOS DERECHOS RESERVADOS</div>
+</div>
+
+</body>
+</html>
