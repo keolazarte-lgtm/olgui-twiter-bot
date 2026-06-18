@@ -377,6 +377,152 @@ export async function getSalesStats() {
   }
 }
 
+// ─── Visit Helpers ────────────────────────────────────────
+
+export async function recordVisit(data: {
+  ip: string | null
+  userAgent: string | null
+  path: string
+  referer: string | null
+  method: string
+  country?: string | null
+  city?: string | null
+  device?: string | null
+  browser?: string | null
+  isBot?: boolean
+}) {
+  const db = getDb()
+  const id = crypto.randomUUID()
+
+  // Detect bot from user-agent
+  const ua = data.userAgent || ''
+  const isBot = data.isBot ?? /bot|crawler|spider|crawling|slurp|googlebot|bingbot|yandex|facebookexternalhit|twitterbot|linkedinbot|telegrambot|whatsapp|preview/i.test(ua)
+
+  // Detect device type
+  let device = data.device || 'desktop'
+  if (!data.device) {
+    if (/Mobile|Android|iPhone|iPod/.test(ua)) device = 'mobile'
+    else if (/iPad|Tablet/.test(ua)) device = 'tablet'
+  }
+
+  // Detect browser
+  let browser = data.browser || 'other'
+  if (!data.browser) {
+    if (/Edg\//.test(ua)) browser = 'edge'
+    else if (/Chrome\//.test(ua)) browser = 'chrome'
+    else if (/Firefox\//.test(ua)) browser = 'firefox'
+    else if (/Safari\//.test(ua)) browser = 'safari'
+  }
+
+  try {
+    await db.execute({
+      sql: `INSERT INTO visits (id, ip, user_agent, path, referer, method, country, city, device, browser, is_bot)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [
+        id,
+        data.ip,
+        data.userAgent,
+        data.path,
+        data.referer,
+        data.method,
+        data.country || null,
+        data.city || null,
+        device,
+        browser,
+        isBot ? 1 : 0,
+      ],
+    })
+  } catch (e) {
+    // ignore — visits are best-effort, never fail the request
+  }
+}
+
+export interface VisitStats {
+  total: number
+  today: number
+  thisWeek: number
+  thisMonth: number
+  uniqueIps: number
+  bots: number
+  byDevice: { device: string; count: number }[]
+  byBrowser: { browser: string; count: number }[]
+  byPath: { path: string; count: number }[]
+  last7Days: { date: string; count: number }[]
+}
+
+export async function getVisitStats(): Promise<VisitStats> {
+  const db = getDb()
+
+  const [totalRes, todayRes, weekRes, monthRes, uniqueRes, botsRes, deviceRes, browserRes, pathRes, dailyRes] = await Promise.all([
+    db.execute('SELECT COUNT(*) as c FROM visits'),
+    db.execute(`SELECT COUNT(*) as c FROM visits WHERE date(created_at) = date('now')`),
+    db.execute(`SELECT COUNT(*) as c FROM visits WHERE created_at >= datetime('now', '-7 days')`),
+    db.execute(`SELECT COUNT(*) as c FROM visits WHERE strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now')`),
+    db.execute(`SELECT COUNT(DISTINCT ip) as c FROM visits WHERE ip IS NOT NULL`),
+    db.execute(`SELECT COUNT(*) as c FROM visits WHERE is_bot = 1`),
+    db.execute(`SELECT device, COUNT(*) as c FROM visits GROUP BY device ORDER BY c DESC`),
+    db.execute(`SELECT browser, COUNT(*) as c FROM visits GROUP BY browser ORDER BY c DESC`),
+    db.execute(`SELECT path, COUNT(*) as c FROM visits GROUP BY path ORDER BY c DESC LIMIT 10`),
+    db.execute(`
+      SELECT date(created_at) as d, COUNT(*) as c
+      FROM visits
+      WHERE created_at >= datetime('now', '-7 days')
+      GROUP BY date(created_at)
+      ORDER BY d ASC
+    `),
+  ])
+
+  return {
+    total: totalRes.rows[0].c as number,
+    today: todayRes.rows[0].c as number,
+    thisWeek: weekRes.rows[0].c as number,
+    thisMonth: monthRes.rows[0].c as number,
+    uniqueIps: uniqueRes.rows[0].c as number,
+    bots: botsRes.rows[0].c as number,
+    byDevice: deviceRes.rows.map(r => ({ device: r.device as string, count: r.c as number })),
+    byBrowser: browserRes.rows.map(r => ({ browser: r.browser as string, count: r.c as number })),
+    byPath: pathRes.rows.map(r => ({ path: r.path as string, count: r.c as number })),
+    last7Days: dailyRes.rows.map(r => ({ date: r.d as string, count: r.c as number })),
+  }
+}
+
+export interface VisitItem {
+  id: string
+  ip: string | null
+  userAgent: string | null
+  path: string
+  referer: string | null
+  method: string
+  country: string | null
+  city: string | null
+  device: string
+  browser: string
+  isBot: number
+  createdAt: string
+}
+
+export async function getRecentVisits(limit = 50): Promise<VisitItem[]> {
+  const db = getDb()
+  const result = await db.execute({
+    sql: `SELECT * FROM visits ORDER BY created_at DESC LIMIT ?`,
+    args: [limit],
+  })
+  return result.rows.map(r => ({
+    id: r.id as string,
+    ip: r.ip as string | null,
+    userAgent: r.user_agent as string | null,
+    path: r.path as string,
+    referer: r.referer as string | null,
+    method: r.method as string,
+    country: r.country as string | null,
+    city: r.city as string | null,
+    device: r.device as string,
+    browser: r.browser as string,
+    isBot: r.is_bot as number,
+    createdAt: r.created_at as string,
+  }))
+}
+
 // ─── Seed Helpers ─────────────────────────────────────────
 
 export async function seedModules() {

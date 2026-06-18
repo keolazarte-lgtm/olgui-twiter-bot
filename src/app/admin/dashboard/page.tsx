@@ -7,7 +7,8 @@ import {
   Users, Check, X, Loader2, Shield, BookOpen, Crown,
   LayoutDashboard, UserCheck, UserX, RefreshCw, Search,
   ChevronDown, Calendar, Mail, ToggleLeft, ToggleRight,
-  DollarSign, TrendingUp, ArrowUpRight, Banknote, Plus, UserCircle
+  DollarSign, TrendingUp, ArrowUpRight, Banknote, Plus, UserCircle,
+  Eye, Globe, Monitor, Smartphone, Tablet, Bot, Activity, MapPin
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -88,6 +89,34 @@ interface PricingItem {
   badgeText: string | null
 }
 
+interface VisitStats {
+  total: number
+  today: number
+  thisWeek: number
+  thisMonth: number
+  uniqueIps: number
+  bots: number
+  byDevice: { device: string; count: number }[]
+  byBrowser: { browser: string; count: number }[]
+  byPath: { path: string; count: number }[]
+  last7Days: { date: string; count: number }[]
+}
+
+interface VisitItem {
+  id: string
+  ip: string | null
+  userAgent: string | null
+  path: string
+  referer: string | null
+  method: string
+  country: string | null
+  city: string | null
+  device: string
+  browser: string
+  isBot: number
+  createdAt: string
+}
+
 // ─── Component ──────────────────────────────────────
 
 export default function AdminDashboardPage() {
@@ -112,6 +141,8 @@ export default function AdminDashboardPage() {
   const [creatingSale, setCreatingSale] = useState(false)
   const [pricing, setPricing] = useState<PricingItem[]>([])
   const [savingPricing, setSavingPricing] = useState<string | null>(null)
+  const [visitStats, setVisitStats] = useState<VisitStats | null>(null)
+  const [recentVisits, setRecentVisits] = useState<VisitItem[]>([])
   const { toast } = useToast()
 
   // Pricing form state — one entry per course
@@ -130,12 +161,13 @@ export default function AdminDashboardPage() {
   // Load all data
   const loadData = useCallback(async () => {
     try {
-      const [statsRes, usersRes, modulesRes, salesRes, pricingRes] = await Promise.all([
+      const [statsRes, usersRes, modulesRes, salesRes, pricingRes, visitsRes] = await Promise.all([
         fetch('/api/admin/stats'),
         fetch('/api/admin/users'),
         fetch('/api/modules'),
         fetch('/api/admin/sales'),
         fetch('/api/admin/pricing'),
+        fetch('/api/admin/visits?limit=50'),
       ])
 
       if (statsRes.ok) {
@@ -179,6 +211,12 @@ export default function AdminDashboardPage() {
           }
         }
         setPricingForms(forms)
+      }
+
+      if (visitsRes.ok) {
+        const visitsData = await visitsRes.json()
+        setVisitStats(visitsData.stats || null)
+        setRecentVisits(visitsData.recent || [])
       }
     } catch (error) {
       console.error('Dashboard load error:', error)
@@ -486,6 +524,13 @@ export default function AdminDashboardPage() {
             >
               <DollarSign className="w-4 h-4 mr-2" />
               PRECIOS
+            </TabsTrigger>
+            <TabsTrigger
+              value="visits"
+              className="font-cinzel text-xs tracking-wider data-[state=active]:bg-amber-500/15 data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/20 text-white/40 px-4 py-2"
+            >
+              <Eye className="w-4 h-4 mr-2" />
+              VISITAS
             </TabsTrigger>
           </TabsList>
 
@@ -1418,6 +1463,215 @@ export default function AdminDashboardPage() {
                     </div>
                   )
                 })}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* ─── VISITS TAB ─── */}
+          <TabsContent value="visits" className="space-y-4">
+            {/* Visit stats cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              <Card className="bg-white/[0.02] border-amber-500/[0.08]">
+                <CardContent className="p-3 text-center">
+                  <Eye className="w-4 h-4 text-amber-400/60 mx-auto mb-1" />
+                  <p className="font-cinzel-decorative text-lg font-bold text-white">{visitStats?.total || 0}</p>
+                  <p className="font-cinzel text-amber-500/40 text-[9px] tracking-wider">TOTAL</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white/[0.02] border-amber-500/[0.08]">
+                <CardContent className="p-3 text-center">
+                  <Activity className="w-4 h-4 text-green-400/60 mx-auto mb-1" />
+                  <p className="font-cinzel-decorative text-lg font-bold text-green-400">{visitStats?.today || 0}</p>
+                  <p className="font-cinzel text-amber-500/40 text-[9px] tracking-wider">HOY</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white/[0.02] border-amber-500/[0.08]">
+                <CardContent className="p-3 text-center">
+                  <TrendingUp className="w-4 h-4 text-amber-400/60 mx-auto mb-1" />
+                  <p className="font-cinzel-decorative text-lg font-bold text-amber-400">{visitStats?.thisWeek || 0}</p>
+                  <p className="font-cinzel text-amber-500/40 text-[9px] tracking-wider">SEMANA</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white/[0.02] border-amber-500/[0.08]">
+                <CardContent className="p-3 text-center">
+                  <Calendar className="w-4 h-4 text-amber-400/60 mx-auto mb-1" />
+                  <p className="font-cinzel-decorative text-lg font-bold text-white">{visitStats?.thisMonth || 0}</p>
+                  <p className="font-cinzel text-amber-500/40 text-[9px] tracking-wider">MES</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white/[0.02] border-amber-500/[0.08]">
+                <CardContent className="p-3 text-center">
+                  <MapPin className="w-4 h-4 text-amber-400/60 mx-auto mb-1" />
+                  <p className="font-cinzel-decorative text-lg font-bold text-white">{visitStats?.uniqueIps || 0}</p>
+                  <p className="font-cinzel text-amber-500/40 text-[9px] tracking-wider">ÚNICOS</p>
+                </CardContent>
+              </Card>
+              <Card className="bg-white/[0.02] border-amber-500/[0.08]">
+                <CardContent className="p-3 text-center">
+                  <Bot className="w-4 h-4 text-red-400/60 mx-auto mb-1" />
+                  <p className="font-cinzel-decorative text-lg font-bold text-red-400">{visitStats?.bots || 0}</p>
+                  <p className="font-cinzel text-amber-500/40 text-[9px] tracking-wider">BOTS</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-4">
+              {/* Last 7 days chart */}
+              <Card className="bg-white/[0.02] border-amber-500/[0.08]">
+                <CardHeader className="pb-3">
+                  <CardTitle className="font-cinzel text-white text-sm tracking-wider flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-amber-400" />
+                    VISITAS ÚLTIMOS 7 DÍAS
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  {visitStats && visitStats.last7Days.length > 0 ? (
+                    <div className="space-y-2">
+                      {(() => {
+                        const max = Math.max(...visitStats.last7Days.map(d => d.count), 1)
+                        return visitStats.last7Days.map(d => (
+                          <div key={d.date} className="flex items-center gap-3">
+                            <span className="font-inter text-white/40 text-[10px] w-16 shrink-0">
+                              {new Date(d.date + 'T00:00:00').toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' })}
+                            </span>
+                            <div className="flex-1 h-6 bg-white/5 rounded overflow-hidden">
+                              <div
+                                className="h-full bg-gradient-to-r from-amber-600 to-yellow-400 transition-all"
+                                style={{ width: `${(d.count / max) * 100}%` }}
+                              />
+                            </div>
+                            <span className="font-cinzel text-amber-400 text-xs w-8 text-right shrink-0">{d.count}</span>
+                          </div>
+                        ))
+                      })()}
+                    </div>
+                  ) : (
+                    <p className="font-inter text-white/20 text-xs text-center py-6">Sin datos todavía</p>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Device + Browser breakdown */}
+              <Card className="bg-white/[0.02] border-amber-500/[0.08]">
+                <CardHeader className="pb-3">
+                  <CardTitle className="font-cinzel text-white text-sm tracking-wider flex items-center gap-2">
+                    <Monitor className="w-4 h-4 text-amber-400" />
+                    DISPOSITIVOS Y NAVEGADORES
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0 space-y-4">
+                  <div>
+                    <p className="font-cinzel text-amber-500/40 text-[10px] tracking-wider mb-2">DISPOSITIVOS</p>
+                    <div className="flex flex-wrap gap-2">
+                      {visitStats?.byDevice.map(d => {
+                        const Icon = d.device === 'mobile' ? Smartphone : d.device === 'tablet' ? Tablet : Monitor
+                        const total = visitStats.byDevice.reduce((a, b) => a + b.count, 0) || 1
+                        return (
+                          <Badge key={d.device} className="bg-white/5 text-white/60 border-white/10 text-[10px]">
+                            <Icon className="w-3 h-3 mr-1" />
+                            {d.device} · {d.count} ({Math.round((d.count / total) * 100)}%)
+                          </Badge>
+                        )
+                      })}
+                      {(!visitStats?.byDevice || visitStats.byDevice.length === 0) && (
+                        <p className="font-inter text-white/20 text-[10px]">Sin datos</p>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="font-cinzel text-amber-500/40 text-[10px] tracking-wider mb-2">NAVEGADORES</p>
+                    <div className="flex flex-wrap gap-2">
+                      {visitStats?.byBrowser.map(b => (
+                        <Badge key={b.browser} className="bg-white/5 text-white/60 border-white/10 text-[10px]">
+                          <Globe className="w-3 h-3 mr-1" />
+                          {b.browser} · {b.count}
+                        </Badge>
+                      ))}
+                      {(!visitStats?.byBrowser || visitStats.byBrowser.length === 0) && (
+                        <p className="font-inter text-white/20 text-[10px]">Sin datos</p>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="font-cinzel text-amber-500/40 text-[10px] tracking-wider mb-2">PÁGINAS MÁS VISITADAS</p>
+                    <div className="space-y-1">
+                      {visitStats?.byPath.map(p => (
+                        <div key={p.path} className="flex items-center justify-between text-[10px]">
+                          <span className="font-inter text-white/60 truncate">{p.path}</span>
+                          <span className="font-cinzel text-amber-400 ml-2">{p.count}</span>
+                        </div>
+                      ))}
+                      {(!visitStats?.byPath || visitStats.byPath.length === 0) && (
+                        <p className="font-inter text-white/20 text-[10px]">Sin datos</p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Recent visits list */}
+            <Card className="bg-white/[0.02] border-amber-500/[0.08] overflow-hidden">
+              <CardHeader className="pb-3">
+                <CardTitle className="font-cinzel text-white text-sm tracking-wider flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-amber-400" />
+                  ÚLTIMAS 50 VISITAS
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="max-h-[500px] overflow-y-auto">
+                  <table className="w-full">
+                    <thead className="sticky top-0 bg-[#0a0a0a]">
+                      <tr className="border-b border-amber-500/10">
+                        <th className="text-left p-2 font-cinzel text-amber-500/40 text-[9px] tracking-wider">FECHA</th>
+                        <th className="text-left p-2 font-cinzel text-amber-500/40 text-[9px] tracking-wider">RUTA</th>
+                        <th className="text-left p-2 font-cinzel text-amber-500/40 text-[9px] tracking-wider">IP</th>
+                        <th className="text-left p-2 font-cinzel text-amber-500/40 text-[9px] tracking-wider">DISP</th>
+                        <th className="text-left p-2 font-cinzel text-amber-500/40 text-[9px] tracking-wider">NAVEGADOR</th>
+                        <th className="text-left p-2 font-cinzel text-amber-500/40 text-[9px] tracking-wider">TIPO</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {recentVisits.map(v => (
+                        <tr key={v.id} className="border-b border-amber-500/5 hover:bg-white/[0.01]">
+                          <td className="p-2 font-inter text-white/40 text-[10px] whitespace-nowrap">
+                            {new Date(v.createdAt + (v.createdAt.includes('Z') ? '' : 'Z')).toLocaleString('es-AR', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </td>
+                          <td className="p-2 font-mono text-white/70 text-[10px] truncate max-w-[180px]">{v.path}</td>
+                          <td className="p-2 font-mono text-white/40 text-[10px]">{v.ip || '—'}</td>
+                          <td className="p-2">
+                            <span className="font-cinzel text-white/60 text-[9px] uppercase">{v.device}</span>
+                          </td>
+                          <td className="p-2">
+                            <span className="font-cinzel text-white/60 text-[9px] uppercase">{v.browser}</span>
+                          </td>
+                          <td className="p-2">
+                            {v.isBot ? (
+                              <Badge className="bg-red-500/10 text-red-400 border-red-500/20 text-[8px]">
+                                <Bot className="w-2.5 h-2.5 mr-0.5" /> BOT
+                              </Badge>
+                            ) : (
+                              <Badge className="bg-green-500/10 text-green-400 border-green-500/20 text-[8px]">HUMANO</Badge>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                      {recentVisits.length === 0 && (
+                        <tr>
+                          <td colSpan={6} className="p-8 text-center">
+                            <Eye className="w-8 h-8 text-amber-500/20 mx-auto mb-3" />
+                            <p className="font-inter text-white/20 text-xs">No hay visitas registradas todavía</p>
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

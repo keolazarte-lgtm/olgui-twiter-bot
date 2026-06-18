@@ -4,6 +4,32 @@ import { verifyToken } from '@/lib/auth'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // Track visit on every non-API, non-static page
+  // We do this by firing an internal fetch to /api/track-visit (which runs on Node runtime)
+  // because middleware runs on Edge runtime and cannot import the DB layer directly.
+  if (!pathname.startsWith('/_next/') && !pathname.startsWith('/favicon') && !pathname.startsWith('/api/')) {
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+               request.headers.get('x-real-ip') ||
+               null
+    const userAgent = request.headers.get('user-agent') || null
+    const referer = request.headers.get('referer') || null
+
+    // Build absolute URL for the internal track endpoint
+    const trackUrl = new URL('/api/track-visit', request.url)
+    fetch(trackUrl.toString(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ip,
+        userAgent,
+        path: pathname,
+        referer,
+        method: request.method,
+      }),
+      // Don't wait — fire and forget
+    }).catch(() => {})
+  }
+
   // Allow API routes and static files through
   if (pathname.startsWith('/api/') || pathname.startsWith('/_next/') || pathname.startsWith('/favicon')) {
     return NextResponse.next()
@@ -80,5 +106,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/campus/:path*', '/admin/:path*', '/login'],
+  // Run middleware on all pages EXCEPT API routes and Next.js internals
+  // (track-visit endpoint is hit internally by middleware itself)
+  matcher: ['/((?!api|_next/static|_next/image|favicon|.*\\..*).*)'],
 }
