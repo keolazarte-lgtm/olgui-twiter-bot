@@ -7,7 +7,7 @@ import {
   Shield, Eye, Lock, DollarSign, Brain, UserCheck, ArrowRight,
   Check, AlertTriangle, Clock, Star, Zap, ChevronDown, ChevronUp,
   MessageCircle, Send, Loader2, Crown, Sparkles, Users, Gem,
-  Fingerprint, Banknote, TrendingUp, Award, X, Play, Timer,
+  Fingerprint, Banknote, TrendingUp, Award, X, Play,
   ShieldCheck, EyeOff, Wallet, HeartHandshake, Volume2, VolumeX,
   Flame, Globe, Palette, Ghost, Instagram
 } from 'lucide-react'
@@ -81,20 +81,6 @@ const TESTIMONIALS = [
   },
 ]
 
-// Fake purchase notifications for social proof
-const PURCHASE_NOTIFICATIONS = [
-  { name: 'María G.', city: 'Buenos Aires', time: 'hace 3 min' },
-  { name: 'Sofía L.', city: 'Córdoba', time: 'hace 7 min' },
-  { name: 'Agustina R.', city: 'Rosario', time: 'hace 12 min' },
-  { name: 'Luciana P.', city: 'Mendoza', time: 'hace 18 min' },
-  { name: 'Florencia M.', city: 'La Plata', time: 'hace 25 min' },
-  { name: 'Natalia D.', city: 'Tucumán', time: 'hace 31 min' },
-  { name: 'Carla V.', city: 'Mar del Plata', time: 'hace 38 min' },
-  { name: 'Romina S.', city: 'Salta', time: 'hace 45 min' },
-  { name: 'Gabriela T.', city: 'Santa Fe', time: 'hace 52 min' },
-  { name: 'Alejandra K.', city: 'Neuquén', time: 'hace 1 hora' },
-]
-
 // Premium content cards
 const PREMIUM_CONTENT = [
   {
@@ -132,56 +118,6 @@ const COMPARISON = [
   { feature: 'Mentalidad', without: 'Dudas e inseguridad', with_: 'Marca que vende' },
   { feature: 'Soporte', without: 'Estás sola', with_: 'Campus exclusivo 24/7' },
 ]
-
-// ─── Countdown Timer Hook ──────────────────────────────────
-// Dynamic countdown: 3 days from the user's first visit (stored in localStorage)
-const OFFER_STORAGE_KEY = 'da_offer_start'
-const OFFER_DURATION_MS = 3 * 24 * 60 * 60 * 1000 // 3 days
-
-function useDynamicCountdown() {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
-
-  useEffect(() => {
-    const getDeadline = (): number => {
-      try {
-        const stored = localStorage.getItem(OFFER_STORAGE_KEY)
-        if (stored) {
-          const start = parseInt(stored, 10)
-          if (!isNaN(start)) return start + OFFER_DURATION_MS
-        }
-      } catch {}
-      // First visit — store now
-      const now = Date.now()
-      try { localStorage.setItem(OFFER_STORAGE_KEY, now.toString()) } catch {}
-      return now + OFFER_DURATION_MS
-    }
-
-    const deadline = getDeadline()
-
-    const tick = () => {
-      const now = Date.now()
-      const distance = deadline - now
-
-      if (distance < 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
-        return
-      }
-
-      setTimeLeft({
-        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-        seconds: Math.floor((distance % (1000 * 60)) / 1000),
-      })
-    }
-
-    tick()
-    const interval = setInterval(tick, 1000)
-    return () => clearInterval(interval)
-  }, [])
-
-  return timeLeft
-}
 
 // ─── Gold Particles Component ──────────────────────────────
 // Pre-computed particle positions to avoid Math.random() hydration mismatch
@@ -267,8 +203,6 @@ function DynastyCrest({ className = '' }: { className?: string }) {
 
 // ─── Main Page ───────────────────────────────────────────────
 export default function DinastiaAcademy() {
-  const TOTAL_SPOTS = 30
-  const [spotsLeft, setSpotsLeft] = useState(17)
   const [showPayment, setShowPayment] = useState(false)
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -277,13 +211,7 @@ export default function DinastiaAcademy() {
   const [paid, setPaid] = useState(false)
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
   const [showStickyCta, setShowStickyCta] = useState(false)
-  const [notification, setNotification] = useState<typeof PURCHASE_NOTIFICATIONS[0] | null>(null)
-  const [notifVisible, setNotifVisible] = useState(false)
-  const [buyerCount] = useState(47)
   const { toast } = useToast()
-
-  // Dynamic countdown: 3 days from first visit
-  const timeLeft = useDynamicCountdown()
 
   // Scroll detection for sticky CTA
   useEffect(() => {
@@ -292,40 +220,6 @@ export default function DinastiaAcademy() {
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  // Spots fluctuation
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSpotsLeft(prev => {
-        const random = Math.floor(Math.random() * 4) + 14
-        return random
-      })
-    }, 45000)
-    return () => clearInterval(interval)
-  }, [])
-
-  // Purchase notification rotation
-  useEffect(() => {
-    let idx = 0
-    const showNotif = () => {
-      setNotification(PURCHASE_NOTIFICATIONS[idx % PURCHASE_NOTIFICATIONS.length])
-      setNotifVisible(true)
-      idx++
-
-      setTimeout(() => {
-        setNotifVisible(false)
-      }, 4000)
-    }
-
-    // Show first one after 8 seconds, then every 15-25 seconds
-    const initialTimeout = setTimeout(() => {
-      showNotif()
-      const interval = setInterval(showNotif, 15000 + Math.random() * 10000)
-      return () => clearInterval(interval)
-    }, 8000)
-
-    return () => clearTimeout(initialTimeout)
   }, [])
 
   const handlePurchase = async () => {
@@ -403,9 +297,6 @@ export default function DinastiaAcademy() {
     }
   }
 
-  const spotsUsed = TOTAL_SPOTS - spotsLeft
-  const spotsPercent = (spotsUsed / TOTAL_SPOTS) * 100
-
   const faqs = [
     {
       q: '¿Necesito mostrar mi cara?',
@@ -421,7 +312,7 @@ export default function DinastiaAcademy() {
     },
     {
       q: '¿Cómo recibo el material?',
-      a: 'Una vez confirmado el pago, recibís el PDF completo en tu email en 5 a 10 minutos. También te llega por WhatsApp si dejás tu número. Rápido y discreto.',
+      a: 'Una vez confirmado el pago, recibís acceso inmediato al campus exclusivo de Dinasty Academy, donde podés consultar todo el material las 24hs desde cualquier dispositivo. Además te llega un email de bienvenida con tus datos de ingreso en 5 a 10 minutos.',
     },
     {
       q: '¿Hay soporte si tengo dudas?',
@@ -429,34 +320,14 @@ export default function DinastiaAcademy() {
     },
   ]
 
-  const pad = (n: number) => n.toString().padStart(2, '0')
-
   return (
     <div className="min-h-screen bg-[#050505] flex flex-col overflow-x-hidden">
-      {/* ═══════════════ COUNTDOWN BAR ═══════════════ */}
+      {/* ═══════════════ LAUNCH BANNER ═══════════════ */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-amber-900/90 via-amber-800/90 to-amber-900/90 backdrop-blur-md border-b border-amber-500/20 py-2 px-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between text-xs sm:text-sm">
           <div className="flex items-center gap-2 sm:gap-4">
-            <Timer className="w-3.5 h-3.5 text-amber-300 shrink-0" />
-            <span className="font-cinzel text-amber-200 tracking-wider">OFERTA TERMINA EN</span>
-            <div className="flex items-center gap-1">
-              {timeLeft.days > 0 && (
-                <>
-                  <span className="bg-black/40 px-1.5 py-0.5 rounded font-cinzel font-bold text-amber-300 min-w-[28px] text-center">
-                    {timeLeft.days}
-                  </span>
-                  <span className="text-amber-500/60 text-[10px]">D</span>
-                </>
-              )}
-              {[pad(timeLeft.hours), pad(timeLeft.minutes), pad(timeLeft.seconds)].map((val, i) => (
-                <span key={i} className="flex items-center gap-1">
-                  <span className="bg-black/40 px-1.5 py-0.5 rounded font-cinzel font-bold text-amber-300 min-w-[28px] text-center">
-                    {val}
-                  </span>
-                  {i < 2 && <span className="text-amber-500/60">:</span>}
-                </span>
-              ))}
-            </div>
+            <Sparkles className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+            <span className="font-cinzel text-amber-200 tracking-wider">PRECIO DE LANZAMIENTO — VA A SUBIR</span>
           </div>
           <a
             href="/login"
@@ -551,7 +422,7 @@ export default function DinastiaAcademy() {
             <div className="inline-flex items-center gap-2 bg-amber-500/5 border border-amber-500/10 rounded-full px-4 py-1.5">
               <Users className="w-3.5 h-3.5 text-amber-400" />
               <span className="font-inter text-amber-400/80 text-xs">
-                <span className="font-bold">+{buyerCount}</span> creadoras ya confiaron en Dinasty Academy
+                <span className="font-bold">Nuevo lanzamiento</span> · Sumate a la comunidad de Dinasty Academy
               </span>
             </div>
           </motion.div>
@@ -603,11 +474,11 @@ export default function DinastiaAcademy() {
               <p className="font-inter text-white/30 text-[10px] mb-2 line-through">
                 Valor real: $50.000 ARS
               </p>
-              <div className="bg-amber-500/5 border border-amber-500/15 rounded-lg px-3 py-1.5 mb-3 pulse-gold">
+                <div className="bg-amber-500/5 border border-amber-500/15 rounded-lg px-3 py-1.5 mb-3 pulse-gold">
                 <div className="flex items-center justify-center gap-2 text-amber-400 text-xs">
                   <AlertTriangle className="w-3.5 h-3.5" />
                   <span className="font-cinzel font-semibold tracking-wide">
-                    ¡Quedan {spotsLeft} cupos!
+                    Precio de lanzamiento — va a subir
                   </span>
                 </div>
               </div>
@@ -758,7 +629,7 @@ export default function DinastiaAcademy() {
                     {/* Próximamente badge */}
                     <div className="absolute top-3 right-3 z-20">
                       <span className="bg-black/50 backdrop-blur-sm text-amber-300 font-cinzel text-[10px] tracking-widest px-3 py-1 rounded-full border border-amber-400/30">
-                        PROXIMAMENTE
+                        PRÓXIMAMENTE
                       </span>
                     </div>
                   </div>
@@ -932,8 +803,8 @@ export default function DinastiaAcademy() {
                 </p>
                 <div className="mt-6 flex items-center justify-center gap-6 text-amber-500/30">
                   <div className="text-center">
-                    <p className="font-cinzel-decorative text-2xl font-bold text-amber-400">{buyerCount}+</p>
-                    <p className="font-inter text-[10px] tracking-wider mt-1">CREADORAS</p>
+                    <p className="font-cinzel-decorative text-2xl font-bold text-amber-400">100%</p>
+                    <p className="font-inter text-[10px] tracking-wider mt-1">PRIVADO</p>
                   </div>
                   <div className="w-px h-10 bg-amber-500/10" />
                   <div className="text-center">
@@ -1127,12 +998,26 @@ export default function DinastiaAcademy() {
           {/* Social links */}
           <div className="flex items-center justify-center gap-4 mb-4">
             <a
-              href="https://www.instagram.com/dinastyacadamy?igsh=a2NoNHRxdGgzeGVx"
+              href="https://www.instagram.com/dinastyacademy"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-amber-500/10 border border-amber-500/15 text-amber-400/60 hover:text-amber-400 hover:bg-amber-500/20 hover:border-amber-500/30 transition-all duration-300"
             >
               <Instagram className="w-4 h-4" />
+            </a>
+          </div>
+          {/* Legal links */}
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mb-4">
+            <a href="/privacidad" className="font-inter text-white/40 hover:text-amber-400 text-xs transition-colors">
+              Política de Privacidad
+            </a>
+            <span className="text-white/10">·</span>
+            <a href="/terminos" className="font-inter text-white/40 hover:text-amber-400 text-xs transition-colors">
+              Términos y Condiciones
+            </a>
+            <span className="text-white/10">·</span>
+            <a href="/reembolsos" className="font-inter text-white/40 hover:text-amber-400 text-xs transition-colors">
+              Política de Reembolsos
             </a>
           </div>
           <p className="font-cinzel text-amber-500/20 text-xs tracking-[0.2em]">
@@ -1159,7 +1044,7 @@ export default function DinastiaAcademy() {
                   MÓDULO 1 — <span className="gold-text">$15.000</span>
                 </p>
                 <p className="font-inter text-amber-400/60 text-[10px]">
-                  ¡Quedan {spotsLeft} cupos!
+                  Precio de lanzamiento — va a subir
                 </p>
               </div>
               <a
@@ -1174,35 +1059,7 @@ export default function DinastiaAcademy() {
         )}
       </AnimatePresence>
 
-      {/* ═══════════════ PURCHASE NOTIFICATION TOAST ═══════════════ */}
-      <AnimatePresence>
-        {notifVisible && notification && (
-          <motion.div
-            initial={{ x: -300, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -300, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 25 }}
-            className="fixed bottom-20 sm:bottom-6 left-4 z-40 bg-[#0a0a0a]/95 border border-amber-500/20 rounded-xl p-3 max-w-[260px] shadow-xl shadow-amber-500/5 backdrop-blur-md"
-          >
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center shrink-0">
-                <Crown className="w-4 h-4 text-black" />
-              </div>
-              <div className="min-w-0">
-                <p className="font-inter text-white text-xs font-medium truncate">
-                  {notification.name}
-                </p>
-                <p className="font-inter text-amber-400/70 text-[10px]">
-                  {notification.city} · {notification.time}
-                </p>
-                <p className="font-inter text-white/40 text-[10px] mt-0.5">
-                  Adquirió el Curso Completo
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ═══════════════ END PURCHASE NOTIFICATION TOAST ═══════════════ */}
 
       {/* ═══════════════ PAYMENT MODAL ═══════════════ */}
       <AnimatePresence>
@@ -1318,7 +1175,7 @@ export default function DinastiaAcademy() {
                     </span>
                   </div>
                   <p className="font-inter text-white/30 text-[10px]">
-                    Una vez confirmado el pago, recibís el PDF completo en tu email y/o WhatsApp
+                    Una vez confirmado el pago, recibís acceso inmediato al campus exclusivo
                   </p>
                 </div>
 

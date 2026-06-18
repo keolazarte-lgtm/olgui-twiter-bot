@@ -53,6 +53,7 @@ export async function initSchema() {
       order_num INTEGER,
       icon TEXT,
       course TEXT DEFAULT 'onlyfans',
+      is_alert INTEGER DEFAULT 0,
       created_at TEXT DEFAULT (datetime('now'))
     )
   `)
@@ -64,6 +65,11 @@ export async function initSchema() {
     if (!hasCourse) {
       await db.execute("ALTER TABLE modules ADD COLUMN course TEXT DEFAULT 'onlyfans'")
       console.log('✓ Added course column to modules table')
+    }
+    const hasAlert = cols.rows.some((c: any) => c.name === 'is_alert')
+    if (!hasAlert) {
+      await db.execute("ALTER TABLE modules ADD COLUMN is_alert INTEGER DEFAULT 0")
+      console.log('✓ Added is_alert column to modules table')
     }
   } catch (e) {
     // ignore — column might already exist
@@ -249,6 +255,7 @@ export async function getModulesWithLessons() {
     orderNum: m.order_num as number,
     icon: m.icon as string | null,
     course: (m.course as string) || 'onlyfans',
+    isAlert: Boolean(m.is_alert),
     createdAt: m.created_at as string,
     lessons: lessons.rows
       .filter(l => l.module_id === m.id)
@@ -533,19 +540,20 @@ export async function seedModules() {
   await db.execute('DELETE FROM modules')
 
   const modules = [
-    { id: 'mod-1', title: 'Mentalidad, Preparación y Legado', description: 'De mujer a mujer: cómo superar los miedos, protegerte y construir tu imperio desde cero. Con o sin rostro.', order_num: 1, icon: 'Brain' },
-    { id: 'mod-2', title: 'De Cero a Creadora: Creación y Verificación', description: 'Creá tu cuenta de OnlyFans paso a paso, activá el modo creadora y verificá tu identidad sin errores ni rechazos.', order_num: 2, icon: 'Lock' },
-    { id: 'mod-3', title: 'El Panel de Control: Tu Centro de Mandos', description: 'Tus primeros ajustes, el menú desplegable completo y la sección especial de retiro de dinero. Cómo cobrar tus dólares.', order_num: 3, icon: 'Shield' },
-    { id: 'mod-4', title: 'La Barra de Herramientas', description: 'Todos los íconos y funciones para armar tus publicaciones de forma profesional. Imágenes, videos, encuestas y más.', order_num: 4, icon: 'DollarSign' },
-    { id: 'mod-5', title: 'Perfil e Identidad de Alto Valor', description: 'Nombre artístico, foto de perfil, portada, biografía, cuenta gratis y mensaje de bienvenida automatizado.', order_num: 5, icon: 'UserCheck' },
-    { id: 'mod-6', title: 'Guía de Tarifas', description: 'Estrategia de venta dinámica — Tarifas de bóveda, contenido personalizado y servicios en tiempo real.', order_num: 6, icon: 'Banknote' },
-    { id: 'mod-7', title: 'Cómo obtener tus primeros suscriptores', description: 'Promoción cruzada, redes de tráfico orgánico y estrategias para arrancar con ventas desde el día uno.', order_num: 7, icon: 'Flame' },
+    { id: 'mod-1', title: 'Mentalidad, Preparación y Legado', description: 'De mujer a mujer: cómo superar los miedos, protegerte y construir tu imperio desde cero. Con o sin rostro.', order_num: 1, icon: 'Brain', is_alert: 0 },
+    { id: 'mod-alerta-of', title: 'ALERTA ROJA: Reglas de OnlyFans y Cuidado de tu Cuenta', description: 'El mayor error de un creador novato es no leer los términos y condiciones. OnlyFans no da segundas oportunidades: leé esto ANTES de seguir.', order_num: 2, icon: 'AlertTriangle', is_alert: 1 },
+    { id: 'mod-2', title: 'De Cero a Creadora: Creación y Verificación', description: 'Creá tu cuenta de OnlyFans paso a paso, activá el modo creadora y verificá tu identidad sin errores ni rechazos.', order_num: 3, icon: 'Lock', is_alert: 0 },
+    { id: 'mod-3', title: 'El Panel de Control: Tu Centro de Mandos', description: 'Tus primeros ajustes, el menú desplegable completo y la sección especial de retiro de dinero. Cómo cobrar tus dólares.', order_num: 4, icon: 'Shield', is_alert: 0 },
+    { id: 'mod-4', title: 'La Barra de Herramientas', description: 'Todos los íconos y funciones para armar tus publicaciones de forma profesional. Imágenes, videos, encuestas y más.', order_num: 5, icon: 'DollarSign', is_alert: 0 },
+    { id: 'mod-5', title: 'Perfil e Identidad de Alto Valor', description: 'Nombre artístico, foto de perfil, portada, biografía, cuenta gratis y mensaje de bienvenida automatizado.', order_num: 6, icon: 'UserCheck', is_alert: 0 },
+    { id: 'mod-6', title: 'Guía de Tarifas', description: 'Estrategia de venta dinámica — Tarifas de bóveda, contenido personalizado y servicios en tiempo real.', order_num: 7, icon: 'Banknote', is_alert: 0 },
+    { id: 'mod-7', title: 'Cómo obtener tus primeros suscriptores', description: 'Promoción cruzada, redes de tráfico orgánico y estrategias para arrancar con ventas desde el día uno.', order_num: 8, icon: 'Flame', is_alert: 0 },
   ]
 
   for (const m of modules) {
     await db.execute({
-      sql: `INSERT INTO modules (id, title, description, order_num, icon) VALUES (?, ?, ?, ?, ?)`,
-      args: [m.id, m.title, m.description, m.order_num, m.icon]
+      sql: `INSERT INTO modules (id, title, description, order_num, icon, is_alert) VALUES (?, ?, ?, ?, ?, ?)`,
+      args: [m.id, m.title, m.description, m.order_num, m.icon, m.is_alert]
     })
   }
 
@@ -575,6 +583,45 @@ export async function seedModules() {
 <p>Hoy miro hacia atrás y sé que cada miedo superado valió la pena. Gracias a haber tomado esa decisión con valentía, a haberme plantado con autoridad y a haber tratado esto como una empresa seria, mi vida cambió por completo. Solo me dedico a esto. Logré la independencia absoluta y, lo más hermoso de todo, pude mudarme y hoy vivo en el lugar que siempre soñé: un rincón mágico rodeado de bosque y mar.</p>
 <p>Si yo pude cambiar mi realidad a los 49 años, con tres hijos, partiendo desde casa y protegiendo mi privacidad desde las sombras, vos también podés hacerlo. No importa tu edad, no importa tu cuerpo, no importa de dónde arranques hoy. Lo único que necesitás es la determinación de querer construir tu propio Imperio.</p>
 <p><strong>Bienvenida a tu nueva era. Bienvenida a Dinasty Academy.</strong></p>`,
+      orderNum: 1,
+      contentType: 'text'
+    },
+
+    // ─── Módulo Alerta: Reglas de OnlyFans ───
+    {
+      id: 'les-alerta-1',
+      moduleId: 'mod-alerta-of',
+      title: 'Reglas de OnlyFans y Cuidado de tu Cuenta',
+      content: `<div class="alerta-roja-bloque">
+<h2>⚠️ Alerta Roja: Reglas de OnlyFans y Cuidado de tu Cuenta</h2>
+<p>El mayor error de un creador novato es no leer los términos y condiciones. <strong>OnlyFans no te da segundas oportunidades:</strong> si te banean la cuenta, bloquean tu documento de identidad de por vida y no podrás volver a crearte otra. Perdés tus seguidores, tu contenido y la plata que tengas acumulada.</p>
+<p>Para que no cometas errores tontos, grabate a fuego estas reglas de lo que está estrictamente prohibido:</p>
+</div>
+
+<h3>🚫 1. Lo que NO podés subir (Contenido Prohibido)</h3>
+<ul>
+<li><strong>Fluidos reales:</strong> Está totalmente prohibido mostrar fluidos corporales reales en fotos o videos (salvo los lógicos de las relaciones sexuales tradicionales, pero nada extra de fetiches pesados, orina, sangre etc).</li>
+<li><strong>Violencia o agresión:</strong> Nada de contenido que simule violencia real, golpes, marcas de dolor real o asfixia (cuidado con esto en los perfiles dominantes, el morbo tiene que ser hablado, no físico extremo).</li>
+<li><strong>Armas y Drogas:</strong> No pueden aparecer armas de fuego, cuchillos ni sustancias ilegales en tus fotos o videos (ni siquiera de fondo o de utilidad).</li>
+<li><strong>Animales (Mascotas en el set):</strong> Está terminantemente prohibido que aparezca cualquier tipo de animal en tus fotos o videos íntimos. Da igual si es tu perro durmiendo al fondo de la cama o tu gato pasando por atrás mientras grabás. Para la plataforma, la presencia de animales en contenido para adultos es motivo de baneo inmediato y definitivo.</li>
+<li><strong>Menores de edad:</strong> No hace falta ni aclararlo, pero cualquier referencia o palabra que remotamente sugiera algo juvenil/escolar te tira la cuenta abajo al instante.</li>
+</ul>
+
+<h3>💸 2. Cuidado con los Métodos de Pago Externos</h3>
+<ul>
+<li>Está prohibido decir palabras como <strong>"Mercado Pago"</strong>, <strong>"PayPal"</strong>, <strong>"Transferencia"</strong>, <strong>"Crypto"</strong> o <strong>"Cabal"</strong> dentro del chat o la biografía. OnlyFans quiere su 20% de comisión. Si detecta que le estás pasando tu alias o tu enlace de pago externo a un cliente para cobrar por fuera, te cerrarán la cuenta en el acto. <strong>Todo se cobra a través de la plataforma.</strong></li>
+</ul>
+
+<h3>📢 3. Cuidado con la Publicidad que haces</h3>
+<ul>
+<li>No podrás promocionar otras plataformas de contenido similares: No pongas enlaces directos a páginas de la competencia en tu biografía (a menos que utilices un contenedor de enlaces externo como Linktree o Beacons).</li>
+</ul>
+
+<h3>💡 Consejo de Oro para tus Redes (Promoción)</h3>
+<p>Cuando hagas publicidad en Instagram, TikTok o Twitter (X) para atraer clientes, cuidá el lenguaje. Las redes tradicionales usan inteligencia artificial para borrar cuentas de OnlyFans.</p>
+<ul>
+<li>No utilices la palabra <strong>"OnlyFans"</strong> en TikTok o Instagram; usá alternativas como <strong>"La página azul"</strong>, <strong>"Mi enlace de la biografía"</strong> o el emoji 💙.</li>
+</ul>`,
       orderNum: 1,
       contentType: 'text'
     },

@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Shield, UserCheck, Lock, DollarSign, Brain, Banknote,
   ArrowLeft, ChevronRight, CheckCircle2, Circle, Loader2,
-  BookOpen, Crown
+  BookOpen, Crown, AlertTriangle
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -15,7 +15,7 @@ import { useContentProtection } from '@/hooks/use-content-protection'
 import { useRouter } from 'next/navigation'
 
 const ICON_MAP: Record<string, React.ElementType> = {
-  Shield, UserCheck, Lock, DollarSign, Banknote, Brain,
+  Shield, UserCheck, Lock, DollarSign, Banknote, Brain, AlertTriangle,
 }
 
 interface Lesson {
@@ -33,6 +33,7 @@ interface ModuleData {
   description: string | null
   orderNum: number
   icon: string | null
+  isAlert?: boolean
   lessons: Lesson[]
 }
 
@@ -142,28 +143,35 @@ export default function ModulePage({ params }: { params: Promise<{ id: string }>
   const nextModule = currentIdx < allModules.length - 1 ? allModules[currentIdx + 1] : null
 
   return (
-    <div className="min-h-screen bg-[#050505] content-protected">
+    <div className={`min-h-screen content-protected ${moduleData.isAlert ? 'bg-[#1a0606]' : 'bg-[#050505]'}`}>
       {/* ─── HEADER ─── */}
-      <header className="border-b border-amber-500/10 bg-[#050505]/90 backdrop-blur-md sticky top-0 z-40">
+      <header className={`backdrop-blur-md sticky top-0 z-40 ${moduleData.isAlert ? 'border-b border-red-500/20 bg-[#1a0606]/90' : 'border-b border-amber-500/10 bg-[#050505]/90'}`}>
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button
               onClick={() => router.push('/campus')}
               variant="ghost"
-              className="text-amber-500/50 hover:text-amber-400 hover:bg-amber-500/10 h-9 px-2"
+              className={moduleData.isAlert ? 'text-red-500/50 hover:text-red-400 hover:bg-red-500/10 h-9 px-2' : 'text-amber-500/50 hover:text-amber-400 hover:bg-amber-500/10 h-9 px-2'}
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
               <span className="font-cinzel text-xs tracking-wider hidden sm:inline">CAMPUS</span>
             </Button>
-            <div className="w-px h-6 bg-amber-500/10" />
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-600 to-yellow-500 flex items-center justify-center">
-              <IconComp className="w-4 h-4 text-black" />
+            <div className={`w-px h-6 ${moduleData.isAlert ? 'bg-red-500/10' : 'bg-amber-500/10'}`} />
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${moduleData.isAlert ? 'bg-gradient-to-br from-red-600 to-red-800' : 'bg-gradient-to-br from-amber-600 to-yellow-500'}`}>
+              <IconComp className={`w-4 h-4 ${moduleData.isAlert ? 'text-white' : 'text-black'}`} />
             </div>
             <div className="min-w-0">
-              <h1 className="font-cinzel text-white font-semibold text-xs sm:text-sm tracking-wide truncate">
-                Módulo {moduleData.orderNum}
+              <h1 className={`font-cinzel font-semibold text-xs sm:text-sm tracking-wide truncate flex items-center gap-2 ${moduleData.isAlert ? 'text-red-300' : 'text-white'}`}>
+                {moduleData.isAlert ? (
+                  <span className="inline-flex items-center gap-1 bg-red-500/20 border border-red-500/40 text-red-300 text-[9px] font-bold tracking-widest px-1.5 py-0.5 rounded">
+                    <AlertTriangle className="w-3 h-3" />
+                    ALERTA
+                  </span>
+                ) : (
+                  `Módulo ${moduleData.orderNum}`
+                )}
               </h1>
-              <p className="font-inter text-amber-400/40 text-[10px] truncate">
+              <p className={`font-inter text-[10px] truncate ${moduleData.isAlert ? 'text-red-400/40' : 'text-amber-400/40'}`}>
                 {completedCount}/{moduleData.lessons.length} lecciones completadas
               </p>
             </div>
