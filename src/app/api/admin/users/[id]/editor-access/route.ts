@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken } from '@/lib/auth'
-import { initSchema, toggleUserActive, getUserById } from '@/lib/academy-db'
+import { initSchema, toggleUserEditorAccess, getUserById } from '@/lib/academy-db'
 
 export async function PATCH(
   request: NextRequest,
@@ -24,19 +24,13 @@ export async function PATCH(
 
     await initSchema()
 
-    // Get current user to toggle
     const currentUser = await getUserById(id)
     if (!currentUser) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
     }
 
-    // Don't allow toggling admin users
-    if (currentUser.role === 'admin') {
-      return NextResponse.json({ error: 'No se puede desactivar un usuario administrador' }, { status: 400 })
-    }
-
-    const newActive = currentUser.active === 1 ? 0 : 1
-    const updatedUser = await toggleUserActive(id, newActive)
+    const newAccess = currentUser.editor_access === 1 ? 0 : 1
+    const updatedUser = await toggleUserEditorAccess(id, newAccess)
 
     return NextResponse.json({
       success: true,
@@ -44,13 +38,11 @@ export async function PATCH(
         id: updatedUser?.id,
         email: updatedUser?.email,
         name: updatedUser?.name,
-        active: updatedUser?.active,
-        role: updatedUser?.role,
         editorAccess: Boolean(updatedUser?.editor_access),
       }
     })
   } catch (error) {
-    console.error('Admin toggle error:', error)
+    console.error('Admin editor-access toggle error:', error)
     return NextResponse.json({ error: 'Error del servidor' }, { status: 500 })
   }
 }

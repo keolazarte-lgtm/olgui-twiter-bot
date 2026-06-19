@@ -8,7 +8,7 @@ import {
   Crown, LogOut, Loader2, BookOpen, CheckCircle2,
   ChevronRight, ChevronDown, ChevronUp, AlertTriangle, Clock, Flame, Globe,
   Palette, Ghost, Sparkles, Instagram, Users, TrendingUp, X, Copy,
-  Bitcoin, Wallet
+  Bitcoin, Wallet, Wand2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -494,7 +494,7 @@ function CourseCard({
 
 // ─── Main Page ───────────────────────────────────────────
 export default function CampusPage() {
-  const [user, setUser] = useState<{ id: string; email: string; name: string | null; role: string; active: number } | null>(null)
+  const [user, setUser] = useState<{ id: string; email: string; name: string | null; role: string; active: number; editorAccess?: boolean } | null>(null)
   const [modules, setModules] = useState<Module[]>([])
   const [progress, setProgress] = useState<Progress[]>([])
   const [pricing, setPricing] = useState<Pricing[]>([])
@@ -709,6 +709,24 @@ export default function CampusPage() {
             )
           })}
         </div>
+
+        {/* Editor de Fotos IA link */}
+        {(user?.editorAccess || user?.role === 'admin') && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="mt-8"
+          >
+            <Button
+              onClick={() => router.push('/editor')}
+              className="bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 font-cinzel text-xs tracking-wider"
+            >
+              <Wand2 className="w-4 h-4 mr-2" />
+              EDITOR DE FOTOS IA
+            </Button>
+          </motion.div>
+        )}
 
         {/* Admin link */}
         {user?.role === 'admin' && (

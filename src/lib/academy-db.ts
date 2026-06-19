@@ -39,11 +39,24 @@ export async function initSchema() {
       phone TEXT,
       role TEXT DEFAULT 'student',
       active INTEGER DEFAULT 0,
+      editor_access INTEGER DEFAULT 0,
       mp_payment_id TEXT,
       created_at TEXT DEFAULT (datetime('now')),
       updated_at TEXT DEFAULT (datetime('now'))
     )
   `)
+
+  // Migration: add editor_access column if missing (existing DBs)
+  try {
+    const userCols = await db.execute("PRAGMA table_info(users)")
+    const hasEditorAccess = userCols.rows.some((c: any) => c.name === 'editor_access')
+    if (!hasEditorAccess) {
+      await db.execute("ALTER TABLE users ADD COLUMN editor_access INTEGER DEFAULT 0")
+      console.log('✓ Added editor_access column to users table')
+    }
+  } catch (e) {
+    // ignore
+  }
 
   await db.execute(`
     CREATE TABLE IF NOT EXISTS modules (
@@ -143,6 +156,21 @@ export async function initSchema() {
     CREATE INDEX IF NOT EXISTS idx_visits_ip ON visits(ip)
   `)
 
+  // Editor de fotos con IA — registro de uso por usuaria (para límite diario)
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS editor_usage (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      mode TEXT NOT NULL,
+      prompt TEXT,
+      created_at TEXT DEFAULT (datetime('now')),
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+  `)
+  await db.execute(`
+    CREATE INDEX IF NOT EXISTS idx_editor_usage_user_date ON editor_usage(user_id, created_at DESC)
+  `)
+
   // Course pricing — one row per course (onlyfans, hombres, reddit)
   await db.execute(`
     CREATE TABLE IF NOT EXISTS course_pricing (
@@ -231,6 +259,15 @@ export async function toggleUserActive(userId: string, active: number) {
   await db.execute({
     sql: `UPDATE users SET active = ?, updated_at = datetime('now') WHERE id = ?`,
     args: [active, userId]
+  })
+  return getUserById(userId)
+}
+
+export async function toggleUserEditorAccess(userId: string, editorAccess: number) {
+  const db = getDb()
+  await db.execute({
+    sql: `UPDATE users SET editor_access = ?, updated_at = datetime('now') WHERE id = ?`,
+    args: [editorAccess, userId]
   })
   return getUserById(userId)
 }
@@ -1297,4 +1334,55 @@ export async function updatePricing(course: string, data: {
   })
 
   return getPricingByCourse(course)
+}
+
+// ─── Editor de fotos con IA ──────────────────────────────────
+
+export const EDITOR_DAILY_LIMIT = 20
+
+export async function getEditorUsageToday(userId: string): Promise<number> {
+  const db = getDb()
+  // SQLite stores datetime('now') in UTC; we count since 00:00 UTC of today
+  const result = await db.execute({
+    sql: `SELECT COUNT(*) as count FROM editor_usage
+          WHERE user_id = ?
+            AND created_at >= date('now')`,
+    args: [userId]
+  })
+  return Number((result.rows[0] as any)?.count ?? 0)
+}
+
+export async function recordEditorUsage(userId: string, mode: string, prompt: string) {
+  const db = getDb()
+  const id = crypto.randomUUID()
+  await db.execute({
+    sql: `INSERT INTO editor_usage (id, user_id, mode, prompt) VALUES (?, ?, ?, ?)`,
+    args: [id, userId, mode, prompt]
+  })
+}
+
+export async function getEditorStats() {
+  const db = getDb()
+  const total = await db.execute(`SELECT COUNT(*) as count FROM editor_usage`)
+  const today = await db.execute(`SELECT COUNT(*) as count FROM editor_usage WHERE created_at >= date('now')`)
+  const byMode = await db.execute(`
+    SELECT mode, COUNT(*) as count
+    FROM editor_usage
+    GROUP BY mode
+    ORDER BY count DESC
+  `)
+  const byUser = await db.execute(`
+    SELECT u.email, u.name, COUNT(e.id) as count, MAX(e.created_at) as last_used
+    FROM editor_usage e
+    JOIN users u ON u.id = e.user_id
+    GROUP BY u.id
+    ORDER BY count DESC
+    LIMIT 20
+  `)
+  return {
+    total: Number((total.rows[0] as any)?.count ?? 0),
+    today: Number((today.rows[0] as any)?.count ?? 0),
+    byMode: byMode.rows,
+    byUser: byUser.rows,
+  }
 }

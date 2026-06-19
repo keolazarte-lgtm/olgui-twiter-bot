@@ -8,7 +8,7 @@ import {
   LayoutDashboard, UserCheck, UserX, RefreshCw, Search,
   ChevronDown, Calendar, Mail, ToggleLeft, ToggleRight,
   DollarSign, TrendingUp, ArrowUpRight, Banknote, Plus, UserCircle,
-  Eye, Globe, Monitor, Smartphone, Tablet, Bot, Activity, MapPin
+  Eye, Globe, Monitor, Smartphone, Tablet, Bot, Activity, MapPin, Wand2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -27,6 +27,7 @@ interface UserItem {
   phone: string | null
   role: string
   active: number
+  editorAccess?: boolean
   mpPaymentId: string | null
   createdAt: string
 }
@@ -250,7 +251,7 @@ export default function AdminDashboardPage() {
       if (res.ok) {
         const data = await res.json()
         setUsers(prev =>
-          prev.map(u => u.id === userId ? { ...u, active: data.user.active } : u)
+          prev.map(u => u.id === userId ? { ...u, active: data.user.active, editorAccess: data.user.editorAccess } : u)
         )
         // Update stats too
         setStats(prev => prev ? {
@@ -271,6 +272,37 @@ export default function AdminDashboardPage() {
       }
     } catch (error) {
       console.error('Toggle error:', error)
+      toast({ title: 'Error de conexión', variant: 'destructive' })
+    } finally {
+      setTogglingId(null)
+    }
+  }
+
+  // Toggle user editor access
+  const handleToggleEditor = async (userId: string, currentAccess: boolean) => {
+    setTogglingId(userId)
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/editor-access`, {
+        method: 'PATCH',
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setUsers(prev =>
+          prev.map(u => u.id === userId ? { ...u, editorAccess: data.user.editorAccess } : u)
+        )
+        toast({
+          title: currentAccess ? 'Editor desactivado' : 'Editor activado',
+          description: currentAccess
+            ? 'La usuaria ya no ve el editor en el campus'
+            : 'La usuaria ahora ve el botón Editor de Fotos IA en el campus',
+        })
+      } else {
+        const data = await res.json()
+        toast({ title: data.error || 'Error al cambiar acceso al editor', variant: 'destructive' })
+      }
+    } catch (error) {
+      console.error('Toggle editor error:', error)
       toast({ title: 'Error de conexión', variant: 'destructive' })
     } finally {
       setTogglingId(null)
@@ -672,6 +704,7 @@ export default function AdminDashboardPage() {
                       <th className="text-left p-4 font-cinzel text-amber-500/40 text-[10px] tracking-wider">EMAIL</th>
                       <th className="text-left p-4 font-cinzel text-amber-500/40 text-[10px] tracking-wider">ESTADO</th>
                       <th className="text-left p-4 font-cinzel text-amber-500/40 text-[10px] tracking-wider">ROL</th>
+                      <th className="text-left p-4 font-cinzel text-amber-500/40 text-[10px] tracking-wider">EDITOR</th>
                       <th className="text-left p-4 font-cinzel text-amber-500/40 text-[10px] tracking-wider">REGISTRO</th>
                       <th className="text-right p-4 font-cinzel text-amber-500/40 text-[10px] tracking-wider">ACCIONES</th>
                     </tr>
@@ -723,6 +756,23 @@ export default function AdminDashboardPage() {
                           </Badge>
                         </td>
                         <td className="p-4">
+                          {u.role === 'admin' ? (
+                            <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-[10px]">
+                              <Wand2 className="w-3 h-3 mr-1" />
+                              SIEMPRE
+                            </Badge>
+                          ) : u.editorAccess ? (
+                            <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px]">
+                              <Wand2 className="w-3 h-3 mr-1" />
+                              CON ACCESO
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-white/5 text-white/30 border-white/10 text-[10px]">
+                              SIN ACCESO
+                            </Badge>
+                          )}
+                        </td>
+                        <td className="p-4">
                           <div className="flex items-center gap-1.5">
                             <Calendar className="w-3 h-3 text-white/20" />
                             <span className="font-inter text-white/30 text-xs">{formatDate(u.createdAt)}</span>
@@ -732,30 +782,52 @@ export default function AdminDashboardPage() {
                           {u.role === 'admin' ? (
                             <span className="font-inter text-white/20 text-[10px]">Protegido</span>
                           ) : (
-                            <Button
-                              onClick={() => handleToggleActive(u.id, u.active)}
-                              disabled={togglingId === u.id}
-                              size="sm"
-                              className={`font-cinzel text-[10px] tracking-wider h-8 px-3 ${
-                                u.active
-                                  ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
-                                  : 'bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20'
-                              }`}
-                            >
-                              {togglingId === u.id ? (
-                                <Loader2 className="w-3 h-3 animate-spin" />
-                              ) : u.active ? (
-                                <>
-                                  <ToggleRight className="w-3 h-3 mr-1" />
-                                  DESACTIVAR
-                                </>
-                              ) : (
-                                <>
-                                  <ToggleLeft className="w-3 h-3 mr-1" />
-                                  ACTIVAR
-                                </>
-                              )}
-                            </Button>
+                            <div className="flex items-center justify-end gap-1.5">
+                              <Button
+                                onClick={() => handleToggleEditor(u.id, Boolean(u.editorAccess))}
+                                disabled={togglingId === u.id}
+                                size="sm"
+                                title={u.editorAccess ? 'Quitar acceso al editor' : 'Dar acceso al editor'}
+                                className={`font-cinzel text-[10px] tracking-wider h-8 px-2.5 ${
+                                  u.editorAccess
+                                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'
+                                    : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10'
+                                }`}
+                              >
+                                {togglingId === u.id ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : (
+                                  <>
+                                    <Wand2 className="w-3 h-3 mr-1" />
+                                    {u.editorAccess ? 'QUITAR' : 'EDITOR'}
+                                  </>
+                                )}
+                              </Button>
+                              <Button
+                                onClick={() => handleToggleActive(u.id, u.active)}
+                                disabled={togglingId === u.id}
+                                size="sm"
+                                className={`font-cinzel text-[10px] tracking-wider h-8 px-3 ${
+                                  u.active
+                                    ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
+                                    : 'bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20'
+                                }`}
+                              >
+                                {togglingId === u.id ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : u.active ? (
+                                  <>
+                                    <ToggleRight className="w-3 h-3 mr-1" />
+                                    DESACTIVAR
+                                  </>
+                                ) : (
+                                  <>
+                                    <ToggleLeft className="w-3 h-3 mr-1" />
+                                    ACTIVAR
+                                  </>
+                                )}
+                              </Button>
+                            </div>
                           )}
                         </td>
                       </tr>
@@ -804,27 +876,57 @@ export default function AdminDashboardPage() {
                         }`}>
                           {u.role === 'admin' ? 'ADMIN' : 'ESTUDIANTE'}
                         </Badge>
+                        {u.role === 'admin' ? (
+                          <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-[9px]">
+                            <Wand2 className="w-2.5 h-2.5 mr-1" />EDITOR
+                          </Badge>
+                        ) : u.editorAccess ? (
+                          <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[9px]">
+                            <Wand2 className="w-2.5 h-2.5 mr-1" />EDITOR
+                          </Badge>
+                        ) : null}
                         <span className="font-inter text-white/25 text-[10px]">{formatDate(u.createdAt)}</span>
                       </div>
                       {u.role !== 'admin' && (
-                        <Button
-                          onClick={() => handleToggleActive(u.id, u.active)}
-                          disabled={togglingId === u.id}
-                          size="sm"
-                          className={`font-cinzel text-[9px] tracking-wider h-7 px-2.5 ${
-                            u.active
-                              ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
-                              : 'bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20'
-                          }`}
-                        >
-                          {togglingId === u.id ? (
-                            <Loader2 className="w-3 h-3 animate-spin" />
-                          ) : u.active ? (
-                            'DESACTIVAR'
-                          ) : (
-                            'ACTIVAR'
-                          )}
-                        </Button>
+                        <div className="flex items-center gap-1.5">
+                          <Button
+                            onClick={() => handleToggleEditor(u.id, Boolean(u.editorAccess))}
+                            disabled={togglingId === u.id}
+                            size="sm"
+                            title={u.editorAccess ? 'Quitar acceso al editor' : 'Dar acceso al editor'}
+                            className={`font-cinzel text-[9px] tracking-wider h-7 px-2 ${
+                              u.editorAccess
+                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'
+                                : 'bg-white/5 text-white/50 border border-white/10 hover:bg-white/10'
+                            }`}
+                          >
+                            {togglingId === u.id ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : u.editorAccess ? (
+                              'QUITAR EDITOR'
+                            ) : (
+                              'DAR EDITOR'
+                            )}
+                          </Button>
+                          <Button
+                            onClick={() => handleToggleActive(u.id, u.active)}
+                            disabled={togglingId === u.id}
+                            size="sm"
+                            className={`font-cinzel text-[9px] tracking-wider h-7 px-2.5 ${
+                              u.active
+                                ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
+                                : 'bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20'
+                            }`}
+                          >
+                            {togglingId === u.id ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : u.active ? (
+                              'DESACTIVAR'
+                            ) : (
+                              'ACTIVAR'
+                            )}
+                          </Button>
+                        </div>
                       )}
                     </div>
                   </div>

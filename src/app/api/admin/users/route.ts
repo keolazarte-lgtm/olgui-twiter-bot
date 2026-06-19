@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
         phone: u.phone,
         role: u.role,
         active: u.active,
+        editorAccess: Boolean(u.editor_access),
         mpPaymentId: u.mp_payment_id,
         createdAt: u.created_at,
       }))

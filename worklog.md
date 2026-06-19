@@ -112,3 +112,41 @@ Stage Summary:
 - Binance Pay ID queda con placeholder hasta que Olgui pase su dato real
 - Files modified: src/lib/academy-db.ts, src/app/campus/page.tsx, src/app/admin/dashboard/page.tsx
 - Files created: src/app/api/pricing/route.ts, src/app/api/admin/pricing/route.ts, scripts/seed-pricing.ts
+
+---
+Task ID: 3
+Agent: Super Z (sesión nueva)
+Task: Re-aplicar mis fixes urgentes encima de los cambios del otro chat (que hizo git push --force y reescribió el historial)
+
+Work Log:
+- Detecté que el otro chat (GLM-5.1) había hecho `git push --force` con 5 commits nuevos
+- Mis commits (36e91cf fixes urgentes + 67d0f37 modulo alerta) quedaron fuera del remote
+- Hice backup de mis archivos clave en /tmp/mis-fixes/
+- `git reset --hard origin/main` para traer TODO el código nuevo del otro chat
+- Vi que el otro chat agregó: sistema multi-curso (onlyfans/hot/reddit), APIs pricing, scripts nuevos (seed-all-courses, seed-pricing), tab Visitas en admin
+- Vi que el otro chat eliminó: mis páginas legales, mi not-found, mis estilos alerta-roja-bloque, mis fixes de falsa escasez
+- Re-apliqué mis fixes encima:
+  - Restaure /privacidad, /terminos, /reembolsos, not-found.tsx (desde backup)
+  - Restaure estilos .alerta-roja-bloque en globals.css
+  - En page.tsx: typo Instagram, PROXIMAMENTE con tilde, eliminar falsa escasez completa, unificar PDF vs campus, agregar links legales en footer, reemplazar countdown bar por 'PRECIO DE LANZAMIENTO'
+  - En academy-db.ts: agregué columna is_alert al schema (con migration), agregué mod-alerta-of con is_alert=1 y order_num=2, empujé modulos 2-7, agregué leccion les-alerta-1
+  - En campus/modulo/[id]/page.tsx: agregué AlertTriangle al ICON_MAP, isAlert al interface, header con tema rojo si es alerta
+  - campus/page.tsx ya tenía soporte isAlert del otro chat, no se tocó
+- Build exitoso, re-seed de DB local OK (8 modulos + 15 lecciones)
+- Push exitoso a origin/main (commit b0f782e)
+- Verificación en producción:
+  - /, /privacidad, /terminos, /reembolsos, /login, /campus -> 200
+  - /no-existe -> 404 con branding
+  - Instagram handle: dinastyacademy (sin 'a')
+  - PROXIMAMENTE: con tilde
+  - Falsa escasez: 0 ocurrencias
+  - Banner: "PRECIO DE LANZAMIENTO"
+  - Footer: links /privacidad /terminos /reembolsos presentes
+  - API /api/modules: modulo mod-alerta-of en posicion 2 con isAlert=true
+  - El otro chat cargó tambien mod-h-alerta (alerta del curso Hot) que tambien aparece marcado como alerta
+
+Stage Summary:
+- Todos los fixes urgentes re-aplicados y desplegados
+- Sistema multi-curso del otro chat (OnlyFans + Hot + Reddit) intacto
+- Módulo alerta visible en todos los cursos donde corresponde
+- IMPORTANTE: el otro chat puede seguir trabajando y hacer otro push --force. Si eso pasa, hay que repetir este merge. Recomendación al usuario: cerrar el otro chat para evitar conflictos.
