@@ -150,3 +150,34 @@ Stage Summary:
 - Sistema multi-curso del otro chat (OnlyFans + Hot + Reddit) intacto
 - Módulo alerta visible en todos los cursos donde corresponde
 - IMPORTANTE: el otro chat puede seguir trabajando y hacer otro push --force. Si eso pasa, hay que repetir este merge. Recomendación al usuario: cerrar el otro chat para evitar conflictos.
+
+---
+Task ID: 4
+Agent: Super Z (sesión nueva)
+Task: Implementar editor de fotos con IA integrado a Dinasty Academy, con acceso controlado por admin
+
+Work Log:
+- Probé 3 modos del SDK z-ai-web-dev-sdk con fotos reales: mejorar calidad, cambiar fondo, cambiar outfit a latex — todos funcionaron perfecto (verificado con VLM)
+- Diseñé arquitectura con flag editor_access en users (default 0, solo admin puede activar)
+- BACKEND:
+  - academy-db.ts: columna editor_access en users + migration ALTER TABLE + tabla editor_usage + helpers (toggleUserEditorAccess, getEditorUsageToday, recordEditorUsage, getEditorStats) + constante EDITOR_DAILY_LIMIT=20
+  - /api/auth/me ahora devuelve editorAccess
+  - /api/admin/users y /api/admin/users/[id]/toggle ahora devuelven editorAccess
+  - /api/admin/users/[id]/editor-access (nuevo PATCH)
+  - /api/editor/process (nuevo POST) — valida auth + access + limite + tamaño, llama a z-ai SDK, registra uso
+  - /api/editor/usage (nuevo GET)
+- FRONTEND:
+  - /editor (página nueva) con interfaz completa: upload drag&drop, 4 modos, presets para fondo y outfit, prompt custom, preview dual, descarga PNG, contador de uso
+  - campus/page.tsx: botón "Editor de Fotos IA" visible solo si editorAccess=true o rol=admin
+  - admin/dashboard: columna EDITOR en tabla + botón "DAR EDITOR/QUITAR" en cada usuario + badges visuales + sección en mobile cards
+- Build verde, re-seed OK (admin + 8 módulos + 15 lecciones + tablas nuevas)
+- Push a producción (commit f125cd1)
+- Verificación: /, /editor, /campus, /admin/login responden 200
+
+Stage Summary:
+- Editor de fotos IA andando en producción
+- Acceso controlado por admin desde el dashboard (toggle por usuaria)
+- 4 modos: mejorar, fondo, outfit, custom
+- Límite: 20 fotos/día por usuaria (admin ilimitado)
+- Admin siempre tiene acceso automático
+- A vos te toca: loguearte como admin, ir a Tab Usuarios, dar acceso a quien quieras (incluídas cuentas de prueba de Olgui)

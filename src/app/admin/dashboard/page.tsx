@@ -144,6 +144,9 @@ export default function AdminDashboardPage() {
   const [savingPricing, setSavingPricing] = useState<string | null>(null)
   const [visitStats, setVisitStats] = useState<VisitStats | null>(null)
   const [recentVisits, setRecentVisits] = useState<VisitItem[]>([])
+  const [editorConfig, setEditorConfig] = useState<{ dailyLimit: number; stats: any } | null>(null)
+  const [editorLimitInput, setEditorLimitInput] = useState('')
+  const [savingEditorLimit, setSavingEditorLimit] = useState(false)
   const { toast } = useToast()
 
   // Pricing form state — one entry per course
@@ -169,6 +172,7 @@ export default function AdminDashboardPage() {
         fetch('/api/admin/sales'),
         fetch('/api/admin/pricing'),
         fetch('/api/admin/visits?limit=50'),
+        fetch('/api/admin/editor/config'),
       ])
 
       if (statsRes.ok) {
@@ -219,6 +223,12 @@ export default function AdminDashboardPage() {
         setVisitStats(visitsData.stats || null)
         setRecentVisits(visitsData.recent || [])
       }
+
+      if (editorConfigRes.ok) {
+        const editorData = await editorConfigRes.json()
+        setEditorConfig(editorData)
+        setEditorLimitInput(editorData.dailyLimit < 0 ? 'unlimited' : String(editorData.dailyLimit))
+      }
     } catch (error) {
       console.error('Dashboard load error:', error)
       toast({ title: 'Error al cargar datos', variant: 'destructive' })
@@ -235,7 +245,7 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const tab = params.get('tab')
-    if (tab && ['overview', 'users', 'modules', 'sales', 'pricing'].includes(tab)) {
+    if (tab && ['overview', 'users', 'modules', 'sales', 'pricing', 'visits', 'editor'].includes(tab)) {
       setActiveTab(tab)
     }
   }, [])
@@ -306,6 +316,52 @@ export default function AdminDashboardPage() {
       toast({ title: 'Error de conexión', variant: 'destructive' })
     } finally {
       setTogglingId(null)
+    }
+  }
+
+  // Save editor daily limit
+  const handleSaveEditorLimit = async () => {
+    setSavingEditorLimit(true)
+    try {
+      const value = editorLimitInput.trim()
+      const body: any = {}
+      if (value === 'unlimited' || value === '∞' || value === '-1') {
+        body.dailyLimit = 'unlimited'
+      } else {
+        const n = Number(value)
+        if (isNaN(n) || n < 0) {
+          toast({ title: 'Número inválido', description: 'Poné un número >= 0 o "unlimited"', variant: 'destructive' })
+          setSavingEditorLimit(false)
+          return
+        }
+        body.dailyLimit = n
+      }
+
+      const res = await fetch('/api/admin/editor/config', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setEditorConfig(prev => prev ? { ...prev, dailyLimit: data.dailyLimit } : prev)
+        setEditorLimitInput(data.dailyLimit < 0 ? 'unlimited' : String(data.dailyLimit))
+        toast({
+          title: 'Límite actualizado',
+          description: data.dailyLimit < 0
+            ? 'Las usuarias tienen uso ilimitado'
+            : `Cada usuaria puede procesar ${data.dailyLimit} fotos por día`,
+        })
+      } else {
+        const data = await res.json()
+        toast({ title: data.error || 'Error al guardar', variant: 'destructive' })
+      }
+    } catch (error) {
+      console.error('Save editor limit error:', error)
+      toast({ title: 'Error de conexión', variant: 'destructive' })
+    } finally {
+      setSavingEditorLimit(false)
     }
   }
 
@@ -563,6 +619,13 @@ export default function AdminDashboardPage() {
             >
               <Eye className="w-4 h-4 mr-2" />
               VISITAS
+            </TabsTrigger>
+            <TabsTrigger
+              value="editor"
+              className="font-cinzel text-xs tracking-wider data-[state=active]:bg-amber-500/15 data-[state=active]:text-amber-400 data-[state=active]:border-amber-500/20 text-white/40 px-4 py-2"
+            >
+              <Wand2 className="w-4 h-4 mr-2" />
+              EDITOR
             </TabsTrigger>
           </TabsList>
 
@@ -1774,6 +1837,152 @@ export default function AdminDashboardPage() {
                     </tbody>
                   </table>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* ─── EDITOR TAB ─── */}
+          <TabsContent value="editor" className="space-y-4">
+            {/* Config del límite */}
+            <Card className="bg-white/[0.02] border-amber-500/[0.08]">
+              <CardHeader className="pb-3">
+                <CardTitle className="font-cinzel text-white text-sm tracking-wider flex items-center gap-2">
+                  <Wand2 className="w-4 h-4 text-amber-400" />
+                  LÍMITE DIARIO DEL EDITOR
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 space-y-4">
+                <div className="bg-amber-500/5 border border-amber-500/15 rounded-lg p-3">
+                  <p className="font-inter text-white/60 text-xs leading-relaxed">
+                    Este límite aplica a <strong className="text-amber-400">todas las usuarias con acceso al editor</strong>.
+                    Vos (admin) siempre tenés uso ilimitado. El contador se reinicia todos los días a la medianoche UTC.
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+                  <div className="flex-1">
+                    <label className="block font-cinzel text-amber-500/60 text-[10px] tracking-wider mb-1.5">
+                      FOTOS POR DÍA POR USUARIA
+                    </label>
+                    <Input
+                      type="text"
+                      value={editorLimitInput}
+                      onChange={(e) => setEditorLimitInput(e.target.value)}
+                      placeholder="20"
+                      disabled={savingEditorLimit}
+                      onKeyDown={(e) => { if (e.key === 'Enter') handleSaveEditorLimit() }}
+                      className="bg-white/[0.02] border-amber-500/20 text-white font-cinzel text-lg"
+                    />
+                    <p className="font-inter text-white/30 text-[10px] mt-1.5">
+                      Poné un número (ej: 20, 50, 100) o <code className="text-amber-400">unlimited</code> para ilimitado
+                    </p>
+                  </div>
+                  <Button
+                    onClick={handleSaveEditorLimit}
+                    disabled={savingEditorLimit}
+                    className="gold-btn-glow text-black font-cinzel font-bold tracking-wider text-xs h-10 px-6"
+                  >
+                    {savingEditorLimit ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      'GUARDAR'
+                    )}
+                  </Button>
+                </div>
+
+                {editorConfig && (
+                  <div className="grid grid-cols-3 gap-3 pt-3 border-t border-amber-500/10">
+                    <div className="text-center">
+                      <p className="font-cinzel-decorative text-2xl font-bold text-amber-400">
+                        {editorConfig.dailyLimit < 0 ? '∞' : editorConfig.dailyLimit}
+                      </p>
+                      <p className="font-inter text-white/30 text-[10px] tracking-wider mt-1">LÍMITE ACTUAL</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="font-cinzel-decorative text-2xl font-bold text-amber-400">
+                        {editorConfig.stats?.total ?? 0}
+                      </p>
+                      <p className="font-inter text-white/30 text-[10px] tracking-wider mt-1">TOTAL PROCESADAS</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="font-cinzel-decorative text-2xl font-bold text-amber-400">
+                        {editorConfig.stats?.today ?? 0}
+                      </p>
+                      <p className="font-inter text-white/30 text-[10px] tracking-wider mt-1">HOY</p>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Por modo */}
+            {editorConfig?.stats?.byMode && editorConfig.stats.byMode.length > 0 && (
+              <Card className="bg-white/[0.02] border-amber-500/[0.08]">
+                <CardHeader className="pb-3">
+                  <CardTitle className="font-cinzel text-white text-sm tracking-wider flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-amber-400" />
+                    USO POR MODO
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-2">
+                    {editorConfig.stats.byMode.map((m: any) => (
+                      <div key={m.mode} className="flex items-center justify-between p-2 rounded bg-white/[0.02]">
+                        <span className="font-cinzel text-white text-xs uppercase tracking-wider">{m.mode}</span>
+                        <span className="font-cinzel text-amber-400 text-xs">{m.count}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Top usuarias */}
+            {editorConfig?.stats?.byUser && editorConfig.stats.byUser.length > 0 && (
+              <Card className="bg-white/[0.02] border-amber-500/[0.08]">
+                <CardHeader className="pb-3">
+                  <CardTitle className="font-cinzel text-white text-sm tracking-wider flex items-center gap-2">
+                    <Users className="w-4 h-4 text-amber-400" />
+                    TOP USUARIAS (MÁS USO)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-2">
+                    {editorConfig.stats.byUser.map((u: any, i: number) => (
+                      <div key={i} className="flex items-center justify-between p-2 rounded bg-white/[0.02]">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-inter text-white text-xs truncate">{u.name || u.email}</p>
+                          <p className="font-inter text-white/30 text-[10px] truncate">{u.email}</p>
+                        </div>
+                        <div className="text-right shrink-0 ml-2">
+                          <p className="font-cinzel text-amber-400 text-sm">{u.count}</p>
+                          <p className="font-inter text-white/20 text-[9px]">
+                            {u.last_used ? new Date(u.last_used).toLocaleDateString('es-AR') : ''}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Cómo activar el editor a una usuaria */}
+            <Card className="bg-white/[0.02] border-amber-500/[0.08]">
+              <CardHeader className="pb-3">
+                <CardTitle className="font-cinzel text-white text-sm tracking-wider flex items-center gap-2">
+                  <UserCircle className="w-4 h-4 text-amber-400" />
+                  CÓMO DAR ACCESO A UNA USUARIA
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <ol className="space-y-2 list-decimal list-inside font-inter text-white/60 text-xs">
+                  <li>Andá a la pestaña <strong className="text-amber-400">USUARIOS</strong></li>
+                  <li>Buscá a la usuaria por email o nombre</li>
+                  <li>Hacé click en el botón <strong className="text-emerald-400">"DAR EDITOR"</strong> (verde)</li>
+                  <li>La usuaria va a ver el botón <strong className="text-amber-400">"EDITOR DE FOTOS IA"</strong> en su campus</li>
+                  <li>Para quitarle el acceso, hacé click en <strong className="text-red-400">"QUITAR"</strong></li>
+                </ol>
               </CardContent>
             </Card>
           </TabsContent>

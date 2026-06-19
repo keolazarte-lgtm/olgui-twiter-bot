@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken } from '@/lib/auth'
-import { initSchema, getEditorUsageToday, EDITOR_DAILY_LIMIT, getUserById } from '@/lib/academy-db'
+import { initSchema, getEditorUsageToday, getEditorDailyLimit, getUserById } from '@/lib/academy-db'
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,14 +22,16 @@ export async function GET(request: NextRequest) {
     }
 
     const isAdmin = user.role === 'admin'
+    const dailyLimit = await getEditorDailyLimit()
     const usedToday = isAdmin ? 0 : await getEditorUsageToday(user.id)
-    const remaining = isAdmin ? EDITOR_DAILY_LIMIT : Math.max(0, EDITOR_DAILY_LIMIT - usedToday)
+    const limit = isAdmin ? '∞' : (dailyLimit < 0 ? '∞' : dailyLimit)
+    const remaining = isAdmin ? '∞' : (dailyLimit < 0 ? '∞' : Math.max(0, dailyLimit - usedToday))
 
     return NextResponse.json({
       hasAccess: Boolean(user.editor_access) || isAdmin,
       usedToday,
-      remaining: isAdmin ? '∞' : remaining,
-      limit: isAdmin ? '∞' : EDITOR_DAILY_LIMIT,
+      remaining,
+      limit,
     })
   } catch (error) {
     console.error('Editor usage error:', error)

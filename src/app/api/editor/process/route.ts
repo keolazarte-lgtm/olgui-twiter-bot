@@ -5,7 +5,8 @@ import {
   getUserById,
   getEditorUsageToday,
   recordEditorUsage,
-  EDITOR_DAILY_LIMIT,
+  getEditorDailyLimit,
+  EDITOR_DAILY_LIMIT_DEFAULT,
 } from '@/lib/academy-db'
 import ZAI from 'z-ai-web-dev-sdk'
 
@@ -74,11 +75,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Check daily usage limit (admins bypass)
-    if (user.role !== 'admin') {
+    const dailyLimit = await getEditorDailyLimit()
+    if (user.role !== 'admin' && dailyLimit >= 0) {
       const usedToday = await getEditorUsageToday(user.id)
-      if (usedToday >= EDITOR_DAILY_LIMIT) {
+      if (usedToday >= dailyLimit) {
         return NextResponse.json(
-          { error: `Alcanzaste el límite diario de ${EDITOR_DAILY_LIMIT} fotos. Volvé mañana.` },
+          { error: `Alcanzaste el límite diario de ${dailyLimit} fotos. Volvé mañana.` },
           { status: 429 }
         )
       }
@@ -120,15 +122,16 @@ export async function POST(request: NextRequest) {
     await recordEditorUsage(user.id, body.mode, prompt)
 
     const usedToday = await getEditorUsageToday(user.id)
-    const remaining = Math.max(0, EDITOR_DAILY_LIMIT - usedToday)
+    const isAdmin = user.role === 'admin'
+    const remaining = dailyLimit < 0 ? '∞' : Math.max(0, dailyLimit - usedToday)
 
     return NextResponse.json({
       success: true,
       image: `data:image/png;base64,${imageBase64}`,
       usage: {
-        usedToday: user.role === 'admin' ? 0 : usedToday,
-        remaining: user.role === 'admin' ? '∞' : remaining,
-        limit: user.role === 'admin' ? '∞' : EDITOR_DAILY_LIMIT,
+        usedToday: isAdmin ? 0 : usedToday,
+        remaining: isAdmin ? '∞' : remaining,
+        limit: isAdmin ? '∞' : (dailyLimit < 0 ? '∞' : dailyLimit),
       },
     })
   } catch (error: any) {

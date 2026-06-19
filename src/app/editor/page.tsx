@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowLeft, Crown, Loader2, Download, Upload, Sparkles, Wand2,
   Image as ImageIcon, Shirt, Mountain, AlertTriangle, X, RefreshCw,
+  HelpCircle, ChevronDown, ChevronUp,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -23,21 +24,32 @@ interface UsageInfo {
 }
 
 const BACKGROUND_PRESETS = [
-  { id: 'penthouse', label: 'Penthouse', description: 'Penthouse moderno al atardecer con vista a la ciudad' },
-  { id: 'playa', label: 'Playa', description: 'Playa tropical con palmeras, mar turquesa y arena blanca al atardecer' },
+  { id: 'penthouse', label: 'Penthouse', description: 'Penthouse moderno al atardecer con vista a la ciudad, ventanales de piso a techo, mobiliario minimalista suavemente desenfocado' },
+  { id: 'playa', label: 'Playa', description: 'Playa tropical con palmeras, mar turquesa y arena blanca al atardecer, luz dorada suave' },
   { id: 'loft', label: 'Loft', description: 'Loft industrial moderno con ladrillos vistos, ventanas grandes y luz natural' },
-  { id: 'dormitorio', label: 'Dormitorio', description: 'Dormitorio elegante con cama king, sábanas blancas y luz cálida suave' },
+  { id: 'dormitorio', label: 'Dormitorio', description: 'Dormitorio elegante con cama king, sábanas blancas, cortinas de terciopelo y luz cálida suave' },
   { id: 'estudio', label: 'Estudio photo', description: 'Estudio fotográfico profesional con fondo gris claro, luces softbox y reflectores' },
   { id: 'ciudad', label: 'Ciudad noche', description: 'Azotea con vista a la ciudad de noche, luces de la ciudad y edificios brillantes' },
+  { id: 'yate', label: 'Yate privado', description: 'Cubierta de un yate de lujo en alta mar, madera clara, barandas de acero, sol del mediodía reflejando en el agua' },
+  { id: 'suite-hotel', label: 'Suite hotel', description: 'Suite presidencial de hotel de lujo, cama king con dosel, lámparas de cristal, alfombras rojas y cortinas de seda' },
+  { id: 'bano-marmol', label: 'Baño mármol', description: 'Baño de mármol blanco con bañadera exenta, espejo grande, velas y luz natural difusa' },
+  { id: 'espejos', label: 'Cuarto de espejos', description: 'Habitación con paredes de espejos de piso a techo, luces cálidas suaves, ambiente sensual y envolvente' },
+  { id: 'neon-rosa', label: 'Neón rosa', description: 'Habitación oscura con luces de neón rosa y púrpura, vibe nocturno sensual, humo suave de fondo' },
 ]
 
 const OUTFIT_PRESETS = [
   { id: 'latex-negro', label: 'Látex negro', description: 'Catsuit de látex negro brillante, cuerpo entero, mangas y piernas largas, con cierre frontal y reflejos realistas' },
-  { id: 'lenceria-negra', label: 'Lencería negra', description: 'Conjunto de lencería negra de encaje, sostén y panty, con medias altas' },
-  { id: 'corset-cuero', label: 'Corset cuero', description: 'Corset de cuero negro ajustado con cordones, pantys de cuero combinando' },
-  { id: 'vestido-rojo', label: 'Vestido rojo', description: 'Vestido rojo largo elegante con abertura en la pierna, escote pronunciado' },
-  { id: 'bikini-dorado', label: 'Bikini dorado', description: 'Bikini dorado de dos piezas con brillos, muy ajustado' },
-  { id: 'arneses-bdsm', label: 'Arneses BDSM', description: 'Conjunto de arneses negros de cuero con tiras, pechería y pantys, estilo fetish' },
+  { id: 'lenceria-negra', label: 'Lencería negra', description: 'Conjunto de lencería negra de encaje, sostén y panty, con medias altas y liguero' },
+  { id: 'corset-cuero', label: 'Corset cuero', description: 'Corset de cuero negro ajustado con cordones, pantys de cuero combinando, medias negras' },
+  { id: 'vestido-rojo', label: 'Vestido rojo', description: 'Vestido rojo largo elegante con abertura en la pierna, escote pronunciado, tela satinada' },
+  { id: 'bikini-dorado', label: 'Bikini dorado', description: 'Bikini dorado de dos piezas con brillos, muy ajustado, con accesorios dorados' },
+  { id: 'arneses-bdsm', label: 'Arneses BDSM', description: 'Conjunto de arneses negros de cuero con tiras, pechería y pantys, estilo fetish, tacones altos' },
+  { id: 'colegiala', label: 'Colegiala', description: 'Uniforme de colegiala adulta: falda plisada corta, camisa blanca abotonada hasta la mitad, corbata floja, medias blancas altas' },
+  { id: 'enfermera', label: 'Enfermera', description: 'Traje de enfermera erótico: vestido blanco corto ajustado, gorro, medias blancas, cruz roja en el pecho' },
+  { id: 'domme', label: 'Domme', description: 'Outfit de dominatrix: corset negro de cuero, pantys, medias negras, guantes largos, tacones de aguja, fusta en mano' },
+  { id: 'novia', label: 'Novia', description: 'Conjunto de novia sensual: velo blanco, corset blanco de encaje, liguero blanco, medias blancas, ramo de flores' },
+  { id: 'kimono', label: 'Kimono seda', description: 'Kimono japonés de seda rojo con bordados dorados, abierto mostrando lencería negra debajo, obi flojo' },
+  { id: 'body-encaje', label: 'Body encaje', description: 'Body de encaje rojo transparente, conjuntito con tanga combinando, medias negras con liguero' },
 ]
 
 export default function EditorPage() {
@@ -55,6 +67,7 @@ export default function EditorPage() {
   const [customPrompt, setCustomPrompt] = useState('')
   const [selectedBackground, setSelectedBackground] = useState(BACKGROUND_PRESETS[0].id)
   const [selectedOutfit, setSelectedOutfit] = useState(OUTFIT_PRESETS[0].id)
+  const [showTutorial, setShowTutorial] = useState(false)
 
   // Auth + access check
   useEffect(() => {
@@ -260,6 +273,85 @@ export default function EditorPage() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-6">
+        {/* Tutorial colapsable */}
+        <Card className="bg-white/[0.02] border-amber-500/[0.08] mb-6 overflow-hidden">
+          <button
+            onClick={() => setShowTutorial(!showTutorial)}
+            className="w-full p-4 flex items-center justify-between hover:bg-white/[0.02] transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <HelpCircle className="w-4 h-4 text-amber-400" />
+              <span className="font-cinzel text-amber-400 text-xs tracking-[0.2em]">¿CÓMO USO EL EDITOR?</span>
+            </div>
+            {showTutorial ? (
+              <ChevronUp className="w-4 h-4 text-amber-500/40" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-amber-500/40" />
+            )}
+          </button>
+          {showTutorial && (
+            <CardContent className="pt-0 space-y-4 text-xs">
+              {/* Modos */}
+              <div>
+                <p className="font-cinzel text-amber-400 text-sm mb-2">Los 4 modos</p>
+                <ul className="space-y-1.5 font-inter text-white/60">
+                  <li><strong className="text-amber-400">Mejorar:</strong> Sube resolución, saca ruido, afila y mejora iluminación. Ideal para fotos viejas, borrosas o pixeladas. No cambia nada, solo mejora calidad.</li>
+                  <li><strong className="text-amber-400">Fondo:</strong> Cambia el fondo de la foto. Mantiene a la persona intacta (cara, ropa, pose, iluminación). Elegí uno de los 11 presets o usá "Custom" para uno propio.</li>
+                  <li><strong className="text-amber-400">Outfit:</strong> Cambia la ropa. Mantiene cara, pose, cuerpo, pelo y fondo. 12 presets disponibles (látex, lencería, corset, vestido, bikini, arneses, colegiala, enfermera, domme, novia, kimono, body encaje).</li>
+                  <li><strong className="text-amber-400">Custom:</strong> Escribí lo que se te cante. Mientras más específica, mejor.</li>
+                </ul>
+              </div>
+
+              {/* Ejemplos de prompts */}
+              <div>
+                <p className="font-cinzel text-amber-400 text-sm mb-2">10 ejemplos de prompts para modo Custom</p>
+                <ul className="space-y-1.5 font-inter text-white/60">
+                  <li className="italic">"Cambiar el vestido por un conjunto de encaje rojo con liguero y medias negras"</li>
+                  <li className="italic">"Ponerle un kimono japonés de seda, abierto, con cinturón"</li>
+                  <li className="italic">"Cambiar el fondo a una terraza con piscina de noche, con luces de neón rosa"</li>
+                  <li className="italic">"Agregar un collar de perlas y cambiar el color del vestido a azul"</li>
+                  <li className="italic">"Cambiar el fondo a un Castillo medieval con antorchas, iluminación dramática"</li>
+                  <li className="italic">"Ponerle un body de encaje negro transparente con medias altas"</li>
+                  <li className="italic">"Cambiar la iluminación a luz de vela, ambiente cálido y sensual"</li>
+                  <li className="italic">"Ponerle un conjunto de arneses de cuero negro estilo BDSM con collared"</li>
+                  <li className="italic">"Cambiar el fondo a un baño de mármol con bañadera y velas"</li>
+                  <li className="italic">"Ponerle un vestido de novia con velo y liguero blanco, fondo de suite de hotel"</li>
+                </ul>
+              </div>
+
+              {/* Tips */}
+              <div>
+                <p className="font-cinzel text-amber-400 text-sm mb-2">5 tips para mejores resultados</p>
+                <ol className="space-y-1.5 list-decimal list-inside font-inter text-white/60">
+                  <li>Subí la foto más nítida que tengas. Si la original está borrosa, el resultado también lo va a estar.</li>
+                  <li>Para cambio de outfit, mejor si se ve el cuerpo entero o 3/4. Si solo se ve la cintura para arriba, no se nota el pantalón/falda.</li>
+                  <li>Sé específica en el prompt. Decí qué cambiar Y qué mantener (cara, pose, fondo, etc.).</li>
+                  <li>Si el resultado no te convence, probá "Probar otra variante" — la IA genera resultados distintos cada vez.</li>
+                  <li>Para cambio de fondo, mejor si el fondo actual es más o menos uniforme (pared lisa, cielo). El recorte queda más prolijo.</li>
+                </ol>
+              </div>
+
+              {/* Qué evitar */}
+              <div>
+                <p className="font-cinzel text-amber-400 text-sm mb-2">Qué evitar</p>
+                <ul className="space-y-1.5 font-inter text-white/60">
+                  <li className="text-red-300/70">Prompts vagos tipo "hacela más linda" o "cambiala"</li>
+                  <li className="text-red-300/70">Pedidos de desnudos explícitos o actos sexuales (la IA los bloquea)</li>
+                  <li className="text-red-300/70">Fotos muy chicas (menos de 500px de ancho)</li>
+                  <li className="text-red-300/70">Fotos con muchas personas (la IA se confunde con cuál es el sujeto)</li>
+                </ul>
+              </div>
+
+              {/* Nota de privacidad */}
+              <div className="bg-amber-500/5 border border-amber-500/15 rounded-lg p-3">
+                <p className="font-inter text-white/60 text-xs leading-relaxed">
+                  <strong className="text-amber-400">Privacidad:</strong> Las imágenes no se guardan en el servidor. Se procesan en memoria y se descartan. Tu contenido es 100% tuyo.
+                </p>
+              </div>
+            </CardContent>
+          )}
+        </Card>
+
         {/* Mode selector */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">

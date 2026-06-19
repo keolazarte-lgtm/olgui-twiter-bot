@@ -171,6 +171,19 @@ export async function initSchema() {
     CREATE INDEX IF NOT EXISTS idx_editor_usage_user_date ON editor_usage(user_id, created_at DESC)
   `)
 
+  // Config global del editor (limite diario, etc.)
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS editor_config (
+      key TEXT PRIMARY KEY,
+      value TEXT,
+      updated_at TEXT DEFAULT (datetime('now'))
+    )
+  `)
+  // Seed default limit = 20
+  await db.execute(`
+    INSERT OR IGNORE INTO editor_config (key, value) VALUES ('daily_limit', '20')
+  `)
+
   // Course pricing — one row per course (onlyfans, hombres, reddit)
   await db.execute(`
     CREATE TABLE IF NOT EXISTS course_pricing (
@@ -1338,11 +1351,38 @@ export async function updatePricing(course: string, data: {
 
 // ─── Editor de fotos con IA ──────────────────────────────────
 
-export const EDITOR_DAILY_LIMIT = 20
+export const EDITOR_DAILY_LIMIT_DEFAULT = 20
+
+export async function getEditorDailyLimit(): Promise<number> {
+  const db = getDb()
+  try {
+    const result = await db.execute({
+      sql: `SELECT value FROM editor_config WHERE key = 'daily_limit'`,
+      args: []
+    })
+    const val = (result.rows[0] as any)?.value
+    if (val === 'unlimited' || val === '-1' || val === '∞') return -1
+    const n = Number(val)
+    if (!isNaN(n) && n >= 0) return n
+    return EDITOR_DAILY_LIMIT_DEFAULT
+  } catch {
+    return EDITOR_DAILY_LIMIT_DEFAULT
+  }
+}
+
+export async function setEditorDailyLimit(limit: number) {
+  const db = getDb()
+  const value = limit < 0 ? 'unlimited' : String(limit)
+  await db.execute({
+    sql: `INSERT INTO editor_config (key, value, updated_at) VALUES ('daily_limit', ?, datetime('now'))
+          ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = datetime('now')`,
+    args: [value]
+  })
+  return getEditorDailyLimit()
+}
 
 export async function getEditorUsageToday(userId: string): Promise<number> {
   const db = getDb()
-  // SQLite stores datetime('now') in UTC; we count since 00:00 UTC of today
   const result = await db.execute({
     sql: `SELECT COUNT(*) as count FROM editor_usage
           WHERE user_id = ?
