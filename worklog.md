@@ -181,3 +181,37 @@ Stage Summary:
 - Límite: 20 fotos/día por usuaria (admin ilimitado)
 - Admin siempre tiene acceso automático
 - A vos te toca: loguearte como admin, ir a Tab Usuarios, dar acceso a quien quieras (incluídas cuentas de prueba de Olgui)
+
+---
+Task ID: 5
+Agent: Super Z (sesión nueva)
+Task: Limite diario global configurable desde admin + tutorial integrado en editor + mas presets eroticos
+
+Work Log:
+- academy-db.ts: agregada tabla editor_config (key/value) + seed default daily_limit=20 + helpers getEditorDailyLimit y setEditorDailyLimit (acepta numero, 'unlimited', -1 o '∞')
+- /api/editor/process: ahora llama getEditorDailyLimit() en vez de EDITOR_DAILY_LIMIT constante; response devuelve limit dinamico
+- /api/editor/usage: igual, usa limite de DB
+- /api/admin/editor/config (nuevo): GET devuelve dailyLimit + stats completas (total, today, byMode, byUser); PATCH actualiza limite
+- admin/dashboard: nueva tab 'EDITOR' con:
+  * Card 'LIMITE DIARIO DEL EDITOR' con campo editable + boton GUARDAR
+  * 3 KPIs: limite actual, total procesadas, hoy
+  * Card 'USO POR MODO' (count por enhance/background/outfit/custom)
+  * Card 'TOP USUARIAS' (top 20 con mas uso)
+  * Card 'COMO DAR ACCESO A UNA USUARIA' (guia paso a paso)
+- editor/page.tsx: agregada seccion colapsable Tutorial arriba de los modos
+  * Header con icono HelpCircle + 'COMO USO EL EDITOR?'
+  * 5 subsecciones: modos, 10 ejemplos prompts, 5 tips, que evitar, privacidad
+  * Estado showTutorial toggleable
+- Presets ampliados:
+  * Fondos: 6 -> 11 (agregados yate, suite-hotel, bano-marmol, espejos, neon-rosa)
+  * Outfits: 6 -> 12 (agregados colegiala, enfermera, domme, novia, kimono, body-encaje)
+- Build verde, re-seed OK, push exitoso (commit 6a68e96)
+- Verificacion en produccion: /, /editor, /campus, /admin/login -> 200; /api/admin/editor/config -> 401 (esperado, requiere auth admin)
+
+Stage Summary:
+- Limite diario global configurable desde admin (default 20, acepta numero o 'unlimited')
+- Tutorial integrado colapsable dentro del editor
+- 11 presets de fondo + 12 presets de outfit, todos eroticos soft (sin explicit)
+- Admin siempre ilimitado, no le afecta el limite
+- Stats de uso del editor visibles en tab EDITOR del admin
+- En produccion: https://dinasty-academy.vercel.app/admin/dashboard?tab=editor
