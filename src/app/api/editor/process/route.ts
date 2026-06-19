@@ -9,9 +9,40 @@ import {
   EDITOR_DAILY_LIMIT_DEFAULT,
 } from '@/lib/academy-db'
 import ZAI from 'z-ai-web-dev-sdk'
+import * as fs from 'fs'
+import * as path from 'path'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
+
+/**
+ * Inicializa el SDK de z-ai con variables de entorno (producción) o
+ * archivo .z-ai-config (desarrollo local).
+ */
+async function initZAI() {
+  // Si las variables de entorno están, escribir un .z-ai-config temporal
+  const baseUrl = process.env.ZAI_BASE_URL
+  const apiKey = process.env.ZAI_API_KEY
+
+  if (baseUrl && apiKey) {
+    const config = {
+      baseUrl,
+      apiKey,
+      chatId: process.env.ZAI_CHAT_ID || '',
+      userId: process.env.ZAI_USER_ID || '',
+      token: process.env.ZAI_TOKEN || '',
+    }
+    // Escribir a disco porque el SDK lee desde archivo (no acepta config en create)
+    const configPath = path.join(process.cwd(), '.z-ai-config')
+    try {
+      fs.writeFileSync(configPath, JSON.stringify(config), { mode: 0o600 })
+    } catch (e) {
+      console.error('No se pudo escribir .z-ai-config:', e)
+    }
+  }
+
+  return ZAI.create()
+}
 
 interface ProcessBody {
   image: string // base64 data URL
@@ -109,7 +140,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Process with z-ai SDK
-    const zai = await ZAI.create()
+    const zai = await initZAI()
     const response = await zai.images.generations.edit({
       prompt,
       images: [{ url: body.image }],
