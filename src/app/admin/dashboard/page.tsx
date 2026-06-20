@@ -319,6 +319,40 @@ export default function AdminDashboardPage() {
     }
   }
 
+  // Toggle user role (admin <-> student)
+  const handleToggleRole = async (userId: string, currentRole: string) => {
+    const newRole = currentRole === 'admin' ? 'student' : 'admin'
+    setTogglingId(userId)
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/role`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: newRole }),
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setUsers(prev =>
+          prev.map(u => u.id === userId ? { ...u, role: data.user.role, editorAccess: data.user.editorAccess } : u)
+        )
+        toast({
+          title: newRole === 'admin' ? 'Rol cambiado a ADMIN' : 'Rol cambiado a ESTUDIANTE',
+          description: newRole === 'admin'
+            ? 'La usuaria ahora ve el panel admin, el editor y todo el campus'
+            : 'La usuaria ahora ve solo el campus (y el editor si se lo das aparte)',
+        })
+      } else {
+        const data = await res.json()
+        toast({ title: data.error || 'Error al cambiar rol', variant: 'destructive' })
+      }
+    } catch (error) {
+      console.error('Toggle role error:', error)
+      toast({ title: 'Error de conexión', variant: 'destructive' })
+    } finally {
+      setTogglingId(null)
+    }
+  }
+
   // Save editor daily limit
   const handleSaveEditorLimit = async () => {
     setSavingEditorLimit(true)
@@ -843,9 +877,39 @@ export default function AdminDashboardPage() {
                         </td>
                         <td className="p-4 text-right">
                           {u.role === 'admin' ? (
-                            <span className="font-inter text-white/20 text-[10px]">Protegido</span>
+                            <div className="flex items-center justify-end gap-1.5">
+                              <Button
+                                onClick={() => handleToggleRole(u.id, u.role)}
+                                disabled={togglingId === u.id}
+                                size="sm"
+                                title="Cambiar rol a estudiante (solo campus)"
+                                className="font-cinzel text-[10px] tracking-wider h-8 px-2.5 bg-amber-500/15 text-amber-400 border border-amber-500/30 hover:bg-amber-500/25"
+                              >
+                                {togglingId === u.id ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : (
+                                  <>
+                                    <Crown className="w-3 h-3 mr-1" />
+                                    QUITAR ADMIN
+                                  </>
+                                )}
+                              </Button>
+                            </div>
                           ) : (
                             <div className="flex items-center justify-end gap-1.5">
+                              <Button
+                                onClick={() => handleToggleRole(u.id, u.role)}
+                                disabled={togglingId === u.id}
+                                size="sm"
+                                title="Cambiar rol a admin (ve todo)"
+                                className="font-cinzel text-[10px] tracking-wider h-8 px-2.5 bg-white/5 text-white/50 border border-white/10 hover:bg-white/10"
+                              >
+                                {togglingId === u.id ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : (
+                                  'HACER ADMIN'
+                                )}
+                              </Button>
                               <Button
                                 onClick={() => handleToggleEditor(u.id, Boolean(u.editorAccess))}
                                 disabled={togglingId === u.id}
@@ -950,8 +1014,21 @@ export default function AdminDashboardPage() {
                         ) : null}
                         <span className="font-inter text-white/25 text-[10px]">{formatDate(u.createdAt)}</span>
                       </div>
-                      {u.role !== 'admin' && (
-                        <div className="flex items-center gap-1.5">
+                      {u.role !== 'admin' ? (
+                        <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                          <Button
+                            onClick={() => handleToggleRole(u.id, u.role)}
+                            disabled={togglingId === u.id}
+                            size="sm"
+                            title="Hacer admin (ve todo)"
+                            className="font-cinzel text-[9px] tracking-wider h-7 px-2 bg-white/5 text-white/50 border border-white/10 hover:bg-white/10"
+                          >
+                            {togglingId === u.id ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                              'HACER ADMIN'
+                            )}
+                          </Button>
                           <Button
                             onClick={() => handleToggleEditor(u.id, Boolean(u.editorAccess))}
                             disabled={togglingId === u.id}
@@ -987,6 +1064,22 @@ export default function AdminDashboardPage() {
                               'DESACTIVAR'
                             ) : (
                               'ACTIVAR'
+                            )}
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5 justify-end">
+                          <Button
+                            onClick={() => handleToggleRole(u.id, u.role)}
+                            disabled={togglingId === u.id}
+                            size="sm"
+                            title="Quitar admin (solo campus)"
+                            className="font-cinzel text-[9px] tracking-wider h-7 px-2 bg-amber-500/15 text-amber-400 border border-amber-500/30 hover:bg-amber-500/25"
+                          >
+                            {togglingId === u.id ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                              'QUITAR ADMIN'
                             )}
                           </Button>
                         </div>

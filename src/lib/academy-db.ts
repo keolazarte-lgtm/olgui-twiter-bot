@@ -285,6 +285,15 @@ export async function toggleUserEditorAccess(userId: string, editorAccess: numbe
   return getUserById(userId)
 }
 
+export async function setUserRole(userId: string, role: string) {
+  const db = getDb()
+  await db.execute({
+    sql: `UPDATE users SET role = ?, updated_at = datetime('now') WHERE id = ?`,
+    args: [role, userId]
+  })
+  return getUserById(userId)
+}
+
 export async function getAllUsers() {
   const db = getDb()
   const result = await db.execute('SELECT * FROM users ORDER BY created_at DESC')
