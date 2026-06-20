@@ -215,3 +215,4 @@ Stage Summary:
 - Admin siempre ilimitado, no le afecta el limite
 - Stats de uso del editor visibles en tab EDITOR del admin
 - En produccion: https://dinasty-academy.vercel.app/admin/dashboard?tab=editor
+# Forzar redeploy Sat Jun 20 05:37:19 UTC 2026
