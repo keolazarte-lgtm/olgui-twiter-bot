@@ -45,7 +45,7 @@ export default function PendingPage() {
 
       if (data.user?.active === 1) {
         toast({
-          title: '¡Pago confirmado!',
+          title: '¡Cuenta activada!',
           description: 'Ya podés acceder al campus',
         })
         router.push('/campus')
@@ -53,8 +53,8 @@ export default function PendingPage() {
       }
 
       toast({
-        title: 'Pago pendiente',
-        description: 'Tu pago aún no fue confirmado. Esto puede tardar unos minutos.',
+        title: 'Aún esperando activación',
+        description: 'Escribinos por WhatsApp con tu comprobante de pago para que activemos tu cuenta.',
       })
     } catch (error) {
       console.error('Check status error:', error)
@@ -98,20 +98,20 @@ export default function PendingPage() {
             </div>
 
             <h1 className="font-cinzel-decorative text-white font-bold text-xl mb-2">
-              Pago <span className="gold-text">Pendiente</span>
+              Esperando <span className="gold-text">Activación</span>
             </h1>
 
             <p className="font-inter text-white/50 text-sm mb-6 leading-relaxed">
-              Tu pago está siendo procesado. Una vez confirmado, tendrás acceso inmediato al campus exclusivo de Dinasty Academy.
+              Tu cuenta está registrada. Para activarla, escribinos por WhatsApp con tu comprobante de pago y te damos acceso al campus en minutos.
             </p>
 
             <div className="bg-amber-500/5 border border-amber-500/10 rounded-lg p-4 mb-6">
               <div className="flex items-center gap-2 text-amber-400 text-xs mb-2">
                 <Clock className="w-3.5 h-3.5" />
-                <span className="font-cinzel font-semibold tracking-wider">TIEMPO ESTIMADO</span>
+                <span className="font-cinzel font-semibold tracking-wider">TIEMPO DE ACTIVACIÓN</span>
               </div>
               <p className="font-inter text-white/40 text-xs">
-                La confirmación del pago puede tardar entre 1 y 15 minutos dependiendo del método de pago utilizado.
+                Una vez que nos escribas por WhatsApp con el comprobante, activamos tu cuenta en pocos minutos.
               </p>
             </div>
 

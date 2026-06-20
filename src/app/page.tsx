@@ -273,17 +273,8 @@ export default function DinastiaAcademy() {
         return
       }
 
-      // Step 2: Create MP preference and redirect to payment
-      const mpRes = await fetch('/api/mp/create-preference', { method: 'POST' })
-      const mpData = await mpRes.json()
-
-      if (mpData.initPoint) {
-        // Redirect to MercadoPago
-        window.location.href = mpData.initPoint
-        return
-      }
-
-      // Fallback: show success
+      // Cuenta creada. No mandamos a MP automáticamente.
+      // La alumna tiene que escribirnos por WhatsApp para coordinar el pago y que le activemos manualmente.
       setPaid(true)
     } catch (error) {
       console.error('Purchase error:', error)
@@ -311,8 +302,8 @@ export default function DinastiaAcademy() {
       a: 'No. Los principios sirven para OnlyFans, Fansly, y cualquier plataforma de contenido para adultos. La configuración de privacidad es universal y aplica a todas.',
     },
     {
-      q: '¿Cómo recibo el material?',
-      a: 'Una vez confirmado el pago, recibís acceso inmediato al campus exclusivo de Dinasty Academy, donde podés consultar todo el material las 24hs desde cualquier dispositivo. Además te llega un email de bienvenida con tus datos de ingreso en 5 a 10 minutos.',
+      q: '¿Cómo compro y cuándo tengo acceso?',
+      a: 'Creás tu cuenta en este mismo sitio y después nos escribís por WhatsApp para coordinar el pago. Una vez que nos envíes el comprobante, activamos tu cuenta en minutos y entrás al campus directamente desde cualquier dispositivo.',
     },
     {
       q: '¿Hay soporte si tengo dudas?',
@@ -496,7 +487,7 @@ export default function DinastiaAcademy() {
               <Lock className="w-3 h-3" /> PAGO SEGURO
             </span>
             <span className="flex items-center gap-1.5">
-              <Clock className="w-3 h-3" /> ENTREGA INMEDIATA
+              <Clock className="w-3 h-3" /> ACTIVACIÓN RÁPIDA
             </span>
             <span className="flex items-center gap-1.5">
               <Shield className="w-3 h-3" /> 100% PRIVADO
@@ -980,7 +971,7 @@ export default function DinastiaAcademy() {
             </a>
 
             <p className="font-cinzel text-white/20 text-[10px] tracking-widest">
-              PAGO SEGURO POR MERCADOPAGO · ENTREGA INMEDIATA · 100% PRIVADO
+              PAGO SEGURO POR WHATSAPP · ACTIVACIÓN RÁPIDA · 100% PRIVADO
             </p>
           </motion.div>
         </div>
@@ -1132,23 +1123,29 @@ export default function DinastiaAcademy() {
                   </p>
                 </div>
 
-                {/* QR Code */}
-                <div className="bg-amber-500/5 border border-amber-500/15 rounded-xl p-4 text-center">
-                  <p className="font-cinzel text-amber-400 text-xs tracking-wider mb-3">
-                    ESCANEÁ Y PAGÁ
+                {/* Instrucciones de pago */}
+                <div className="bg-amber-500/5 border border-amber-500/15 rounded-xl p-4">
+                  <p className="font-cinzel text-amber-400 text-xs tracking-wider mb-3 text-center">
+                    CÓMO OBTENER ACCESO
                   </p>
-                  <div className="bg-white rounded-xl p-3 inline-block mx-auto">
-                    <Image
-                      src="/mp-qr.jpeg"
-                      alt="QR MercadoPago"
-                      width={200}
-                      height={200}
-                      className="rounded-lg"
-                    />
-                  </div>
-                  <p className="font-inter text-white/30 text-[10px] mt-3">
-                    Abrí la cámara de tu celular y escaneá el QR
-                  </p>
+                  <ol className="space-y-2.5 text-left">
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 font-cinzel text-[10px] flex items-center justify-center shrink-0 mt-0.5">1</span>
+                      <span className="font-inter text-white/60 text-xs">Completá tus datos arriba</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 font-cinzel text-[10px] flex items-center justify-center shrink-0 mt-0.5">2</span>
+                      <span className="font-inter text-white/60 text-xs">Tocá <strong className="text-amber-400">CREAR CUENTA</strong> abajo</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 font-cinzel text-[10px] flex items-center justify-center shrink-0 mt-0.5">3</span>
+                      <span className="font-inter text-white/60 text-xs">Escribinos por <strong className="text-emerald-400">WhatsApp</strong> para coordinar el pago</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 font-cinzel text-[10px] flex items-center justify-center shrink-0 mt-0.5">4</span>
+                      <span className="font-inter text-white/60 text-xs">Activamos tu cuenta y entrás al campus</span>
+                    </li>
+                  </ol>
                 </div>
 
                 {/* Pay button */}
@@ -1161,8 +1158,8 @@ export default function DinastiaAcademy() {
                     <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
                     <>
-                      <DollarSign className="w-5 h-5" />
-                      PAGAR CON MERCADOPAGO
+                      <Crown className="w-5 h-5" />
+                      CREAR CUENTA
                     </>
                   )}
                 </Button>
@@ -1171,11 +1168,11 @@ export default function DinastiaAcademy() {
                   <div className="flex items-center gap-2 text-amber-400 text-xs mb-1">
                     <Clock className="w-3.5 h-3.5" />
                     <span className="font-cinzel font-semibold tracking-wide">
-                      ENTREGA INMEDIATA
+                      ACTIVACIÓN RÁPIDA
                     </span>
                   </div>
                   <p className="font-inter text-white/30 text-[10px]">
-                    Una vez confirmado el pago, recibís acceso inmediato al campus exclusivo
+                    Una vez que nos escribas por WhatsApp con tu comprobante de pago, activamos tu cuenta en minutos.
                   </p>
                 </div>
 
@@ -1210,48 +1207,61 @@ export default function DinastiaAcademy() {
                 <Check className="w-8 h-8 text-amber-400" />
               </div>
               <h3 className="font-cinzel-decorative text-white font-bold text-xl mb-2">
-                ¡Gracias por tu compra!
+                ¡Cuenta creada!
               </h3>
               <p className="font-playfair text-white/60 text-sm mb-4 italic">
-                Una vez confirmado el pago, tendrás acceso inmediato al campus exclusivo de Dinasty Academy.
+                Tu cuenta está registrada. Ahora escribínos por WhatsApp para coordinar el pago y activar tu acceso al campus.
               </p>
 
-              {/* Thank you details */}
+              {/* Estado de la cuenta */}
               <div className="bg-amber-500/5 border border-amber-500/10 rounded-lg p-4 mb-5 text-left space-y-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center shrink-0">
-                    <Check className="w-3 h-3 text-black" />
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center shrink-0">
+                    <Check className="w-3 h-3 text-white" />
                   </div>
-                  <span className="font-inter text-white/60 text-xs">Pago procesado por MercadoPago</span>
+                  <span className="font-inter text-white/60 text-xs">Cuenta registrada con email <strong className="text-white">{email}</strong></span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center shrink-0">
-                    <Check className="w-3 h-3 text-black" />
+                  <div className="w-6 h-6 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
+                    <Clock className="w-3 h-3 text-amber-400" />
                   </div>
-                  <span className="font-inter text-white/60 text-xs">Acceso al campus exclusivo</span>
+                  <span className="font-inter text-white/60 text-xs">Esperando activación manual</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center shrink-0">
-                    <Check className="w-3 h-3 text-black" />
+                  <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                    <Crown className="w-3 h-3 text-white/40" />
                   </div>
-                  <span className="font-inter text-white/60 text-xs">Actualizaciones gratuitas</span>
+                  <span className="font-inter text-white/60 text-xs">Acceso al campus (se activa tras pago)</span>
                 </div>
               </div>
 
-              <div className="bg-white/5 rounded-lg p-3 mb-5">
-                <p className="font-inter text-white/30 text-xs">
-                  Si el pago tarda en confirmarse, podés ingresar al campus y se activará automáticamente.
+              {/* Botón principal WhatsApp */}
+              <a
+                href={`https://api.whatsapp.com/send?phone=5492246449032&text=${encodeURIComponent('Hola! Acabo de crear mi cuenta en Dinasty Academy con el email ' + email + '. Quiero coordinar el pago para activar mi acceso al campus.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full h-12 flex items-center justify-center gap-2 text-sm font-cinzel font-bold tracking-wider bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl border-0 cursor-pointer transition-colors no-underline mb-3"
+              >
+                <MessageCircle className="w-5 h-5" />
+                ESCRIBIR POR WHATSAPP
+              </a>
+
+              <div className="bg-amber-500/5 border border-amber-500/10 rounded-lg p-3 mb-5">
+                <p className="font-inter text-white/40 text-[10px] leading-relaxed">
+                  <strong className="text-amber-400">Importante:</strong> guardá tu email y contraseña. Cuando te activemos, vas a poder ingresar directo a <code className="text-amber-400">dinasty-academy.vercel.app/login</code>
                 </p>
               </div>
+
               <Button
                 onClick={() => {
                   setPaid(false)
                   setShowPayment(false)
                   window.location.href = '/campus'
                 }}
-                className="bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-black font-cinzel font-bold tracking-wider border-0"
+                variant="ghost"
+                className="w-full font-cinzel text-white/40 text-xs hover:text-white/60 tracking-wider"
               >
-                IR AL CAMPUS
+                IR AL CAMPUS (esperando activación)
               </Button>
             </motion.div>
           </motion.div>
