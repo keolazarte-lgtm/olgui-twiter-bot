@@ -8,7 +8,8 @@ import {
   LayoutDashboard, UserCheck, UserX, RefreshCw, Search,
   ChevronDown, Calendar, Mail, ToggleLeft, ToggleRight,
   DollarSign, TrendingUp, ArrowUpRight, Banknote, Plus, UserCircle,
-  Eye, Globe, Monitor, Smartphone, Tablet, Bot, Activity, MapPin, Wand2
+  Eye, Globe, Monitor, Smartphone, Tablet, Bot, Activity, MapPin, Wand2,
+  Trash2, AlertTriangle
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -149,6 +150,9 @@ export default function AdminDashboardPage() {
   const [editorConfig, setEditorConfig] = useState<{ dailyLimit: number; stats: any } | null>(null)
   const [editorLimitInput, setEditorLimitInput] = useState('')
   const [savingEditorLimit, setSavingEditorLimit] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<UserItem | null>(null)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [deletingUser, setDeletingUser] = useState(false)
   const { toast } = useToast()
 
   // Pricing form state — one entry per course
@@ -385,6 +389,45 @@ export default function AdminDashboardPage() {
       toast({ title: 'Error de conexión', variant: 'destructive' })
     } finally {
       setTogglingId(null)
+    }
+  }
+
+  // Eliminar usuario
+  const handleDeleteUser = async () => {
+    if (!deleteTarget) return
+    if (deleteConfirmText.trim().toLowerCase() !== deleteTarget.email.toLowerCase()) {
+      toast({
+        title: 'El email no coincide',
+        description: 'Escribí el email exactamente como aparece para confirmar.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    setDeletingUser(true)
+    try {
+      const res = await fetch(`/api/admin/users/${deleteTarget.id}`, {
+        method: 'DELETE',
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setUsers(prev => prev.filter(u => u.id !== deleteTarget.id))
+        toast({
+          title: 'Usuario eliminado',
+          description: `Se eliminó la cuenta ${data.email} y todos sus datos asociados.`,
+        })
+        setDeleteTarget(null)
+        setDeleteConfirmText('')
+      } else {
+        const data = await res.json()
+        toast({ title: data.error || 'Error al eliminar', variant: 'destructive' })
+      }
+    } catch (error) {
+      console.error('Delete user error:', error)
+      toast({ title: 'Error de conexión', variant: 'destructive' })
+    } finally {
+      setDeletingUser(false)
     }
   }
 
@@ -1022,6 +1065,18 @@ export default function AdminDashboardPage() {
                                   </>
                                 )}
                               </Button>
+                              <Button
+                                onClick={() => {
+                                  setDeleteTarget(u)
+                                  setDeleteConfirmText('')
+                                }}
+                                disabled={togglingId === u.id}
+                                size="sm"
+                                title="Eliminar usuario (no se puede deshacer)"
+                                className="font-cinzel text-[10px] tracking-wider h-8 px-2.5 bg-red-500/5 text-red-400/70 border border-red-500/20 hover:bg-red-500/15 hover:text-red-400"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
                             </div>
                           )}
                         </td>
@@ -1165,6 +1220,18 @@ export default function AdminDashboardPage() {
                             ) : (
                               'ACTIVAR'
                             )}
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              setDeleteTarget(u)
+                              setDeleteConfirmText('')
+                            }}
+                            disabled={togglingId === u.id}
+                            size="sm"
+                            title="Eliminar usuario"
+                            className="font-cinzel text-[9px] tracking-wider h-7 px-2 bg-red-500/5 text-red-400/70 border border-red-500/20 hover:bg-red-500/15 hover:text-red-400"
+                          >
+                            <Trash2 className="w-3 h-3" />
                           </Button>
                         </div>
                       ) : (
@@ -2180,6 +2247,85 @@ export default function AdminDashboardPage() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* ─── MODAL ELIMINAR USUARIO ─── */}
+        {deleteTarget && (
+          <div
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => !deletingUser && setDeleteTarget(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-[#0a0a0a] border border-red-500/30 rounded-2xl p-6 sm:p-8 max-w-md w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="w-14 h-14 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle className="w-7 h-7 text-red-400" />
+              </div>
+
+              <h3 className="font-cinzel-decorative text-white font-bold text-xl mb-2 text-center">
+                Eliminar usuario
+              </h3>
+              <p className="font-inter text-white/60 text-sm mb-4 text-center">
+                Vas a eliminar la cuenta <strong className="text-red-400">{deleteTarget.email}</strong>
+                {deleteTarget.name && <span> ({deleteTarget.name})</span>}.
+                Esta acción <strong className="text-red-400">no se puede deshacer</strong>.
+              </p>
+
+              <div className="bg-red-500/5 border border-red-500/15 rounded-lg p-3 mb-5">
+                <p className="font-inter text-white/50 text-xs mb-1">Se van a borrar:</p>
+                <ul className="font-inter text-white/40 text-xs space-y-1 ml-4 list-disc">
+                  <li>Su cuenta y datos de acceso</li>
+                  <li>Su progreso en todos los cursos</li>
+                  <li>Los cursos que tenga activos</li>
+                  <li>El acceso al editor de fotos IA</li>
+                  <li>El registro de uso del editor</li>
+                  <li>Los registros de ventas asociados</li>
+                </ul>
+              </div>
+
+              <p className="font-inter text-white/60 text-xs mb-2">
+                Para confirmar, escribí el email del usuario:
+              </p>
+              <Input
+                type="text"
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder={deleteTarget.email}
+                disabled={deletingUser}
+                autoFocus
+                className="bg-white/5 border-red-500/20 text-white font-inter mb-4"
+                onKeyDown={(e) => { if (e.key === 'Enter' && deleteConfirmText.trim().toLowerCase() === deleteTarget.email.toLowerCase()) handleDeleteUser() }}
+              />
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => {
+                    setDeleteTarget(null)
+                    setDeleteConfirmText('')
+                  }}
+                  disabled={deletingUser}
+                  variant="ghost"
+                  className="flex-1 font-cinzel text-white/60 text-xs hover:text-white/80 tracking-wider border border-white/10"
+                >
+                  CANCELAR
+                </Button>
+                <Button
+                  onClick={handleDeleteUser}
+                  disabled={deletingUser || deleteConfirmText.trim().toLowerCase() !== deleteTarget.email.toLowerCase()}
+                  className="flex-1 bg-red-500/20 text-red-400 border border-red-500/40 hover:bg-red-500/30 font-cinzel font-bold text-xs tracking-wider disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  {deletingUser ? (
+                    <><Loader2 className="w-3 h-3 mr-1 animate-spin" /> ELIMINANDO...</>
+                  ) : (
+                    <><Trash2 className="w-3 h-3 mr-1" /> ELIMINAR</>
+                  )}
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </motion.div>
     </div>
   )

@@ -416,6 +416,33 @@ export async function getAllUsers() {
   return result.rows
 }
 
+export async function deleteUser(userId: string) {
+  const db = getDb()
+  // Borrar en cascada los datos relacionados
+  await db.execute({
+    sql: `DELETE FROM user_progress WHERE user_id = ?`,
+    args: [userId]
+  })
+  await db.execute({
+    sql: `DELETE FROM user_courses WHERE user_id = ?`,
+    args: [userId]
+  })
+  await db.execute({
+    sql: `DELETE FROM editor_usage WHERE user_id = ?`,
+    args: [userId]
+  })
+  await db.execute({
+    sql: `DELETE FROM sales WHERE user_id = ?`,
+    args: [userId]
+  })
+  // Finalmente borrar el usuario
+  await db.execute({
+    sql: `DELETE FROM users WHERE id = ?`,
+    args: [userId]
+  })
+  return { success: true, id: userId }
+}
+
 // ─── Module & Lesson Helpers ──────────────────────────────
 
 export async function getModulesWithLessons() {
