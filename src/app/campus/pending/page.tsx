@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Clock, Crown, Loader2, RefreshCw, ArrowLeft, DollarSign } from 'lucide-react'
+import { Clock, Crown, Loader2, RefreshCw, ArrowLeft, DollarSign, MessageCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
@@ -124,6 +124,16 @@ export default function PendingPage() {
                 VERIFICAR ESTADO DEL PAGO
               </Button>
 
+              <a
+                href="https://api.whatsapp.com/send?phone=5492246449032&text=Hola!%20Ya%20realic%C3%A9%20el%20pago%20del%20curso%20de%20Dinasty%20Academy.%20Mi%20email%20es%3A%20"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full h-11 flex items-center justify-center gap-2 text-sm font-cinzel font-bold tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 rounded-xl transition-colors no-underline"
+              >
+                <MessageCircle className="w-4 h-4" />
+                AVISAR POR WHATSAPP
+              </a>
+
               <Button
                 onClick={handleRetryPayment}
                 disabled={loading}
@@ -136,6 +146,10 @@ export default function PendingPage() {
                 )}
                 REINTENTAR PAGO
               </Button>
+
+              <p className="font-inter text-white/30 text-[10px] leading-relaxed text-center px-4">
+                Si ya pagaste y tu cuenta no se activa en 15 minutos, escribinos por WhatsApp con tu email y te lo activamos enseguida.
+              </p>
 
               <Button
                 onClick={() => {
