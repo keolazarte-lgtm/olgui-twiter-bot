@@ -9,39 +9,42 @@ import {
   EDITOR_DAILY_LIMIT_DEFAULT,
 } from '@/lib/academy-db'
 import ZAI from 'z-ai-web-dev-sdk'
-import * as fs from 'fs'
-import * as path from 'path'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
 
 /**
- * Inicializa el SDK de z-ai con variables de entorno (producción) o
- * archivo .z-ai-config (desarrollo local).
+ * Crea una instancia del SDK de z-ai directamente con la config (sin leer archivo).
+ * En Vercel el filesystem es read-only, así que no podemos escribir .z-ai-config.
+ * En cambio, instanciamos ZAI directamente con new ZAI(config).
+ *
+ * Requiere las variables de entorno en Vercel:
+ *   ZAI_BASE_URL, ZAI_API_KEY, ZAI_CHAT_ID, ZAI_USER_ID, ZAI_TOKEN
  */
 async function initZAI() {
-  // Si las variables de entorno están, escribir un .z-ai-config temporal
   const baseUrl = process.env.ZAI_BASE_URL
   const apiKey = process.env.ZAI_API_KEY
 
-  if (baseUrl && apiKey) {
-    const config = {
-      baseUrl,
-      apiKey,
-      chatId: process.env.ZAI_CHAT_ID || '',
-      userId: process.env.ZAI_USER_ID || '',
-      token: process.env.ZAI_TOKEN || '',
-    }
-    // Escribir a disco porque el SDK lee desde archivo (no acepta config en create)
-    const configPath = path.join(process.cwd(), '.z-ai-config')
-    try {
-      fs.writeFileSync(configPath, JSON.stringify(config), { mode: 0o600 })
-    } catch (e) {
-      console.error('No se pudo escribir .z-ai-config:', e)
-    }
+  if (!baseUrl || !apiKey) {
+    throw new Error(
+      'Falta configurar variables de entorno ZAI_* en Vercel. ' +
+      'Revisá: ZAI_BASE_URL, ZAI_API_KEY, ZAI_CHAT_ID, ZAI_USER_ID, ZAI_TOKEN'
+    )
   }
 
-  return ZAI.create()
+  const config = {
+    baseUrl,
+    apiKey,
+    chatId: process.env.ZAI_CHAT_ID || '',
+    userId: process.env.ZAI_USER_ID || '',
+    token: process.env.ZAI_TOKEN || '',
+  }
+
+  // El SDK exporta ZAI como clase con constructor público que recibe config
+  // ZAI.create() internamente hace loadConfig() + new ZAI(config),
+  // así que new ZAI(config) es equivalente pero sin leer archivo.
+  // @ts-ignore — el constructor existe aunque TypeScript no lo exponga bien
+  return new ZAI(config)
 }
 
 interface ProcessBody {
@@ -167,9 +170,28 @@ export async function POST(request: NextRequest) {
     })
   } catch (error: any) {
     console.error('Editor process error:', error)
+
+    // Errores conocidos con mensajes claros
+    let errorMessage = error?.message || 'Error al procesar la imagen'
+    let status = 500
+
+    if (errorMessage.includes('Falta configurar variables de entorno ZAI')) {
+      status = 503
+      errorMessage = 'El editor de IA no está configurado en el servidor. Avisale al administrador para configurar las variables ZAI_* en Vercel.'
+    } else if (errorMessage.includes('Configuration file not found')) {
+      status = 503
+      errorMessage = 'El editor de IA no está configurado en el servidor. Avisale al administrador.'
+    } else if (errorMessage.includes('API request failed')) {
+      status = 502
+      errorMessage = 'El servicio de IA no respondió correctamente. Probá de nuevo en unos segundos.'
+    } else if (errorMessage.includes('rate limit') || errorMessage.includes('429')) {
+      status = 429
+      errorMessage = 'El servicio de IA está saturado. Esperá 1 minuto y probá de nuevo.'
+    }
+
     return NextResponse.json(
-      { error: error?.message || 'Error al procesar la imagen' },
-      { status: 500 }
+      { error: errorMessage },
+      { status }
     )
   }
 }
