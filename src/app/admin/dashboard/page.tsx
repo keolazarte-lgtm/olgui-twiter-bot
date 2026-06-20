@@ -28,6 +28,8 @@ interface UserItem {
   role: string
   active: number
   editorAccess?: boolean
+  courseAccess?: { onlyfans: boolean; reddit: boolean; hombres: boolean }
+  isLegacy?: boolean
   mpPaymentId: string | null
   createdAt: string
 }
@@ -347,6 +349,39 @@ export default function AdminDashboardPage() {
       }
     } catch (error) {
       console.error('Toggle role error:', error)
+      toast({ title: 'Error de conexión', variant: 'destructive' })
+    } finally {
+      setTogglingId(null)
+    }
+  }
+
+  // Toggle user course access (onlyfans / reddit / hombres)
+  const handleToggleCourse = async (userId: string, course: 'onlyfans' | 'reddit' | 'hombres', currentAccess: boolean) => {
+    setTogglingId(`${userId}-${course}`)
+    try {
+      const res = await fetch(`/api/admin/users/${userId}/course-access`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ course, active: !currentAccess }),
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setUsers(prev =>
+          prev.map(u => u.id === userId ? { ...u, courseAccess: data.access, isLegacy: false } : u)
+        )
+        toast({
+          title: !currentAccess ? `Curso ${course.toUpperCase()} activado` : `Curso ${course.toUpperCase()} desactivado`,
+          description: !currentAccess
+            ? `La usuaria ahora tiene acceso al curso ${course}`
+            : `Se le quitó el acceso al curso ${course}`,
+        })
+      } else {
+        const data = await res.json()
+        toast({ title: data.error || 'Error al cambiar acceso al curso', variant: 'destructive' })
+      }
+    } catch (error) {
+      console.error('Toggle course error:', error)
       toast({ title: 'Error de conexión', variant: 'destructive' })
     } finally {
       setTogglingId(null)
@@ -801,6 +836,7 @@ export default function AdminDashboardPage() {
                       <th className="text-left p-4 font-cinzel text-amber-500/40 text-[10px] tracking-wider">EMAIL</th>
                       <th className="text-left p-4 font-cinzel text-amber-500/40 text-[10px] tracking-wider">ESTADO</th>
                       <th className="text-left p-4 font-cinzel text-amber-500/40 text-[10px] tracking-wider">ROL</th>
+                      <th className="text-left p-4 font-cinzel text-amber-500/40 text-[10px] tracking-wider">CURSOS</th>
                       <th className="text-left p-4 font-cinzel text-amber-500/40 text-[10px] tracking-wider">EDITOR</th>
                       <th className="text-left p-4 font-cinzel text-amber-500/40 text-[10px] tracking-wider">REGISTRO</th>
                       <th className="text-right p-4 font-cinzel text-amber-500/40 text-[10px] tracking-wider">ACCIONES</th>
@@ -851,6 +887,38 @@ export default function AdminDashboardPage() {
                           }`}>
                             {u.role === 'admin' ? 'ADMIN' : 'ESTUDIANTE'}
                           </Badge>
+                        </td>
+                        <td className="p-4">
+                          {u.role === 'admin' ? (
+                            <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-[10px]">
+                              TODOS
+                            </Badge>
+                          ) : u.isLegacy ? (
+                            <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-[10px]">
+                              TODOS (legacy)
+                            </Badge>
+                          ) : (
+                            <div className="flex flex-col gap-1">
+                              {(['onlyfans', 'reddit', 'hombres'] as const).map(course => {
+                                const access = u.courseAccess?.[course] ?? false
+                                return (
+                                  <button
+                                    key={course}
+                                    onClick={() => handleToggleCourse(u.id, course, access)}
+                                    disabled={togglingId === `${u.id}-${course}`}
+                                    title={access ? `Quitar ${course}` : `Dar ${course}`}
+                                    className={`text-[9px] font-cinzel tracking-wider px-2 py-0.5 rounded border transition-colors ${
+                                      access
+                                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
+                                        : 'bg-white/5 text-white/30 border-white/10 hover:bg-white/10'
+                                    }`}
+                                  >
+                                    {togglingId === `${u.id}-${course}` ? '...' : course.toUpperCase()}
+                                  </button>
+                                )
+                              })}
+                            </div>
+                          )}
                         </td>
                         <td className="p-4">
                           {u.role === 'admin' ? (
@@ -1014,6 +1082,38 @@ export default function AdminDashboardPage() {
                         ) : null}
                         <span className="font-inter text-white/25 text-[10px]">{formatDate(u.createdAt)}</span>
                       </div>
+                    </div>
+
+                    {/* Cursos (mobile) */}
+                    {u.role !== 'admin' && (
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="font-cinzel text-amber-500/40 text-[9px] tracking-wider">CURSOS:</span>
+                        {(['onlyfans', 'reddit', 'hombres'] as const).map(course => {
+                          const access = u.courseAccess?.[course] ?? false
+                          return (
+                            <button
+                              key={course}
+                              onClick={() => handleToggleCourse(u.id, course, access)}
+                              disabled={togglingId === `${u.id}-${course}`}
+                              className={`text-[9px] font-cinzel tracking-wider px-2 py-0.5 rounded border transition-colors ${
+                                access
+                                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
+                                  : 'bg-white/5 text-white/30 border-white/10 hover:bg-white/10'
+                              }`}
+                            >
+                              {togglingId === `${u.id}-${course}` ? '...' : course.toUpperCase()}
+                            </button>
+                          )
+                        })}
+                        {u.isLegacy && (
+                          <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-[8px] ml-1">
+                            LEGACY
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between">
                       {u.role !== 'admin' ? (
                         <div className="flex items-center gap-1.5 flex-wrap justify-end">
                           <Button

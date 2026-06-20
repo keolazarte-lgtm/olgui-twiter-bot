@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken } from '@/lib/auth'
-import { initSchema, getUserById } from '@/lib/academy-db'
+import { initSchema, getUserById, getUserCourseAccess } from '@/lib/academy-db'
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,6 +22,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
     }
 
+    // Si es admin, tiene acceso a todos los cursos
+    let courseAccess = { onlyfans: false, reddit: false, hombres: false }
+    if (user.role === 'admin') {
+      courseAccess = { onlyfans: true, reddit: true, hombres: true }
+    } else {
+      courseAccess = await getUserCourseAccess(user.id)
+    }
+
     return NextResponse.json({
       user: {
         id: user.id,
@@ -31,6 +39,7 @@ export async function GET(request: NextRequest) {
         role: user.role,
         active: user.active,
         editorAccess: Boolean(user.editor_access),
+        courseAccess,
         mpPaymentId: user.mp_payment_id,
         createdAt: user.created_at,
       }

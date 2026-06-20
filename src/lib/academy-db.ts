@@ -171,6 +171,21 @@ export async function initSchema() {
     CREATE INDEX IF NOT EXISTS idx_editor_usage_user_date ON editor_usage(user_id, created_at DESC)
   `)
 
+  // Acceso a cursos por usuaria (1 fila por usuario+curso)
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS user_courses (
+      user_id TEXT NOT NULL,
+      course TEXT NOT NULL,
+      active INTEGER DEFAULT 0,
+      purchased_at TEXT DEFAULT (datetime('now')),
+      PRIMARY KEY (user_id, course),
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+  `)
+  await db.execute(`
+    CREATE INDEX IF NOT EXISTS idx_user_courses_user ON user_courses(user_id)
+  `)
+
   // Config global del editor (limite diario, etc.)
   await db.execute(`
     CREATE TABLE IF NOT EXISTS editor_config (
@@ -292,6 +307,107 @@ export async function setUserRole(userId: string, role: string) {
     args: [role, userId]
   })
   return getUserById(userId)
+}
+
+// ─── Course Access Helpers ──────────────────────────────────
+
+export const VALID_COURSES = ['onlyfans', 'reddit', 'hombres'] as const
+export type CourseId = typeof VALID_COURSES[number]
+
+/**
+ * Devuelve los cursos activos de un usuario: { onlyfans: bool, reddit: bool, hombres: bool }
+ * Si el usuario tiene active=1 (legacy) Y NO tiene filas en user_courses, se le da acceso a todos (migración implícita)
+ */
+export async function getUserCourseAccess(userId: string): Promise<{ onlyfans: boolean; reddit: boolean; hombres: boolean }> {
+  const db = getDb()
+  const result = await db.execute({
+    sql: `SELECT course, active FROM user_courses WHERE user_id = ?`,
+    args: [userId]
+  })
+
+  const access: { onlyfans: boolean; reddit: boolean; hombres: boolean } = {
+    onlyfans: false,
+    reddit: false,
+    hombres: false,
+  }
+
+  if (result.rows.length === 0) {
+    // Legacy: si no tiene filas en user_courses pero tiene users.active = 1, darle todo
+    const user = await getUserById(userId)
+    if (user && (user as any).active === 1) {
+      access.onlyfans = true
+      access.reddit = true
+      access.hombres = true
+    }
+    return access
+  }
+
+  for (const row of result.rows) {
+    const course = (row as any).course as string
+    const active = Number((row as any).active)
+    if (course in access) {
+      (access as any)[course] = active === 1
+    }
+  }
+  return access
+}
+
+/**
+ * Activa o desactiva un curso específico para un usuario.
+ * Si no existe la fila, la crea.
+ */
+export async function setUserCourseAccess(userId: string, course: string, active: boolean) {
+  const db = getDb()
+  const activeNum = active ? 1 : 0
+  await db.execute({
+    sql: `INSERT INTO user_courses (user_id, course, active, purchased_at)
+          VALUES (?, ?, ?, datetime('now'))
+          ON CONFLICT(user_id, course) DO UPDATE SET active = excluded.active, purchased_at = datetime('now')`,
+    args: [userId, course, activeNum]
+  })
+  return getUserCourseAccess(userId)
+}
+
+/**
+ * Devuelve un resumen de los cursos de cada usuario (para el admin dashboard).
+ * Incluye migración implícita (legacy active=1 = todos los cursos).
+ */
+export async function getAllUsersWithCourses() {
+  const db = getDb()
+  const users = await db.execute('SELECT * FROM users ORDER BY created_at DESC')
+  const courses = await db.execute('SELECT * FROM user_courses')
+
+  return users.rows.map(u => {
+    const userCourses = courses.rows.filter(c => (c as any).user_id === (u as any).id)
+    const hasExplicitCourses = userCourses.length > 0
+    const isLegacyActive = (u as any).active === 1
+
+    let access = { onlyfans: false, reddit: false, hombres: false }
+    if (hasExplicitCourses) {
+      for (const c of userCourses) {
+        const course = (c as any).course as string
+        const active = Number((c as any).active) === 1
+        if (course in access) (access as any)[course] = active
+      }
+    } else if (isLegacyActive) {
+      // Legacy: usuario con active=1 pero sin cursos explícitos → acceso a todo
+      access = { onlyfans: true, reddit: true, hombres: true }
+    }
+
+    return {
+      id: (u as any).id,
+      email: (u as any).email,
+      name: (u as any).name,
+      phone: (u as any).phone,
+      role: (u as any).role,
+      active: (u as any).active,
+      editorAccess: Boolean((u as any).editor_access),
+      mpPaymentId: (u as any).mp_payment_id,
+      createdAt: (u as any).created_at,
+      courseAccess: access,
+      isLegacy: !hasExplicitCourses && isLegacyActive,
+    }
+  })
 }
 
 export async function getAllUsers() {

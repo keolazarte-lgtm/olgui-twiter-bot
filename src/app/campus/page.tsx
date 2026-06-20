@@ -494,7 +494,15 @@ function CourseCard({
 
 // ─── Main Page ───────────────────────────────────────────
 export default function CampusPage() {
-  const [user, setUser] = useState<{ id: string; email: string; name: string | null; role: string; active: number; editorAccess?: boolean } | null>(null)
+  const [user, setUser] = useState<{
+    id: string;
+    email: string;
+    name: string | null;
+    role: string;
+    active: number;
+    editorAccess?: boolean;
+    courseAccess?: { onlyfans: boolean; reddit: boolean; hombres: boolean };
+  } | null>(null)
   const [modules, setModules] = useState<Module[]>([])
   const [progress, setProgress] = useState<Progress[]>([])
   const [pricing, setPricing] = useState<Pricing[]>([])
@@ -528,7 +536,7 @@ export default function CampusPage() {
         const pricingData = await pricingRes.json()
         setPricing(pricingData.pricing || [])
 
-        if (userData.user.active === 1) {
+        if (userData.user.active === 1 || userData.user.courseAccess) {
           const progRes = await fetch('/api/progress')
           const progData = await progRes.json()
           setProgress(progData.progress || [])
@@ -607,7 +615,16 @@ export default function CampusPage() {
     )
   }
 
-  const isActive = user?.active === 1
+  const isActive = user?.active === 1 // legacy global (por compatibilidad)
+  const courseAccess = user?.courseAccess || { onlyfans: false, reddit: false, hombres: false }
+  const isAdmin = user?.role === 'admin'
+  // Helper: ¿tiene acceso a un curso específico?
+  const isActiveForCourse = (courseKey: string): boolean => {
+    if (isAdmin) return true
+    return Boolean((courseAccess as any)[courseKey])
+  }
+  // Helper: ¿tiene acceso a ALGÚN curso? (para mostrar stats, sticky CTA, etc.)
+  const hasAnyCourse = isAdmin || (courseAccess.onlyfans || courseAccess.reddit || courseAccess.hombres)
 
   return (
     <div className="min-h-screen bg-[#050505] content-protected">
@@ -657,7 +674,7 @@ export default function CampusPage() {
             Bienvenida, <span className="gold-text">{user?.name || 'Creadora'}</span>
           </h2>
           <p className="font-inter text-white/40 text-sm">
-            {isActive
+            {hasAnyCourse
               ? 'Tocá un curso para ver su temario completo. Marcá las lecciones como completadas a medida que avances.'
               : 'Tocá un curso para ver su temario y precio. Desbloqueá el curso que elijas para acceder a todo su contenido.'}
           </p>
@@ -698,7 +715,7 @@ export default function CampusPage() {
                 courseKey={courseKey}
                 modules={courseModules}
                 pricing={coursePricing}
-                isActive={isActive}
+                isActive={isActiveForCourse(courseKey)}
                 progress={progress}
                 getModuleProgress={getModuleProgress}
                 onOpenModule={(modId) => router.push(`/campus/modulo/${modId}`)}

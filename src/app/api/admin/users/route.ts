@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken } from '@/lib/auth'
-import { initSchema, getAllUsers, toggleUserActive } from '@/lib/academy-db'
+import { initSchema, getAllUsersWithCourses, toggleUserActive } from '@/lib/academy-db'
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,21 +15,9 @@ export async function GET(request: NextRequest) {
     }
 
     await initSchema()
-    const users = await getAllUsers()
+    const users = await getAllUsersWithCourses()
 
-    return NextResponse.json({
-      users: users.map(u => ({
-        id: u.id,
-        email: u.email,
-        name: u.name,
-        phone: u.phone,
-        role: u.role,
-        active: u.active,
-        editorAccess: Boolean(u.editor_access),
-        mpPaymentId: u.mp_payment_id,
-        createdAt: u.created_at,
-      }))
-    })
+    return NextResponse.json({ users })
   } catch (error) {
     console.error('Admin users GET error:', error)
     return NextResponse.json({ error: 'Error del servidor' }, { status: 500 })
