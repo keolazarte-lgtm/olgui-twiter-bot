@@ -552,28 +552,19 @@ export default function CampusPage() {
   }, [router])
 
   const handleBuyArs = async (courseKey: string, mpLink?: string | null) => {
+    // En el flujo manual, "comprar" = abrir WhatsApp para coordinar el pago
+    // El admin activa el curso a mano una vez confirmado el pago
     setPaying(true)
     try {
-      // If admin set a direct MP link, use it; otherwise generate via API
-      if (mpLink && mpLink.startsWith('http')) {
-        window.location.href = mpLink
-        return
-      }
-      const mpRes = await fetch('/api/mp/create-preference', { method: 'POST' })
-      const mpData = await mpRes.json()
-      if (mpData.initPoint) {
-        window.location.href = mpData.initPoint
-        return
-      }
-      toast({
-        title: 'Error al generar el link de pago',
-        description: 'Intentá de nuevo o contactanos por WhatsApp',
-        variant: 'destructive',
-      })
+      const courseTitle = COURSE_META[courseKey as keyof typeof COURSE_META]?.title || courseKey
+      const message = encodeURIComponent(
+        `Hola! Quiero comprar el curso "${courseTitle}" de Dinasty Academy. Mi cuenta ya está creada. ¿Cómo hacemos para coordinar el pago?`
+      )
+      window.location.href = `https://api.whatsapp.com/send?phone=5492246449032&text=${message}`
     } catch (error) {
       toast({
-        title: 'Error de conexión',
-        description: 'Intentá de nuevo en unos segundos',
+        title: 'Error al abrir WhatsApp',
+        description: 'Escribinos directamente al 5492246449032',
         variant: 'destructive',
       })
     } finally {

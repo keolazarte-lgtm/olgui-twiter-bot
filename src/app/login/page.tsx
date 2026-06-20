@@ -61,20 +61,11 @@ export default function LoginPage() {
         return
       }
 
-      // If register, create MP preference and redirect to payment
+      // Si es registro, mandar al campus (va a ver la pantalla de "esperando activación")
+      // No mandamos a MercadoPago porque el pago se coordina por WhatsApp
       if (mode === 'register') {
-        try {
-          const mpRes = await fetch('/api/mp/create-preference', { method: 'POST' })
-          const mpData = await mpRes.json()
-
-          if (mpData.initPoint) {
-            // Redirect to MP payment
-            window.location.href = mpData.initPoint
-            return
-          }
-        } catch {
-          // Fallback to campus
-        }
+        router.push('/campus/pending')
+        return
       }
 
       // For login, redirect to campus

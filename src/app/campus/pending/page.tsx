@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Clock, Crown, Loader2, RefreshCw, ArrowLeft, DollarSign, MessageCircle } from 'lucide-react'
+import { Clock, Crown, RefreshCw, ArrowLeft, MessageCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
@@ -16,26 +16,9 @@ export default function PendingPage() {
   const { toast } = useToast()
 
   const handleRetryPayment = async () => {
-    setLoading(true)
-    try {
-      const mpRes = await fetch('/api/mp/create-preference', { method: 'POST' })
-      const mpData = await mpRes.json()
-
-      if (mpData.initPoint) {
-        window.location.href = mpData.initPoint
-        return
-      }
-    } catch (error) {
-      console.error('Retry payment error:', error)
-    }
-
-    toast({
-      title: 'Error al crear el link de pago',
-      description: 'Intentá de nuevo en unos minutos',
-      variant: 'destructive',
-    })
-    setLoading(false)
-    setRetryCount(prev => prev + 1)
+    // En el flujo manual, "reintentar pago" = abrir WhatsApp para coordinar
+    const message = encodeURIComponent('Hola! Creé mi cuenta en Dinasty Academy y quiero coordinar el pago para que me activen el acceso.')
+    window.location.href = `https://api.whatsapp.com/send?phone=5492246449032&text=${message}`
   }
 
   const handleCheckStatus = async () => {
@@ -139,12 +122,8 @@ export default function PendingPage() {
                 disabled={loading}
                 className="w-full h-11 text-sm font-cinzel font-bold tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 rounded-xl"
               >
-                {loading ? (
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                ) : (
-                  <DollarSign className="w-4 h-4 mr-2" />
-                )}
-                REINTENTAR PAGO
+                <MessageCircle className="w-4 h-4 mr-2" />
+                COORDINAR PAGO POR WHATSAPP
               </Button>
 
               <p className="font-inter text-white/30 text-[10px] leading-relaxed text-center px-4">
