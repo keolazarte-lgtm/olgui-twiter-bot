@@ -130,11 +130,11 @@ export async function POST(request: NextRequest) {
     const prompt = buildPrompt(body)
     const size = body.size || pickSize(body.image)
 
-    // Validate image size — limit to 8MB
+    // Validate image size — limit to 10MB (la compression del frontend deberia dejarla en ~2MB)
     const imageBytes = Math.ceil((body.image.length * 3) / 4)
-    if (imageBytes > 8 * 1024 * 1024) {
+    if (imageBytes > 10 * 1024 * 1024) {
       return NextResponse.json(
-        { error: 'La imagen es muy grande (máx 8MB). Usá una más chica.' },
+        { error: 'La imagen es muy grande (máx 10MB). El editor debería comprimirla automáticamente. Si ves este error, recargá la página.' },
         { status: 413 }
       )
     }

@@ -108,7 +108,73 @@ export default function EditorPage() {
     } catch {}
   }, [])
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  /**
+   * Comprime y redimensiona una imagen para que pese menos de maxBytes.
+   * Usa canvas en el navegador (sin mandar nada al servidor).
+   * Redimensiona gradualmente hasta llegar al tamaño objetivo.
+   */
+  const compressImage = async (file: File, maxBytes: number = 2 * 1024 * 1024): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => {
+        const img = new window.Image()
+        img.onload = () => {
+          let { width, height } = img
+          const maxDim = 1536 // máximo 1536px en el lado más largo
+
+          // Redimensionar si es muy grande
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width)
+              width = maxDim
+            } else {
+              width = Math.round((width * maxDim) / height)
+              height = maxDim
+            }
+          }
+
+          const canvas = document.createElement('canvas')
+          canvas.width = width
+          canvas.height = height
+          const ctx = canvas.getContext('2d')
+          if (!ctx) {
+            reject(new Error('No se pudo crear el contexto del canvas'))
+            return
+          }
+          ctx.drawImage(img, 0, 0, width, height)
+
+          // Probar calidades descendentes hasta llegar a maxBytes
+          let quality = 0.92
+          let dataUrl = canvas.toDataURL('image/jpeg', quality)
+
+          while (dataUrl.length * 0.75 > maxBytes && quality > 0.4) {
+            quality -= 0.05
+            dataUrl = canvas.toDataURL('image/jpeg', quality)
+          }
+
+          // Si todavía es muy grande, redimensionar más
+          while (dataUrl.length * 0.75 > maxBytes && width > 800) {
+            width = Math.round(width * 0.85)
+            height = Math.round(height * 0.85)
+            canvas.width = width
+            canvas.height = height
+            ctx.drawImage(img, 0, 0, width, height)
+            dataUrl = canvas.toDataURL('image/jpeg', quality)
+          }
+
+          resolve(dataUrl)
+        }
+        img.onerror = () => reject(new Error('No se pudo cargar la imagen'))
+        img.src = reader.result as string
+      }
+      reader.onerror = () => reject(new Error('No se pudo leer el archivo'))
+      reader.readAsDataURL(file)
+    })
+  }
+
+  const [compressing, setCompressing] = useState(false)
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -117,18 +183,34 @@ export default function EditorPage() {
       return
     }
 
-    if (file.size > 8 * 1024 * 1024) {
-      toast({ title: 'Imagen muy grande', description: 'Máximo 8MB. Usá una más chica.', variant: 'destructive' })
+    // Límite amplio: 50MB (las fotos del celu suelen pesar entre 4 y 15MB)
+    if (file.size > 50 * 1024 * 1024) {
+      toast({ title: 'Imagen muy grande', description: 'Máximo 50MB. Probá con una más chica.', variant: 'destructive' })
       return
     }
 
     setOriginalFile(file)
-    const reader = new FileReader()
-    reader.onload = () => {
-      setOriginalImage(reader.result as string)
+    setCompressing(true)
+
+    try {
+      // Comprimir antes de mostrar y mandar
+      const compressed = await compressImage(file, 2 * 1024 * 1024) // target 2MB
+      setOriginalImage(compressed)
       setResultImage(null)
+
+      const originalSizeKB = Math.round(file.size / 1024)
+      const compressedSizeKB = Math.round((compressed.length * 0.75) / 1024)
+      if (compressedSizeKB < originalSizeKB * 0.8) {
+        toast({
+          title: 'Imagen optimizada',
+          description: `${originalSizeKB}KB → ${compressedSizeKB}KB (lista para procesar)`,
+        })
+      }
+    } catch (error: any) {
+      toast({ title: 'Error al procesar imagen', description: error.message || 'Probá con otra', variant: 'destructive' })
+    } finally {
+      setCompressing(false)
     }
-    reader.readAsDataURL(file)
   }
 
   const handleDrop = (e: React.DragEvent) => {
@@ -411,12 +493,26 @@ export default function EditorPage() {
               <div
                 onDrop={handleDrop}
                 onDragOver={(e) => e.preventDefault()}
-                onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-amber-500/20 rounded-xl p-8 sm:p-12 text-center cursor-pointer hover:border-amber-500/40 hover:bg-amber-500/5 transition-all"
+                onClick={() => !compressing && fileInputRef.current?.click()}
+                className={`border-2 border-dashed rounded-xl p-8 sm:p-12 text-center transition-all ${
+                  compressing
+                    ? 'border-amber-500/40 bg-amber-500/5 cursor-wait'
+                    : 'border-amber-500/20 cursor-pointer hover:border-amber-500/40 hover:bg-amber-500/5'
+                }`}
               >
-                <Upload className="w-10 h-10 text-amber-500/30 mx-auto mb-3" />
-                <p className="font-cinzel text-white/60 text-sm mb-1">Subí tu foto</p>
-                <p className="font-inter text-white/30 text-xs">Click o arrastrá una imagen (JPG, PNG, WEBP — máx 8MB)</p>
+                {compressing ? (
+                  <>
+                    <Loader2 className="w-10 h-10 text-amber-400 animate-spin mx-auto mb-3" />
+                    <p className="font-cinzel text-amber-400 text-sm mb-1">OPTIMIZANDO IMAGEN...</p>
+                    <p className="font-inter text-white/30 text-xs">Unos segundos nada más</p>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-10 h-10 text-amber-500/30 mx-auto mb-3" />
+                    <p className="font-cinzel text-white/60 text-sm mb-1">Subí tu foto</p>
+                    <p className="font-inter text-white/30 text-xs">Click o arrastrá una imagen (JPG, PNG, WEBP — se optimiza automáticamente)</p>
+                  </>
+                )}
               </div>
             ) : (
               <Card className="bg-white/[0.02] border-amber-500/[0.08] overflow-hidden">
