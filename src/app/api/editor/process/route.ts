@@ -14,37 +14,42 @@ export const runtime = 'nodejs'
 export const maxDuration = 60
 
 /**
- * Crea una instancia del SDK de z-ai directamente con la config (sin leer archivo).
- * En Vercel el filesystem es read-only, así que no podemos escribir .z-ai-config.
- * En cambio, instanciamos ZAI directamente con new ZAI(config).
- *
- * Requiere las variables de entorno en Vercel:
- *   ZAI_BASE_URL, ZAI_API_KEY, ZAI_CHAT_ID, ZAI_USER_ID, ZAI_TOKEN
+ * Crea una instancia del SDK de z-ai.
+ * 1) Si están las variables de entorno ZAI_*, instancia directo con new ZAI(config) (Vercel).
+ * 2) Si no, intenta ZAI.create() que lee el archivo .z-ai-config (desarrollo local).
  */
 async function initZAI() {
   const baseUrl = process.env.ZAI_BASE_URL
   const apiKey = process.env.ZAI_API_KEY
 
-  if (!baseUrl || !apiKey) {
+  // Modo producción (Vercel): usar variables de entorno
+  if (baseUrl && apiKey) {
+    const config = {
+      baseUrl,
+      apiKey,
+      chatId: process.env.ZAI_CHAT_ID || '',
+      userId: process.env.ZAI_USER_ID || '',
+      token: process.env.ZAI_TOKEN || '',
+    }
+    try {
+      // @ts-ignore — el constructor existe aunque TypeScript no lo exponga bien
+      return new ZAI(config)
+    } catch (e: any) {
+      console.error('[editor] new ZAI(config) falló, probando ZAI.create():', e.message)
+      // Caer al método de archivo como fallback
+    }
+  }
+
+  // Modo desarrollo (local): usar ZAI.create() que lee /etc/.z-ai-config o ./.z-ai-config
+  try {
+    return await ZAI.create()
+  } catch (e: any) {
     throw new Error(
-      'Falta configurar variables de entorno ZAI_* en Vercel. ' +
-      'Revisá: ZAI_BASE_URL, ZAI_API_KEY, ZAI_CHAT_ID, ZAI_USER_ID, ZAI_TOKEN'
+      'No se pudo inicializar el SDK de IA. ' +
+      'En producción: configurá ZAI_BASE_URL, ZAI_API_KEY, ZAI_CHAT_ID, ZAI_USER_ID, ZAI_TOKEN en Vercel. ' +
+      `Error original: ${e.message}`
     )
   }
-
-  const config = {
-    baseUrl,
-    apiKey,
-    chatId: process.env.ZAI_CHAT_ID || '',
-    userId: process.env.ZAI_USER_ID || '',
-    token: process.env.ZAI_TOKEN || '',
-  }
-
-  // El SDK exporta ZAI como clase con constructor público que recibe config
-  // ZAI.create() internamente hace loadConfig() + new ZAI(config),
-  // así que new ZAI(config) es equivalente pero sin leer archivo.
-  // @ts-ignore — el constructor existe aunque TypeScript no lo exponga bien
-  return new ZAI(config)
 }
 
 interface ProcessBody {
@@ -143,12 +148,28 @@ export async function POST(request: NextRequest) {
     }
 
     // Process with z-ai SDK
+    console.log('[editor] initZAI starting...')
     const zai = await initZAI()
-    const response = await zai.images.generations.edit({
-      prompt,
-      images: [{ url: body.image }],
-      size,
-    })
+    console.log('[editor] initZAI OK, llamando a images.generations.edit...')
+    console.log('[editor] prompt length:', prompt.length, 'size:', size, 'imageBytes:', imageBytes)
+
+    let response
+    try {
+      response = await zai.images.generations.edit({
+        prompt,
+        images: [{ url: body.image }],
+        size,
+      })
+      console.log('[editor] SDK response OK, base64 length:', response?.data?.[0]?.base64?.length || 0)
+    } catch (sdkError: any) {
+      console.error('[editor] SDK error details:', {
+        message: sdkError?.message,
+        status: sdkError?.status,
+        response: sdkError?.response ? 'has response' : 'no response',
+        body: typeof sdkError?.body === 'string' ? sdkError.body.substring(0, 500) : sdkError?.body,
+      })
+      throw sdkError
+    }
 
     const imageBase64 = response.data[0].base64
 
