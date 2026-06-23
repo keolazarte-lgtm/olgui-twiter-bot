@@ -171,7 +171,7 @@ export default function AdminDashboardPage() {
   // Load all data
   const loadData = useCallback(async () => {
     try {
-      const [statsRes, usersRes, modulesRes, salesRes, pricingRes, visitsRes] = await Promise.all([
+      const [statsRes, usersRes, modulesRes, salesRes, pricingRes, visitsRes, editorConfigRes] = await Promise.all([
         fetch('/api/admin/stats'),
         fetch('/api/admin/users'),
         fetch('/api/modules'),
