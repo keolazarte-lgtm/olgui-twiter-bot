@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Crown, Users, BookOpen, LogOut, LayoutDashboard,
-  Menu, X, Loader2, Shield, ChevronRight, DollarSign
+  Menu, X, Loader2, Shield, ChevronRight, DollarSign, Wand2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useRouter, usePathname } from 'next/navigation'
@@ -39,6 +39,7 @@ const NAV_ITEMS = [
   { label: 'Ventas', icon: DollarSign, href: '/admin/dashboard?tab=sales' },
   { label: 'Usuarios', icon: Users, href: '/admin/dashboard?tab=users' },
   { label: 'Módulos', icon: BookOpen, href: '/admin/dashboard?tab=modules' },
+  { label: 'Generador Reels', icon: Wand2, href: '/generador' },
 ]
 
 export default function AdminLayout({
