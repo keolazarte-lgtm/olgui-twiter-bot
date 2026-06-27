@@ -23,9 +23,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Si es admin, tiene acceso a todos los cursos
-    let courseAccess = { onlyfans: false, reddit: false, hombres: false }
+    let courseAccess = { onlyfans: false, reddit: false, hombres: false, fetiches: false }
     if (user.role === 'admin') {
-      courseAccess = { onlyfans: true, reddit: true, hombres: true }
+      courseAccess = { onlyfans: true, reddit: true, hombres: true, fetiches: true }
     } else {
       courseAccess = await getUserCourseAccess(user.id)
     }

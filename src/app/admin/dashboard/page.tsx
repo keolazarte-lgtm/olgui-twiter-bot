@@ -29,7 +29,7 @@ interface UserItem {
   role: string
   active: number
   editorAccess?: boolean
-  courseAccess?: { onlyfans: boolean; reddit: boolean; hombres: boolean }
+  courseAccess?: { onlyfans: boolean; reddit: boolean; hombres: boolean; fetiches: boolean }
   isLegacy?: boolean
   mpPaymentId: string | null
   createdAt: string
@@ -942,7 +942,7 @@ export default function AdminDashboardPage() {
                             </Badge>
                           ) : (
                             <div className="flex flex-col gap-1">
-                              {(['onlyfans', 'reddit', 'hombres'] as const).map(course => {
+                              {(['onlyfans', 'reddit', 'hombres', 'fetiches'] as const).map(course => {
                                 const access = u.courseAccess?.[course] ?? false
                                 return (
                                   <button

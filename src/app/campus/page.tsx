@@ -64,9 +64,19 @@ const COURSE_META: Record<string, {
     accent: 'indigo',
     featuredGradient: 'from-amber-500 via-yellow-400 to-amber-500',
   },
+  fetiches: {
+    id: 'fetiches',
+    title: 'Curso de Fetiches',
+    subtitle: 'Producto separado · Especialización premium',
+    description: 'Psicología del fetiche, 10 nichos hiperespecializados (SPH, Castidad, CEI, Sissificación, Pegging, JOI, Denial, Pies, Adoración, Findom), monetización premium y cierre de ventas.',
+    icon: Sparkles,
+    gradient: 'from-pink-700 via-purple-700 to-fuchsia-800',
+    accent: 'indigo',
+    featuredGradient: 'from-amber-500 via-yellow-400 to-amber-500',
+  },
 } as const
 
-const COURSE_ORDER = ['reddit', 'onlyfans', 'hombres']
+const COURSE_ORDER = ['reddit', 'onlyfans', 'hombres', 'fetiches']
 
 interface Module {
   id: string
@@ -501,7 +511,7 @@ export default function CampusPage() {
     role: string;
     active: number;
     editorAccess?: boolean;
-    courseAccess?: { onlyfans: boolean; reddit: boolean; hombres: boolean };
+    courseAccess?: { onlyfans: boolean; reddit: boolean; hombres: boolean; fetiches: boolean };
   } | null>(null)
   const [modules, setModules] = useState<Module[]>([])
   const [progress, setProgress] = useState<Progress[]>([])
@@ -607,7 +617,7 @@ export default function CampusPage() {
   }
 
   const isActive = user?.active === 1 // legacy global (por compatibilidad)
-  const courseAccess = user?.courseAccess || { onlyfans: false, reddit: false, hombres: false }
+  const courseAccess = user?.courseAccess || { onlyfans: false, reddit: false, hombres: false, fetiches: false }
   const isAdmin = user?.role === 'admin'
   // Helper: ¿tiene acceso a un curso específico?
   const isActiveForCourse = (courseKey: string): boolean => {
@@ -615,7 +625,7 @@ export default function CampusPage() {
     return Boolean((courseAccess as any)[courseKey])
   }
   // Helper: ¿tiene acceso a ALGÚN curso? (para mostrar stats, sticky CTA, etc.)
-  const hasAnyCourse = isAdmin || (courseAccess.onlyfans || courseAccess.reddit || courseAccess.hombres)
+  const hasAnyCourse = isAdmin || (courseAccess.onlyfans || courseAccess.reddit || courseAccess.hombres || courseAccess.fetiches)
 
   return (
     <div className="min-h-screen bg-[#050505] content-protected">

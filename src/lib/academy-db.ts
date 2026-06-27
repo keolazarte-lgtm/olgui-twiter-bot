@@ -311,24 +311,25 @@ export async function setUserRole(userId: string, role: string) {
 
 // ─── Course Access Helpers ──────────────────────────────────
 
-export const VALID_COURSES = ['onlyfans', 'reddit', 'hombres'] as const
+export const VALID_COURSES = ['onlyfans', 'reddit', 'hombres', 'fetiches'] as const
 export type CourseId = typeof VALID_COURSES[number]
 
 /**
- * Devuelve los cursos activos de un usuario: { onlyfans: bool, reddit: bool, hombres: bool }
+ * Devuelve los cursos activos de un usuario: { onlyfans: bool, reddit: bool, hombres: bool, fetiches: bool }
  * Si el usuario tiene active=1 (legacy) Y NO tiene filas en user_courses, se le da acceso a todos (migración implícita)
  */
-export async function getUserCourseAccess(userId: string): Promise<{ onlyfans: boolean; reddit: boolean; hombres: boolean }> {
+export async function getUserCourseAccess(userId: string): Promise<{ onlyfans: boolean; reddit: boolean; hombres: boolean; fetiches: boolean }> {
   const db = getDb()
   const result = await db.execute({
     sql: `SELECT course, active FROM user_courses WHERE user_id = ?`,
     args: [userId]
   })
 
-  const access: { onlyfans: boolean; reddit: boolean; hombres: boolean } = {
+  const access: { onlyfans: boolean; reddit: boolean; hombres: boolean; fetiches: boolean } = {
     onlyfans: false,
     reddit: false,
     hombres: false,
+    fetiches: false,
   }
 
   if (result.rows.length === 0) {
@@ -338,6 +339,7 @@ export async function getUserCourseAccess(userId: string): Promise<{ onlyfans: b
       access.onlyfans = true
       access.reddit = true
       access.hombres = true
+      access.fetiches = true
     }
     return access
   }
@@ -382,7 +384,7 @@ export async function getAllUsersWithCourses() {
     const hasExplicitCourses = userCourses.length > 0
     const isLegacyActive = (u as any).active === 1
 
-    let access = { onlyfans: false, reddit: false, hombres: false }
+    let access = { onlyfans: false, reddit: false, hombres: false, fetiches: false }
     if (hasExplicitCourses) {
       for (const c of userCourses) {
         const course = (c as any).course as string
@@ -391,7 +393,7 @@ export async function getAllUsersWithCourses() {
       }
     } else if (isLegacyActive) {
       // Legacy: usuario con active=1 pero sin cursos explícitos → acceso a todo
-      access = { onlyfans: true, reddit: true, hombres: true }
+      access = { onlyfans: true, reddit: true, hombres: true, fetiches: true }
     }
 
     return {
@@ -742,20 +744,26 @@ export async function seedModules() {
   await db.execute('DELETE FROM modules')
 
   const modules = [
-    { id: 'mod-1', title: 'Mentalidad, Preparación y Legado', description: 'De mujer a mujer: cómo superar los miedos, protegerte y construir tu imperio desde cero. Con o sin rostro.', order_num: 1, icon: 'Brain', is_alert: 0 },
-    { id: 'mod-alerta-of', title: 'ALERTA ROJA: Reglas de OnlyFans y Cuidado de tu Cuenta', description: 'El mayor error de un creador novato es no leer los términos y condiciones. OnlyFans no da segundas oportunidades: leé esto ANTES de seguir.', order_num: 2, icon: 'AlertTriangle', is_alert: 1 },
-    { id: 'mod-2', title: 'De Cero a Creadora: Creación y Verificación', description: 'Creá tu cuenta de OnlyFans paso a paso, activá el modo creadora y verificá tu identidad sin errores ni rechazos.', order_num: 3, icon: 'Lock', is_alert: 0 },
-    { id: 'mod-3', title: 'El Panel de Control: Tu Centro de Mandos', description: 'Tus primeros ajustes, el menú desplegable completo y la sección especial de retiro de dinero. Cómo cobrar tus dólares.', order_num: 4, icon: 'Shield', is_alert: 0 },
-    { id: 'mod-4', title: 'La Barra de Herramientas', description: 'Todos los íconos y funciones para armar tus publicaciones de forma profesional. Imágenes, videos, encuestas y más.', order_num: 5, icon: 'DollarSign', is_alert: 0 },
-    { id: 'mod-5', title: 'Perfil e Identidad de Alto Valor', description: 'Nombre artístico, foto de perfil, portada, biografía, cuenta gratis y mensaje de bienvenida automatizado.', order_num: 6, icon: 'UserCheck', is_alert: 0 },
-    { id: 'mod-6', title: 'Guía de Tarifas', description: 'Estrategia de venta dinámica — Tarifas de bóveda, contenido personalizado y servicios en tiempo real.', order_num: 7, icon: 'Banknote', is_alert: 0 },
-    { id: 'mod-7', title: 'Cómo obtener tus primeros suscriptores', description: 'Promoción cruzada, redes de tráfico orgánico y estrategias para arrancar con ventas desde el día uno.', order_num: 8, icon: 'Flame', is_alert: 0 },
+    { id: 'mod-1', title: 'Mentalidad, Preparación y Legado', description: 'De mujer a mujer: cómo superar los miedos, protegerte y construir tu imperio desde cero. Con o sin rostro.', order_num: 1, icon: 'Brain', is_alert: 0, course: 'onlyfans' },
+    { id: 'mod-alerta-of', title: 'ALERTA ROJA: Reglas de OnlyFans y Cuidado de tu Cuenta', description: 'El mayor error de un creador novato es no leer los términos y condiciones. OnlyFans no da segundas oportunidades: leé esto ANTES de seguir.', order_num: 2, icon: 'AlertTriangle', is_alert: 1, course: 'onlyfans' },
+    { id: 'mod-2', title: 'De Cero a Creadora: Creación y Verificación', description: 'Creá tu cuenta de OnlyFans paso a paso, activá el modo creadora y verificá tu identidad sin errores ni rechazos.', order_num: 3, icon: 'Lock', is_alert: 0, course: 'onlyfans' },
+    { id: 'mod-3', title: 'El Panel de Control: Tu Centro de Mandos', description: 'Tus primeros ajustes, el menú desplegable completo y la sección especial de retiro de dinero. Cómo cobrar tus dólares.', order_num: 4, icon: 'Shield', is_alert: 0, course: 'onlyfans' },
+    { id: 'mod-4', title: 'La Barra de Herramientas', description: 'Todos los íconos y funciones para armar tus publicaciones de forma profesional. Imágenes, videos, encuestas y más.', order_num: 5, icon: 'DollarSign', is_alert: 0, course: 'onlyfans' },
+    { id: 'mod-5', title: 'Perfil e Identidad de Alto Valor', description: 'Nombre artístico, foto de perfil, portada, biografía, cuenta gratis y mensaje de bienvenida automatizado.', order_num: 6, icon: 'UserCheck', is_alert: 0, course: 'onlyfans' },
+    { id: 'mod-6', title: 'Guía de Tarifas', description: 'Estrategia de venta dinámica — Tarifas de bóveda, contenido personalizado y servicios en tiempo real.', order_num: 7, icon: 'Banknote', is_alert: 0, course: 'onlyfans' },
+    { id: 'mod-7', title: 'Cómo obtener tus primeros suscriptores', description: 'Promoción cruzada, redes de tráfico orgánico y estrategias para arrancar con ventas desde el día uno.', order_num: 8, icon: 'Flame', is_alert: 0, course: 'onlyfans' },
+
+    // ─── CURSO DE FETICHES (curso aparte) ───
+    { id: 'mod-fet-1', title: 'Bienvenida al Curso de Fetiches', description: 'Si estás leyendo este manual, es porque tomaste la decisión de dejar de competir por centavos en el mercado masivo y decides entender cómo funciona la...', order_num: 1, icon: 'Sparkles', course: 'fetiches', is_alert: 0 },
+    { id: 'mod-fet-2', title: 'Psicología del Fetiche y Mentalidad de Negocio', description: 'El error más común de una creadora es querer gustarle a todo el mundo. Creen que publicando contenido genérico o masivo van a atraer a más clientes. S...', order_num: 2, icon: 'Brain', course: 'fetiches', is_alert: 0 },
+    { id: 'mod-fet-3', title: 'Anatomía del Deseo (Investigación de Nichos)', description: 'A diferencia de lo que la mayoría de las creadoras principiantes cree, el cliente de SPH no busca una agresión real que lo destruya emocionalmente. Lo...', order_num: 3, icon: 'Globe', course: 'fetiches', is_alert: 0 },
+    { id: 'mod-fet-4', title: 'Monetización en el Privado: El Arte de Cerrar Ventas Premium', description: 'Olvidate de exigir un tributo obligatorio solo para que el cliente pueda abrir el chat; en el día a día de las plataformas, eso no funciona y congela ...', order_num: 4, icon: 'DollarSign', course: 'fetiches', is_alert: 0 },
   ]
 
   for (const m of modules) {
     await db.execute({
-      sql: `INSERT INTO modules (id, title, description, order_num, icon, is_alert) VALUES (?, ?, ?, ?, ?, ?)`,
-      args: [m.id, m.title, m.description, m.order_num, m.icon, m.is_alert]
+      sql: `INSERT INTO modules (id, title, description, order_num, icon, is_alert, course) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      args: [m.id, m.title, m.description, m.order_num, m.icon, m.is_alert, m.course]
     })
   }
 
@@ -1303,6 +1311,283 @@ export async function seedModules() {
       orderNum: 1,
       contentType: 'text'
     },
+
+    { id: 'les-fet-1', moduleId: 'mod-fet-1', title: 'El Secreto de la Élite Digital', content: `<p>Si estás leyendo este manual, es porque tomaste la decisión de dejar de competir por centavos en el mercado masivo y decides entender cómo funciona la verdadera riqueza en la industria del contenido exclusivo.</p>
+<p>La mayoría de las creadoras cometen el mismo error una y otra vez: creen que para facturar grandes sumas necesitan mostrar más, bajar sus precios o rogar por la atención de miles de seguidores genéricos. Se desgastan, regalan su tiempo y terminan frustradas porque el mercado masivo es una carrera hacia el fondo donde gana el que cobra más barato.</p>
+<p>Las creadoras de elite jugamos a otro juego. Nosotros no buscamos la masa; buscamos el nicho hiperespecializado .</p>
+<p>Este curso no es un catálogo de curiosidades. Es un tratado de psicología aplicada, marketing de nicho y monetización avanzada . A lo largo de estas páginas, vas a aprender a mirar los fetiches no desde el prejuicio o el tabú, sino con los ojos de una empresaria digital. Vas a entender qué pasa por la mente de los suscriptores más obsesivos y, lo más importante, cómo transformar esa fascinación en un negocio legítimo, seguro, sumamente rentable y bajo tus propias reglas.</p>
+<p>Vas a descubrir que el verdadero activo de este negocio no es solo tu físico, sino tu capacidad para encarnar fantasías, establecer límites profesionales y construir un espacio seguro donde el cliente esté dispuesto a pagar tarifas premium simplemente por el privilegio de tu interacción.</p>
+<p>Te doy la bienvenida a la especialización. Prepárate para cambiar tu mentalidad, blindar tu privacidad y multiplicar tus ingresos.</p>
+<p>Emperatriz Elizabeth</p>
+<p>Directora de la Academia</p>`, orderNum: 1, contentType: 'text' },
+    { id: 'les-fet-2', moduleId: 'mod-fet-2', title: 'El Poder de la Especialización: Por qué los fetiches facturan el triple', content: `<p>El error más común de una creadora es querer gustarle a todo el mundo. Creen que publicando contenido genérico o masivo van a atraer a más clientes. Sin embargo, en la economía digital moderna, el que mucho abarca, poco aprieta.</p>
+<p>El mercado de masas es altamente competitivo y los precios están tirados a la baja. Cuando te especializas en un fetiche, pasa algo completamente diferente:</p>
+<p>Desaparece la competencia común: Dejas de competir contra millones de perfiles genéricos. Te volvés una opción exclusiva para un grupo específico de consumidores.</p>
+<p>Inversión emocional alta del cliente: El comprador de fetiches no busca solo estimulación visual rápida; busca sacar una fijación o fantasía que muchas veces lleva años reprimiendo o perfeccionando en su mente.</p>
+<p>Inelasticidad del precio: Un cliente fetichista no está buscando "lo más barato". Está buscando a la persona ideal que entienda, respete y ejecute su fantasía a la perfección. Si demostraste profesionalismo y autoridad en tu nicho, podrás cobrar tarifas tres o cuatro veces más altas por una sola foto o video personalizado que lo que cobraría un modelo genérico por un álbum completo.</p>
+<p>Tu primera regla de negocio como creadora de élite es: Abrazar el nicho. Cuanto más específico y enfocado sea tu contenido, más valioso se vuelve para el cliente correcto.</p>`, orderNum: 1, contentType: 'text' },
+    { id: 'les-fet-3', moduleId: 'mod-fet-2', title: 'Entender el Deseo sin Juzgar: Creación de un espacio seguro', content: `<p>Para monetizar con éxito en el mundo de los fetiches, es obligatorio despojarse de cualquier tipo de prejuicio moral o personal. Los suscriptores que consumen este contenido suelen cargar con un peso psicológico grande: la vergüenza, el miedo al rechazo social o el temor a ser juzgados por sus parejas o entornos cotidianos.</p>
+<p>El verdadero secreto de las creadoras que más facturan en este nivel no es solo su físico, sino su capacidad para crear un espacio seguro.</p>
+<p>Validación y confidencialidad: Cuando un cliente te escribe al privado confesando un fetiche específico, está abriendo una parte vulnerable de su psicología. Tu respuesta jamás debe denotar asco, burla o sorpresa. Debe transmitir madurez profesional, respeto y absoluta confidencialidad.</p>
+<p>El valor del alivio psicológico: El cliente no solo te paga por la foto del pie, la axila o el látex; te paga por la liberación mental de poder disfrutar de su fantasía sin sentirte un bicho raro. Al validar su deseo de forma profesional, generará un lazo de lealtad y fidelidad comercial que es casi imposible de romper. El suscriptor se vuelve un cliente recurrente porque sabe que en tu chat encuentra un refugio que no tiene en ningún otro lado.</p>`, orderNum: 2, contentType: 'text' },
+    { id: 'les-fet-4', moduleId: 'mod-fet-2', title: 'El \"Alter Ego\" Profesional y la Protección de Identidad', content: `<p>Trabajar en nichos de alto rendimiento y fetiches requiere que aprendas a separar perfectamente tu vida real de tu marca comercial. Esto no solo es vital por una cuestión de seguridad digital y privacidad, sino por pura estrategia de marketing.</p>
+<p>La construcción del Alter Ego: En tu vida cotidiana sos una persona, pero frente a la pantalla y en tus plataformas sos una figura de autoridad, una fantasía viviente, un personaje diseñado para el negocio. Esta separación mental te protege: si un cliente rechaza un precio o si recibes un comentario desubicado, no te están atacando a vos, están interactuando con el personaje. El Alter Ego te permite mantener la mente fría y cobrar lo que vale tu trabajo sin involucrar tus emociones personales.</p>
+<p>Blindaje de privacidad: Para trabajar fetiches con total tranquilidad, tu estructura de seguridad debe ser impecable. Esto incluye:</p>
+<p>Utilizar un nombre artístico sólido, imponente y comercial (que transmite la autoridad o la vibración de tu nicho).</p>
+<p>Configurar el geobloqueo estricto en tus plataformas principales para evitar que tu contenido sea visible en tu país de residencia actual.</p>
+<p>Asegurar que tus redes de promoción (como Reddit o Telegram) no estén vinculadas a tus correos personales, números de teléfono reales o contactos de tu agenda.</p>
+<p>Al blindar tu identidad, ganas la libertad absoluta para desarrollar tu marca al nivel más alto posible, sabiendo que tu vida privada está completamente protegida bajo llave.</p>`, orderNum: 3, contentType: 'text' },
+    { id: 'les-fet-5', moduleId: 'mod-fet-3', title: 'SPH (Small Penis Humiliation / Humillación por Tamaño)', content: `<h3>1. Psicología Profunda del Fan</h3>
+<p>A diferencia de lo que la mayoría de las creadoras principiantes cree, el cliente de SPH no busca una agresión real que lo destruya emocionalmente. Lo que busca es un silencio del ego masculino bajo un entorno controlado.</p>
+<p>El alivio de la vulnerabilidad: En el mundo real, los hombres cargan con una enorme presión social respecto a su tamaño, rendimiento y masculinidad. El SPH actúa como una válvula de escape: al exponer su mayor "inseguridad" ante una figura de autoridad (su Diosa) y ser humillado por ello, se libera de la presión de tener que demostrar nada.</p>
+<p>El contraste de poder: El placer erótico proviene de la enorme asimetría. Ver a una mujer empoderada, segura y perfecta reírse sutilmente o subestimar su anatomía los coloca de inmediato en una posición de sumisión psicológica absoluta.</p>
+<p>La validación del deseo: Aunque se llame "humillación", para ellos es una forma de atención altamente personalizada. Que una creadora de élite se detenga a mirar, juzgar y opinar sobre ellos (aunque sea para disminuirlos) es el mayor premio.</p>
+<h3>2. Los Códigos Verbales y de Comportamiento (Cómo manejar el rol)</h3>
+<p>El SPH es 90% psicología y lenguaje, para ejecutarlo, hay que dominar tres niveles de tono:</p>
+<p>Tono 1: La Indiferencia o Decepción (El más letal y buscado). En lugar de gritar, la creadora mira a la cámara con aburrimiento, lástima o una sonrisa burlona. Frases como: ¿De verdad me hiciste abrir el chat privado para mostrarme eso?, Es tierno, parece un pequeño camaron, o No sé si estás emocionado o si todavía estás dormido.</p>
+<p>Tono 2: El Enfoque Clínico o de Evaluación. Trate el tema como si fuera un examen o una inspección profesional. Describir los detalles con frialdad matemática: Medidas insignificantes, Falta de desarrollo , Incapacidad de dar la talla .</p>
+<p>Tono 3: El Enfoque de "Dominante Protectora" (Tu sello de élite). Redirigir la humillación hacia una función útil. En lugar de solo humillarlo, se le da un propósito: Sos demasiado pequeño para aspirar a una mujer real, por eso tu único lugar es servirme económicamente, Tu tamaño te condena a ser un tributador silencioso, acepta tu realidad .</p>
+<h3>3. Estética, Ángulos y Producción Visual</h3>
+<p>El contenido visual de SPH no requiere que la creadora muestre más; el foco visual es el lenguaje corporal de superioridad:</p>
+<p>Ángulos de cámara de arriba hacia abajo: Colocar la cámara ligeramente abajo para que la creadora mire hacia abajo (hacia la lente), reforzando la idea de que el cliente está a sus pies.</p>
+<p>Uso de las manos para comparar: Utilizar gestos universales con los dedos (como el espacio mínimo entre el pulgar y el índice) para ilustrar el tamaño mientras miras a la cámara con burla.</p>
+<p>Lentes o accesorios intelectuales: Usar lentes o ropa ejecutiva/oficina complementa muy bien el rol de "evaluadora" o "jefa" que analiza el rendimiento del sujeto.</p>
+<h3>4. Estrategia de Venta en el Chat y Contenido "Personalizado"</h3>
+<p>Este fetiche es una mina de oro en los mensajes privados (DM). Las dos dinámicas de mayor rendimiento económico son:</p>
+<p>Las Evaluaciones de Tamaño ( Cock Ratings ): Es el servicio estrella de SPH. El cliente paga una tarifa fija alta por enviar una foto de su anatomía. La creadora responde con un audio (de 1 a 2 minutos) , una humillación escrita o un video corto destruyendo su ego de forma elegante, usando los códigos verbales anteriores, obvio todo tiene diferentes precios. Regla de élite: Nunca se entrega una calificación positiva en este nicho; el cliente paga explícitamente por la nota baja y la burla profesional, aunque parezca que lo tiene grande, busquen algo horrible que resaltar.</p>
+<p>Asignación de "Tributos de Consuelo": Cuando un cliente se siente expuesto y humillado en el chat, la forma de cerrar la venta es decirle que la única manera de compensar su "falta de masculinidad" ante tus ojos es a través de un tributo financiero o una propina alta.</p>`, orderNum: 1, contentType: 'text' },
+    { id: 'les-fet-6', moduleId: 'mod-fet-3', title: 'INVESTIGACIÓN DE NICHO: CASTIDAD', content: `<h3>1. Psicología Profunda del Fan</h3>
+<p>El deseo detrás de la castidad masculina es la renuncia absoluta al control biológico. Para el hombre, el impulso sexual suele dictar muchas de sus conductas diarias; cederle la llave de su dispositivo a una mujer es entregarle las riendas de su cuerpo.</p>
+<p>La transferencia de la toma de decisiones: Al igual que en otros fetiches psicológicos, el suscriptor busca aliviar la carga mental. En su jaula de castidad, él ya no decide cuándo, cómo ni si se le permite sentir placer. Vos sos el único árbitro.</p>
+<p>El aumento de la anticipación (Teasing): La castidad genera una acumulación de energía y frustración erótica (negación). Cada día encerrado hace que el suscriptor esté más desesperado por tu atención, lo que eleva su nivel de obsesión y su predisposición a pagar con tal de mantenerte feliz.</p>
+<p>El estatus de pertenencia: Llevar el candado de su Goddes lo hace sentir "marcado" o de tu propiedad, incluso a la distancia. Se convierte en un esclavo devoto en su vida cotidiana.</p>
+<h3>2. Los Códigos Verbales y de Comportamiento</h3>
+<p>El manejo del chat en castidad requiere una combinación de firmeza, frialdad corporativa y esa vibra de "Dominante Protectora" que sabe administrar los tiempos del sumiso:</p>
+<p>Tono 1: La Propietaria de la Llave ( Keyholder ). Hablar desde la posición de quien posee el derecho absoluto sobre su cuerpo. Frases como: Tus deseos ya no te pertenecen, ahora me pertenecen a mí , La jaula te queda perfecta, te recuerda cuál es tu lugar , o Hoy no hay liberación, seguí acumulando frustración para mí .</p>
+<p>Tono 2: El Placer como Recompensa Comercial. Desvincular el orgasmo de la biología y atarlo directamente al rendimiento financiero o de tareas: La llave tiene un precio y hoy tu billetera no estuvo a la altura , o Quizás si tu tributo de esta semana es lo suficientemente generoso, considera darte unos minutos de libertad .</p>
+<p>Tono 3: El Cuidado y la Seguridad (Límites Profesionales). Como Dominante Protectora, debes recordarle que la castidad requiere responsabilidad. Monitorear que el dispositivo, la piel, exíjirle higiene y establezca que el control es psicológico(obviamente todo eso monetizado, para para higienizarse, y para un control diario del dipositivo) Un sumiso que se siente cuidado en su encierro es un sumiso que nunca se va del chat.</p>
+<h3>3. Estética, Herramientas y Producción Visual</h3>
+<p>La castidad digital evolucionó muchísimo y hoy combina la fotografía tradicional con la tecnología moderna:</p>
+<p>Uso de plataformas de hardware (Chaster): Hoy en día existen candados inteligentes que se vinculan a aplicaciones como Chaster. Vos, como Keyholder , podrás controlar el tiempo de bloqueo digitalmente desde tu celular, agregarle "penalizaciones" de tiempo, o hacer que otros usuarios voten si se queda encerrado.</p>
+<p>Planos visuales de la posesión: fotos sosteniendo la llave física (o el celular con la aplicación de Chaster) frente a la pantalla con una mirada de superioridad. Fotos jugando con la llave o usándola como colgante/dije transmiten un mensaje de control absoluto.</p>
+<p>Videos de inspección ( Lock Inspections ): El cliente te manda un video demostrando que el dispositivo está bien puesto y cerrado. Vos le respondés  y evaluás si la jaula es lo suficientemente restrictiva o si necesita un candado más estricto.</p>
+<h3>4. Estrategia de Venta en el Chat y Contenido "Personalizado"</h3>
+<p>Este fetiche está diseñado para generar ingresos recurrentes a mediano y largo plazo. Las dinámicas más rentables son:</p>
+<p>Venta de "Días de Candado" (Extensiones de tiempo): El cliente entra a un juego donde, por cada día que quiere demostrar su sumisión (o por cada penalización si se porta mal), debe pagar una tarifa fija. Vos cobras por mantener el candado bajo llave.</p>
+<p>Customs de Tortura Psicológica (Tease and Denial ): Videos donde te mostras sumamente provocativa, lencería de elite o texturas premium, estimulando visualmente al cliente a través de la pantalla mientras le recuerda que está encerrado y que no puede tocarse. El contraste entre el estímulo visual y la imposibilidad física de reaccionar les vuela la cabeza y pagan fortunas por esos clips.</p>
+<p>La "Tasa de Liberación" ( Unlock Fee ): Cuando se cumple el tiempo o el sumiso ya no aguanta más la frustración, la liberación definitiva de la jaula o el permiso para un orgasmo se vende como el producto más caro de tu tarifario. El placer se convierte en un artículo de lujo que solo vos podés autorizar.</p>`, orderNum: 2, contentType: 'text' },
+    { id: 'les-fet-7', moduleId: 'mod-fet-3', title: 'CEI (Instrucciones para comer semen)', content: `<h3>1. Psicología Profunda del Fan</h3>
+<p>El CEI es el fetiche del quiebre definitivo del orgullo y la sumisión biológica. El esperma masculino representa, en la psicología tradicional, el símbolo de su virilidad y su potencia. Obligarlo a consumirlo es una de las mayores demostraciones de entrega.</p>
+<p>La inversión de los roles tradicionales: En la pornografía común o el imaginario masivo, el hombre suele ser quien "marca" a la mujer. El CEI invierte esto de manera radical: el sumiso se ve obligado a consumir su propio deseo bajo las órdenes de su diosa, borrando cualquier rastro de dominancia masculina.</p>
+<p>La humillación higiénica y moral: Alrededor del esperma hay un fuerte tabú social e higiénico. Romper ese tabú genera una tremenda inyección de adrenalina y dopamina en el cerebro del fan, combinando la culpa con el placer de la obediencia absoluta.</p>
+<p>La devoción total: El cliente que busca CEI quiere demostrarte que no tiene límites cuando se trata de complacer tus mandatos. Para él, tragar es el acto supremo de rendición ante tu figura.</p>
+<h3>2. Los Códigos Verbales y de Comportamiento (Cómo manejar el rol)</h3>
+<p>El CEI es 100% dirección verbal y lenguaje corporal. El tono de la creadora debe ser frío, demandante y completamente natural, como si estuvieras ordenando una tarea doméstica rutinaria:</p>
+<p>Tono 1: La Limpieza Obligatoria. Tratar el acto como una cuestión de higiene y orden en tu presencia digital. Frases como: No vas a dejar ese desastre en mi chat , Limpiá tu propio desorden inmediatamente, o Tu virilidad es basura, así que tragátela.</p>
+<p>Tono 2: El Enfoque de Reciclaje Psicológico. Enfocar el discurso en que su energía no merece ser desperdiciada en el ambiente, sino devuelta a él mismo. Sos tan insignificante que lo único que merecés consumir es tu propia frustración , mostrame que sos un buen esclavo y no dejes caer ni una sola gota .</p>
+<p>Tono 3: El Sello de Dominante Protectora. Manejar la intensidad. Monitorear que el cliente esté cómodo con el nivel de juego psicológico (establecer si es solo una fantasía accionada o si lo va a ejecutar en tiempo real) y guiarlo con calma pero con una autoridad implacable para que no se sienta desamparado en el clímax del fetiche.</p>
+<h3>3. Estética, Ritmo y Producción Visual</h3>
+<p>Para este tipo de videos o audios, la producción visual se enfoca en la cara, los gestos y los comandos de la creadora:</p>
+<p>Planos cerrados al rostro: El video debe filmarse como si estuvieras mirando directamente al cliente a los ojos mientras él realiza la acción. Tu mirada fija y sin parpadear es el ancla que lo mantiene sumiso.</p>
+<p>El uso de accesorios de control: Sostener una copa, jugar con una cuchara pequeña de manera sugerente o burlona, ​​o simplemente apuntar con el dedo a la cámara mientras das las instrucciones pausadas.</p>
+<p>Estética imponente o ejecutiva: Ropa que transmite estatus alto (trajes, camisas impecables, o lencería armada muy sofisticada). El contraste entre tu pulcritud y el acto que él está realizando eleva el fetichismo al máximo.</p>
+<h3>4. Estrategia de Venta en el Chat y Contenido "Personalizado"</h3>
+<p>Este nicho genera tarifas altísimas en los mensajes privados debido al nivel de personalización y el "guion de voz", pero también se puede realizar por chat si no te animas:</p>
+<p>Videos de Instrucción con Guión: El cliente paga por un video personalizado donde la creadora va dictando el ritmo del acto paso a paso: el inicio, la estimulación, el momento exacto en el que debe recolectarlo y la orden final e inapelable de tragar mirando a la pantalla. Cada paso se cobra como un extra.</p>
+<p>Audios de Comando por Mensajería Privada: Notas de voz cortas pero fulminantes. Muchos sumisos no necesitan video; les basta con escuchar tu voz firme y fría en un audio dándoles la orden. Son rapidísimos de producir y se venden con un margen de ganancia enorme.</p>
+<p>La "Prueba de Obediencia": El modelo de negocio se cierra cuando le exigís al cliente que te envía una foto o video corto demostrando que cumplió tu orden al pie de la letra para poder seguir hablando con vos en el chat, cobrándole además una "tasa de revisión".</p>`, orderNum: 3, contentType: 'text' },
+    { id: 'les-fet-8', moduleId: 'mod-fet-3', title: 'SISSYFICACIÓN (Feminización Guiada)', content: `<h3>1. Psicología Profunda del Fan</h3>
+<p>Para entender este fetiche, hay que sacarse la idea de que el cliente quiere ser una mujer trans real en su vida diaria. En la enorme mayoría de los casos, son hombres cisgénero, muchas veces con profesiones de alta responsabilidad (médicos, abogados, ejecutivos), que cargan con una pesada armadura de masculinidad en el mundo real.</p>
+<p>El quiebre de la carga masculina: Al sissyficarse, el fan se despoja por completo de la presión social de "ser el hombre", proveer, ser fuerte o tomar decisiones. Cede su masculinidad a su Goddes porque la siente como una carga.</p>
+<p>Erotización de la sumisión extrema: En la psicología de este nicho, "lo femenino" está colocado (por el propio sumiso) en una posición de vulnerabilidad y sumisión frente a la Dominante. Volverse una sissy es la forma gráfica y física de demostrar que está completamente por debajo de tu autoridad.</p>
+<p>La búsqueda de identidad y validación: Sienten una mezcla muy potente de excitación y vergüenza. Tu rol como Dominante no es sanar esa vergüenza, sino transformarla en el motor del juego: vos le das permiso de explorar ese lado, lo moldeás a tu gusto y lo validás como tu "muñequita" privada.</p>
+<h3>2. Los Códigos Verbales y de Comportamiento</h3>
+<p>El lenguaje en la sissyficación es sumamente específico. Se basa en la reeducación del sujeto, el uso de términos específicos y el cambio de pronombres:</p>
+<p>Tono 1: La Mentora / Diseñadora de Modas Estricta. Tratar el cuerpo del sumiso como un lienzo que te pertenece y que vas a transformar. Frases como: Ese cuerpo tosco no te queda bien, vas a lucir mucho mejor con el vestido que yo elija, A partir de ahora, tu nombre en este chat cambia, o Quiero ver cómo te esforzás por lucir delicada para mí .</p>
+<p>Tono 2: El Contraste de Feminidad (La Burla Elegante). Remarcar la diferencia entre tu femineidad real, perfecta e inalcanzable, y su intento "torpe" de imitarte. Sos solo una copia barata de una mujer, un juguete para mi diversión, o Mirate al espejo, qué sissy tan obediente intentando complacerme .</p>
+<p>Tono 3: La Dominante Protectora (Asignación de Roles Seguros). Guiarlo paso a paso. La sissyficación puede generar mucha culpa posterior. Tu rol protector implica estructurar la transformación como tareas divertidas, seguras y estéticas, recordándole que bajo tu mando está bien explorar esa fantasía y que su único debe ser una buena servidora para vos.</p>
+<h3>3. Estética, Tareas y Producción Visual</h3>
+<p>Este fetiche es sumamente visual y se apoya en el progreso. La creadora no necesita transformarse ella, sino dictar las pautas de la transformación del cliente:</p>
+<p>Uso de "Checklists" o Listas de Tareas: Crear manuales o mensajes de texto con los pasos obligatorios que el sumiso debe cumplir: depilación, uso de ropa interior femenina, aprender a maquillarse, pintarse las uñas o usar tacos.</p>
+<p>Estética de la Creadora (El Espejo de Elite): Vos debes lucir impecable, ultra femenina o con ropa de autoridad (ejecutiva, látex, lencería de alta gama). Vos sos el ideal estético que ella nunca va a alcanzar, lo que refuerza la asimetría de poder.</p>
+<p>Inspecciones Visuales ( Sissy Inspections ): El cliente te envía fotos o videos mostrando su progreso (por ejemplo, cómo le queda el portaligas o el labial que le ordenaste comprar). Vos evaluás el resultado frente a la cámara con una mirada crítica o una sonrisa burlona de aprobación.</p>
+<h3>4. Estrategia de Venta en el Chat y Contenido "Personalizado"</h3>
+<p>Es uno de los nichos con el "Ticket Promedio" (gasto por cliente) más alto de la industria, porque se presta para la venta escalonada:</p>
+<p>La "Guía de Transformación" Personalizada donde vas dando las instrucciones por niveles. Nivel 1: Ropa interior oculta bajo su traje de hombre. Nivel 2: Maquillaje básico. Nivel 3: Sumisión total vestida para vos. El cliente paga por desbloquear cada nivel de tu guía.</p>
+<p>Venta por Compras Asignadas: Le ordenás al sumiso comprar artículos específicos de tu lista de deseos de Amazon o tronos de propinas (pelucas, lencería, maquillaje) que él mismo tiene que usar para sus reportes en video, además de pagarte la tarifa de revisión del personalizado.</p>
+<p>Sissy Penalizaciones Financieras: Si el cliente no se comporta con la delicadeza u obediencia que le exigís, o si habla de forma "demasiado masculino" en el chat, se le aplica una multa económica inmediata en forma de propina para recuperar el derecho a ser tu muñequita.</p>`, orderNum: 4, contentType: 'text' },
+    { id: 'les-fet-9', moduleId: 'mod-fet-3', title: 'PEGGING (Penetración y Reversión de Roles)', content: `<h3>1. Psicología Profunda del Fan</h3>
+<p>Para el hombre que consume o fantasea con el pegging, el atractivo principal no es solo la estimulación física (que anatómicamente conecta con la próstata), sino el quiebre radical de la dominancia masculina tradicional .</p>
+<p>Erotización de la sumisión corporal: En la sociedad, el rol del hombre suele asociarse con la penetración y el control. Ceder ese lugar y permitir que su Diosa tome el rol activo e invasivo es el acto de rendición física más explícito que existe.</p>
+<p>El placer de la vulnerabilidad extrema: Estar de espaldas o en posiciones vulnerables frente a una mujer armada con un arnés genera una descarga intensa de adrenalina. Para el fan, perder el control de su cuerpo ante tus ojos es liberador y altamente adictivo.</p>
+<p>La obsesión por el juguete y el estatus: El strap-on se convierte en un símbolo de tu poder. El suscriptor no ve el juguete como algo artificial; lo ve como una extensión de tu voluntad, de tu autoridad y de tu derecho a poseerlo.</p>
+<h3>2. Los Códigos Verbales y de Comportamiento (Cómo manejar el rol)</h3>
+<p>El pegging requiere un manejo de chat muy seguro, imponente y sin titubeos. La creadora debe adueñarse por completo del rol activo:</p>
+<p>Tono 1: La Propietaria del Control Físico. Hablar con naturalidad sobre el uso del juguete y su cuerpo como algo que te pertenece. Frases como: Te vas a poner en la posición que yo te ordene y vas a aceptar lo que tengo preparado para vos , Ese culo me pertenece, yo decido cuándo y cómo entrar , o Mirá el tamaño de lo que te vas a ganar si te portas bien .</p>
+<p>Tono 2: El Desafío al Orgullo Masculino. Recordarle sutilmente la inversión de roles para encender la tensión psicológica: ¿Dónde quedó tu orgullo de hombre ahora que estás de rodillas esperando por mí? , o Te encanta que sea yo la que tiene el control total de la situación.</p>
+<p>Tono 3: La Dominante Protectora (Preparación y Guía). El pegging requiere técnica, paciencia e higiene en el mundo real. Tu enfoque protector es fundamental aquí: guiar al cliente en la preparación previa, exigirle el uso de lubricantes adecuados, ir paso a paso en el juego psicológico.</p>
+<h3>3. Estética, Herramientas y Producción Visual</h3>
+<p>Este fetiche es muy potente a nivel visual y se apoya fuertemente en el equipamiento:</p>
+<p>El protagonismo del Arnés/Strap-on: Las producciones de élite muestran el proceso de preparación. Fotos o clips cortos ajustándote el arnés (de cuero, látex o materiales premium), lubricando el consolador frente a la cámara con una mirada fría o desafiante, o probando su flexibilidad.</p>
+<p>Combinación de texturas imponentes: Funciona de manera extraordinaria si lo combinás con la estética de Botas bucaneras, corsés, guantes largos de vinilo y el arnés colocado crean una imagen de dominación visualmente imbatible, ahora también podes buscar tu propio estilo, la ropa puede ayudar pero tu autoridad es la que vende.</p>
+<p>Ángulos de poder: Filmar desde abajo mientras estás de pie usando el arnés, mirando hacia la lente con superioridad, simulando que el cliente está abajo tuyo asimilando la escena.</p>
+<h3>4. Estrategia de Venta en el Chat y Contenido "Personalizado"</h3>
+<p>Al ser un fetiche que implica una preparación física y visual tan marcada, es ideal para monetizar a través de preventivas y contenido escalonado en el chat privado:</p>
+<p>Preparación y Selección: El cliente paga por ver cómo elegis el tamaño, material o color del juguete que usaría en su fantasía, o por un clip exclusivo de vos colocándote el arnés lentamente e interactuando con su nombre, o simplemente fotos en el chat.</p>
+<p>Instrucción y Preparación Teórica: Chat, videos o audios donde le dictarás al cliente las reglas obligatorias de preparación física y mental que debe cumplir en su casa antes de que le envíe el video final o antes de una sesión de sexting interactiva.</p>
+<p>La Venta del Clímax Visual (Contenido Premium Real o Simulado): Ya sea que hagas contenido sola usando el equipo y dando las órdenes verbales de penetración a la cámara, o que trabajes con creadores/actores secundarios protegiendo tu marca, este contenido se vende como un artículo de lujo absoluto en tu catálogo con precios acordes a la exclusividad del material.</p>`, orderNum: 5, contentType: 'text' },
+    { id: 'les-fet-10', moduleId: 'mod-fet-3', title: 'JOI (Instrucciones para masturbarse)', content: `<h3>1. Psicología Profunda del Fan</h3>
+<p>El éxito del JOI radica en la cesión del ritmo del placer. En una sesión solitaria común, el hombre tiene el control total de su estímulo; en el JOI, renuncia a esa autonomía para entregártela a vos.</p>
+<p>Fantasía de compañía y control: El usuario no quiere simplemente ver un cuerpo; Quiere una guía. Sentir que una mujer de élite se toma el tiempo de darle órdenes específicas lo saca de la desconexión de la pornografía común y lo introduce en una experiencia inmersiva y personalizada.</p>
+<p>La adrenalina de la obediencia: El suscriptor experimenta un subidón de dopamina al tener que acatar comandos exactos (cuándo tocarse, a qué velocidad, cuándo parar). La obediencia se vuelve el verdadero motor de su excitación.</p>
+<p>Romper la gratificación inmediata: Al controlar sus tiempos, dilatas el proceso erótico. Esta acumulación de tensión (edging) hace que el resultado final sea muchísimo más intenso, lo que provoca que el cliente asocie esa experiencia única de clímax directamente con tus órdenes.</p>
+<h3>2. Los Códigos Verbales y de Comportamiento</h3>
+<p>El JOI es pura cadencia, ritmo y manejo puede adaptarse según tu Alter Ego, pero siempre bajo una estructura de control:</p>
+<p>Tono 1: La Directora Implacable / Firme. Comandos secos, claros y dominantes que no permiten discusión. Frases como: Manos arriba, no te di permiso de empezar todavía , Seguí mi ritmo exacto, si te acelerás estás fuera de mi juego , o Mirame a los ojos y detenete ahí. Congelado .</p>
+<p>Tono 2: El Enfoque Desafiante o Burlón. Jugar con su resistencia física y mental, ideal para combinar con perfiles de autoridad: Apuesto a que no podés aguantar dos minutos más con mi voz en tu cabeza , o Mirá lo desesperado que estás por cumplir mis órdenes .</p>
+<p>Tono 3: La Dominante Protectora (Guía y Sintonía). Conducir al cliente de forma segura y rítmica. Usando una voz pausada, hipnótica y firme para regular su ansiedad, grabándole que estás ahí para moldear su experiencia y exigirle disciplina. Un sumiso guiado con esta precisión no vuelve a consumir contenido genérico nunca más.</p>
+<h3>3. Estética, Ritmo y Producción Visual</h3>
+<p>El JOI requiere una sincronización visual perfecta con las órdenes que estás dictando:</p>
+<p>Planos fijos y contacto visual sostenido ( POV ): La cámara debe estar a la altura de tus ojos. Sostener la mirada hacia la lente de forma fija, es fundamental; el cliente debe sentir que lo estás vigilando atentamente a través de la pantalla.</p>
+<p>El uso del lenguaje corporal y las manos: Usar tus propias manos para marcar el ritmo en el aire (marcar la velocidad como un director de orquesta) o señalar la cámara para dar la orden de detenerse.</p>
+<p>Estética cuidada y enfoque de texturas: Funciona de forma excelente si vestís lencería premium, medias de red o ropa de oficina, jugando sutilmente con tu ropa o tu cabello mientras dictas los comandos, aumentando la tensión visual sin necesidad de hacer acciones explícitas.</p>
+<h3>4. Estrategia de Venta en el Chat y Contenido "Personalizado"</h3>
+<p>Este fetiche es el rey de la monetización escalonada en el chat privado y permite crear estructuras de precios sumamente lucrativas:</p>
+<p>Los Videos por Minuto / Estructura por Niveles: Un video de JOI no se cobra plano. Se cobra por el nivel de complejidad del guion. Podés vender un "JOI Básico" (ritmo estándar), un "JOI de Resistencia" ( Edging/Denial , donde lo mantenés al límite varias veces sin dejarlo terminar) o un "JOI Combinado" (añadiendo códigos de SPH o CEI al final). Cada nivel extra duplica el valor del personalizado.</p>
+<p>Venta de Audios JOI de Alta Conversión: Notas de voz en el chat privado simulando una interacción casual pero sumamente firme ("Estoy en mi cama y pensé en decirte exactamente qué tenés que hacer ahora mismo..."). Son rápidos de grabar, no requieren edición visual y se venden de forma masiva como contenido diario para tus suscriptores.</p>
+<p>Dinámicas de Sexting Interactivo en Vivo: El JOI es la base perfecta para sesiones de chat de texto o audio en tiempo real, donde cobrarás una tarifa fija por cada 10 minutos de sesión interactiva en la que vas testeando la obediencia del cliente segundo a segundo.</p>`, orderNum: 6, contentType: 'text' },
+    { id: 'les-fet-11', moduleId: 'mod-fet-3', title: 'DENIAL (Negación del Orgasmo)', content: `<h3>1. Psicología Profunda del Fan</h3>
+<p>Para el consumidor de negación , el valor real no está en la liberación física, sino en la intensidad de la tensión acumulada y la sumisión psicológica que esta provoca.</p>
+<p>La erotización de la frustración: En el consumo masivo de contenido, la gratificación es inmediata y barata. La negación rompe esta regla por completo. Al prohibir el clímax, el deseo no se apaga; al contrario, se expande y se vuelve una obsesión mental que dura horas o incluso días.</p>
+<p>El Orgasmo Aruinado: Muchos sumisos encuentran una descarga psicológica inmensa en que se les ordene arruinar su propio clímax (estimularse hasta el punto de no retorno y parar en seco, o liberar la tensión sin tocarse ni disfrutar del momento). Psicológicamente, esto representa el sacrificio máximo de su placer en honor a tu control.</p>
+<p>La dependencia emocional y monetaria: Un sumiso al que se le niega el orgasmo queda biológicamente "enganchado". Su cerebro busca desesperadamente la dopamina que solo vos administras. Esta frustración controlada anula su capacidad de negociación en el chat: se vuelve sumamente dócil y obediente.</p>
+<h3>2. Los Códigos Verbales y de Comportamiento</h3>
+<p>El manejo de la negación requiere una frialdad absoluta, seguridad y un tono de juego psicológico implacable. No se trata de enojo, se trata de una superioridad calmada:</p>
+<p>Tono 1: La Propietaria del Clímax. Establecer que su cuerpo y sus reacciones biológicas no le pertenecen. Frases como: ¿Quién te dio permiso de pensar en terminar?, Tus orgasmos son míos, y hoy decidió que no te lo ganaste, o Vas a quedarte exactamente así, frustrado y pensando en mí toda la noche .</p>
+<p>Tono 2: El Placer como un Privilegio Costoso. Tratar la liberación como una recompensa de élite: Tu frustración es lo que me divierte de vos, o Quizás la semana que viene, si tus tributos demuestran verdadera devoción, considera darte permiso .</p>
+<p>Tono 3: La Dominante Protectora (Gestión de la Tensión). Monitorear y calibrar el nivel del cliente. La negación prolongada exige disciplina mental por parte del sumiso. Tu rol protector implica guiar esa frustración de manera que se transforma en energía productiva para tu marca (asignándole tareas, rutinas o metas en el chat), enseñándole que la frustración bajo tus órdenes es su mayor muestra de lealtad.</p>
+<h3>3. Estética, Ritmo y Producción Visual</h3>
+<p>El contenido visual de negación se enfoca en el contraste entre tu sensualidad impecable y tu frialdad verbal:</p>
+<p>Estética Premium y Desafiante: Lucir conjuntos de lencería de alta gama, texturas premium o lencería armada que se ve sumamente provocativa. El objetivo visual es maximizar el estímulo del cliente mientras tus palabras le impiden reaccionar severamente.</p>
+<p>El Lenguaje Corporal del Bloqueo: Gestos con las manos que indican detenerse, sonrisas burlonas o miradas fijas y divertidas al lente. Sostener un temporizador o mirar el reloj de reojo añade un factor psicológico de presión temporal tremendo.</p>
+<p>Clips de "Tease and Denial" (Tensión Directa): Videos cortos o fotos blureadas donde te mostrás sumamente sugerente, elevando su excitación al máximo, para terminar el clip de forma abrupta con una orden directa de apagar la pantalla y quedarse con las ganas.</p>
+<h3>4. Estrategia de Venta en el Chat y Contenido "Personalizado"</h3>
+<p>Es uno de los nichos con mayor retorno económico por mensaje privado, ya que el cliente paga para salir de la tensión o para mantener el juego vivo:</p>
+<p>Suscripciones o Packs por "Días de Frustración": Vende un seguimiento en el chat privado donde el cliente paga una tarifa diaria por mantener el estado de negación . Cada mañana entra al chat a reportar que cumplió tu orden de no tocarse.</p>
+<p>Customs de "Orgasmo Ruinado" ( Ruined Orgasm Guide ): Videos ultra personalizados donde guías al cliente al punto de no retorno ( edging ) y, en el segundo exacto del clímax, dictás la orden letal de parar o soltar. Este contenido tiene un valor premium elevadísimo debido al nivel de control y precisión verbal que requiere de tu parte.</p>
+<p>La Tasa de Redención Financiera: Cuando un sumiso lleva días en castidad o negación y ya no soporta la frustración psicológica, la única manera en que una Goddes concede el permiso para su liberación es a través de una propina o tributo financiero extraordinario. El alivio biológico se convierte en la mercancía más cara de su catálogo.</p>`, orderNum: 7, contentType: 'text' },
+    { id: 'les-fet-12', moduleId: 'mod-fet-3', title: 'Fetichismo de pies (Podofilia de Elite)', content: `<p>es, por lejos, el mercado anatómico más masivo, fiel y con mayor flujo de dinero en el mundo del contenido exclusivo.</p>
+<p>La ventaja competitiva de este nicho es que es inagotable: podés facturar miles de dólares al mes sin necesidad de recurrir al desnudo explícito, simplemente dominando los códigos visuales y la psicología del suscriptor.</p>
+<h3>1. Psicología Profunda del Fan</h3>
+<p>Para el devoto de los pies, esta extremidad no es solo una parte del cuerpo; es el eje central de su fijación erótica . Psicológicamente, este fetiche se mueve casi siempre bajo dinámicas de sumisión, entrega y adoración .</p>
+<p>El simbolismo de la sumisión: El pie representa el punto más bajo del cuerpo de una mujer. Para el sumiso, colocarse a la altura de tus pies (o por debajo de ellos) es la forma gráfica y física de demostrar su sumisión ante tu autoridad. Adorar tus pies es adorar tu estatus.</p>
+<p>Fijación sensorial y pulcritud: El sumiso de pies suele ser un obsevivo extremo. Busca la perfección, el cuidado, la simetría y la limpieza. Para él, un pie bien cuidado transmite elegancia, femineidad real y un nivel de sofisticación que le genera una enorme descarga de dopamina.</p>
+<p>El tabú de lo semioculto: A diferencia de otras zonas del cuerpo que siempre están expuestas o hipersexualizadas, el pie tiene ese misterio de lo que suele estar cubierto por zapatos o medias. Acceder a tus planos macro es entrar a tu espacio más íntimo.</p>
+<h3>2. Los Códigos Verbales y de Comportamiento</h3>
+<p>El manejo de los pies en el FemDom o en el contenido premium exige que la creadora hable con total seguridad y reclame la adoración como un derecho natural:</p>
+<p>Tono 1: La Deidad que Exige Adoración. Tratar a tus pies como obras de arte que el cliente solo tiene permitido mirar si paga por el privilegio. Frases como: De rodillas, acá abajo es donde pertenecés, Mirá la perfección de mis plantas, naciste para adorarlas , o Tus ojos no merecen ver más allá de mis tacos .</p>
+<p>Tono 2: La Indiferencia Cruel o Burlona. Combinar los pies con el desprecio psicológico : ¿Estás desesperado por besar mis plantas? Primero mostrame qué tan buena es tu billetera, o Sos tan insignificante como el suelo que piso.</p>
+<h3>3. Estética, Ángulos y Producción Visual</h3>
+<p>En este nicho, la calidad del plano y el cuidado del detalle definen si cobrarás 5 dólares o 100 dólares por una foto:</p>
+<p>Higiene y Estética Impecable: Pies ultra hidratados (el uso de aceites corporales para dar brillo es un truco de élite), uñas perfectamente limadas y esmaltadas. Los colores más pedidos son el blanco, negro, rojo profundo y la francesita clásica.</p>
+<p>El Diccionario de Planos:</p>
+<p>Soles: La planta del pie (plano estrella, enfocado de cerca).</p>
+<p>Toes / Scrunching: Los dedos del pie estirados o encogidos con fuerza.</p>
+<p>Arcos: El arco del pie, resaltando la curvatura.</p>
+<p>Calzado y Texturas: Fotos con tacos aguja ( tacones altos ), sandalias delicadas, o el proceso de deslizar el pie fuera de un zapato ( zapato colgando ). El uso de medias de red o seda multiplica el valor de la producción.</p>
+<h3>4. Estrategia de Venta en el Chat y Contenido "Personalizado"</h3>
+<p>Es el nicho ideal para la venta diaria y la interacción personalizada en los mensajes privados (DM):</p>
+<p>Customs de "Pisotón Visual": Videos donde la creadora filma desde su perspectiva pisando la cámara (protegiendo la lente con un acrílico transparente) usando medias, descalza o con tacos, simulando que está pisando al sumiso.</p>
+<p>Venta de Calzado o Medias Usadas: La transición perfecta hacia la logística física. Vende las medias de seda o las sandalias que usas en tus producciones fotográficas, cobrando precios extraordinarios por el empaque discreto y el valor fetichista del objeto real.</p>
+<p>El Lado Crudo y Texturado (Pies Sucios y Juanetes)</p>
+<p>Hay un mercado gigantesco y sumamente lucrativo que busca exactamente lo opuesto a la pulcritud. Para este tipo de suscriptores, el disparador erótico no es la belleza estética tradicional, sino la autenticidad biológica y la dominación real .</p>
+<p>Pies Sucios y Sudorosos: Clientes que pagan fortunas por ver plantas de pies negras después de caminar descalza por la casa, el jardín o la calle, o por medias sudadas después de un día entero usando zapatillas. Psicológicamente, buscan la descarga de sumisión total: adorar el rastro de tu día, el sudor real y la "humillación higiénica" de besar un pie que no se produjo para una foto, sino que está viviendo su realidad.</p>
+<p>Juanetes, Dedos Deformes o Imperfecciones: Las llamadas "imperfecciones" anatómicas (juanetes, dedos martillo, cicatrices o curvaturas extrañas) son fetiches hiperespecíficos de nicho. Al haber menos creadoras dispuestas a mostrarlos o que los tengan, el valor de este contenido en el mercado de elite se dispara. Para el fan, esa característica única es el "santo grial" de su obsesión.</p>
+<p>Pies con Comida: Una dinámica donde el pie se usa como una herramienta para aplastar, pisar o jugar con texturas (pasteles, frutas, cremas). Mezcla la dominación física con la humillación visual del cliente, que fantasea con ser el receptor de ese desastre.</p>`, orderNum: 8, contentType: 'text' },
+    { id: 'les-fet-13', moduleId: 'mod-fet-3', title: 'ADORACIÓN (Worship de Elite)', content: `<h3>1. Psicología Profunda del Fan</h3>
+<p>El motor de la adoración es el deseo de trascendencia a través de la sumisión . El suscriptor que busca adorar no quiere una interacción casual o de iguales; necesita colocar a la creadora en un pedestal casi divino.</p>
+<p>El alivio de la pequeñez: En su vida diaria, el cliente puede tener poder o dinero, pero esa misma posición le exige una carga de frialdad y toma de decisiones constantes. Adorar a su Emperatriz le permite volverse "pequeño", humilde y devoto, experimentando una catarsis psicológica inmensa al arrodillarse ante alguien superior.</p>
+<p>La sacralización del fetiche: Cualquier atributo (tus pies, tus manos, tu mirada, tu látex o tu culo) deja de ser una parte del cuerpo y se convierte en un "objeto sagrado". El fan encuentra placer en el respeto, la pulcritud y la distancia litúrgica que impone.</p>
+<p>El tributo como ofrenda: Para el adorador, el dinero cambia de significado. Ya no es un pago por un servicio; es un tributo de devoción . Pagar es su forma de rezar, su manera de demostrar que es digno de que le prestes atención.</p>
+<h3>2. Los Códigos Verbales y de Comportamiento</h3>
+<p>La adoración exige que la creadora se cree el papel al 100%. Tu lenguaje debe ser impecable, distante pero magnético, encarnando a la Dominante Protectora que acepta la devoción si el sumiso se comporta a la altura:</p>
+<p>Tono 1: Distante e Imponente. Hablar desde el trono, aceptando los halagos como algo que te corresponde por derecho. Frases como: Acepto tu devoción, pero tus palabras deben venir acompañadas de hechos , Mirame bien, naciste para contemplar mi perfección desde el suelo , o Tu único propósito en este chat es recordar lo superior que soy .</p>
+<p>Tono 2: La Exigencia (Límites de Elite). Educar al cliente en cómo debe dirigirse a vos. No se permite la confianza ordinaria: Para hablarle a tu Diosa, primero debes presentarte con un tributo de respeto , o Cuidá tus palabras en mi presencia; la adoración requiere disciplina .</p>
+<p>Tono 3: La Dominante Protectora (Validación del Culto). El fan de la adoración es sumamente fiel, pero necesita saber que su devoción es bien recibida. Tu enfoque protector implica darle ese espacio seguro donde su culto es validado, guiándolo para que su sumisión sea sana, productiva y completamente enfocada en enaltecer tu marca.</p>
+<h3>3. Estética, Atmósfera y Producción Visual</h3>
+<p>Para vender adoración, el entorno visual debe transmitir lujo, poder y misticismo. No es una selfie rápida en el sillón; es una puesta en escena:</p>
+<p>Estética de Trono y Realeza: Uso de sillas imponentes (estilos ejecutivos altos o sillones de terciopelo), iluminación dramática con contrastes fuertes, y fondos limpios o atractivos. Vestuarios de alta gama: vestidos elegantes, corsés de satén, cuero impecable o lencería armada de élite con joyería llamativa.</p>
+<p>Ángulos de Superioridad Absoluta: Filmar siempre con la cámara baja, apuntando hacia arriba, de modo que obliga visualmente al espectador a mirarte desde abajo. Tu mirada debe ser directa, firme, serena y segura de tu poder.</p>
+<p>Rituales Visuales: Clips cortos enfocados en un solo atributo. Por ejemplo, un video en silencio o con música ambiental donde solo mostrarás el movimiento delicado de tus manos con anillos, o la quietud de tus pies con tacos sobre una alfombra, invitando al sumiso a la contemplación silenciosa.</p>
+<h3>4. Estrategia de Venta en el Chat y Contenido "Personalizado"</h3>
+<p>La adoración es el nicho con el mayor margen de ganancia limpia de la industria, porque el contenido "custom" se estructura bajo la lógica del tributo y el acceso escalonado:</p>
+<p>El Protocolo de Entrada: Implementar en tus chats la regla de que ningún cliente nuevo puede iniciar una conversación sin antes enviar un "Tributo de Apertura". Si el cliente no paga para presentarse ante la Diosa, no se le responde. Esto filtra a los curiosos y atrae de inmediato a los verdaderos adoradores.</p>
+<p>Customs de Adoracion: tareas personalizados donde la creadora, envia tareas al sumiso y vos dictás si su devoción es aceptada en tu corte o si necesitas esforzarse más económicamente para ganarse tu bendición.</p>
+<p>Packs de Contemplación Exclusiva: Compilación galerías fotográficas y de video de altísima calidad artística enfocadas puramente en la estética de tu Alter Ego (tu rostro, tus miradas, tus manos, tu presencia corporativa), vendidas a precios premium bajo el concepto de que son "reliquias visuales" reservadas solo para los siervos más fieles de tu comunidad VIP.</p>`, orderNum: 9, contentType: 'text' },
+    { id: 'les-fet-14', moduleId: 'mod-fet-3', title: 'FINDOM (Dominación Financiera)', content: `<h3>1. Psicología Profunda del Fan</h3>
+<p>El esclavo financiero (cerdito pagador) no paga por recibir un servicio, una foto o un video; su orgasmo y su liberación erótica ocurren en el momento exacto en que transfiere el dinero .</p>
+<p>Erotización de la pérdida y la escasez: Para el hombre en el mundo real, el dinero es el símbolo máximo de su poder, estatus y seguridad. Entregar ese dinero de forma voluntaria a su Emperatriz es el acto de sumisión más destructivo y placentero para su ego. Disfruta de la sensación de quedar desprotegido ante tu voluntad.</p>
+<p>El dinero como extensión de su tiempo: El sumiso financiero entiende que el dinero representa las horas de su vida que pasó trabajando. Al entregártelo, te está regalando literalmente su tiempo de vida y su esfuerzo, convirtiéndose en un servidor en el sentido más puro del término.</p>
+<p>La adicción al tributo inmediato ( Goddess Worship ): El sumiso busca la validación instantánea. Ver cómo aceptarás su tributo (o cómo lo ignorarás de forma fría tras recibirlo) le genera una descarga de adrenalina inmensa que la pornografía común.</p>
+<h3>2. Los Códigos Verbales y de Comportamiento</h3>
+<p>El Findom es pura actitud de superioridad absoluta, codicia elegante y desprecio financiero. La creadora no pide, exige o reclama lo que considera suyo por derecho :</p>
+<p>Tono 1: La Dueña de su Billetera (Derecho Natural). Hablar del dinero del cliente como si fuera tuyo y él solo lo estaría cuidando temporalmente. Frases como: Tu billetera me pertenece, mostrame qué tan buen esclavo sos hoy , Ese dinero luce mucho mejor en mi cuenta que en la tuya , o Tu único valor en mi chat es tu capacidad de tributar .</p>
+<p>Tono 2: La Indiferencia Financiera / El Desprecio. Castigar o ignorar si el monto no está a la altura de tu estatus. Esto enciende su deseo de esforzarse más: ¿Eso es todo lo que vale tu devoción? Patético , o Volvé cuando tengas un tributo real que merezca mi atención .</p>
+<p>Tono 3: El Enfoque de Elite (Establecer el Filtro). En el Findom real no se ruega ni se persigue al cliente. La creadora se posiciona tan alto que el esclavo financiero siente que transferir dinero es el único privilegio disponible para que tus notas su existencia.</p>
+<h3>3. Estética, Herramientas y Dinámicas Digitales</h3>
+<p>A diferencia de otros nichos corporales, el Findom se apoya visualmente en las transacciones, las marcas de lujo y el estilo de vida de la creadora:</p>
+<p>Estética de Lujo y Poder: Muestra un estilo de vida aspiracional. Fotos usando ropa de diseñador, accesorios costosos o simplemente disfrutando de un café premium. El mensaje visual es claro: Tu dinero financiero mi perfección .</p>
+<p>Capturas de Pantalla: El contenido visual secundario en este nicho son las capturas de las transferencias recibidas (difuminando los datos del cliente). Publicar que otros están tributando genera un efecto de competencia brutal ( Drain ) entre los sumisos; todos quieren ser el que mandó la propina más alta para ganar tu mención.</p>
+<p>Uso de Herramientas de Desgaste ( Draining ): Crear dinámicas interactivas de billetera como juegos de dados financieros, "tributos por respirar" (el cliente paga una tarifa fija por cada hora que pasa en tu chat), o metas de propinas grupales para desbloquear un beneficio común.</p>
+<h3>4. Estrategia de Venta en el Chat y Dinámicas de Pago</h3>
+<p>En el Findom, el chat privado es el campo de juego donde se ejecuta el vaciado de cuentas ( Draining ):</p>
+<p>La Tasa de Mensaje Privado: Una regla estricta en el Findom es que el sumiso debe adjuntar una propina con cada mensaje de texto que envía en el chat privado. Si el mensaje llega sin dinero, se borra o se ignora por completo. El cliente paga por el derecho de ser escuchado por su Ama.</p>
+<p>Sesiones de Vaciado Colectivo: Dinámicas de chat o vivos de tiempo limitado donde exiges tributos en ráfaga (por ejemplo: “Tienen 5 minutos para llenar esta meta de propinas). Los sumisos entran en un estado de euforia y compiten entre ellos para mantenerte feliz.</p>
+<p>Tributos Silenciosos: Sumisos de alto valor que transfieren montos fijos semanales o mensuales de forma automática, sin exigir fotos, videos ni conversación a cambio. Su único placer es saber que están financiando tu estilo de vida y que vos aceptas su dinero desde tu trono.</p>`, orderNum: 10, contentType: 'text' },
+    { id: 'les-fet-15', moduleId: 'mod-fet-3', title: 'Nota Final: Autenticidad, Estilo y Comodidad', content: `<p>Como creadora y mentora, necesito que te grabes a fuego una regla de oro antes de invertir un solo centavo en vestuario o de aceptar dinámicas que te generen ansiedad: El fetiche se adapta a vos, no vos al fetiche.</p>
+<h3>1. El Mito de la Ropa "Obligatoria</h3>
+<p>Existe el error garrafal de creer que para dominar o trabajar en estos nichos necesitás transformarte obligatoriamente en una figura fría vestida de cuero negro de pies a cabeza. Eso es completamente falso. * La ropa de cuero, vinilo o látex no es exclusiva de un papel rígido. Podés usarla con una estética totalmente Bratty (esa vibra de chica caprichosa, juguetona, desafiante y demandante) o adaptarla a un estilo urbano, elegante o casual.</p>
+<p>Lo verdaderamente importante es ser fiel a tu propia personalidad . Si intentás forzar un personaje frío cuando en realidad sos más expresiva, juguetona o protectora, el cliente va a notar la falsedad de inmediato. En el mercado premium, la falta de autenticidad mata la venta . El sumiso busca conectarse con una esencia real, no con una actriz barata que repite un guion.</p>
+<h3>2. Tus Límites son tu Mayor Fortaleza</h3>
+<p>Otra gran mentira de la industria es que para facturar fuerte estás obligado a hacer videollamadas en vivo o enviar audios personalizados todo el tiempo.</p>
+<p>Quiero que te quedes completamente tranquila: No hace falta que expongas tu voz o tu tiempo en vivo si no te sentís cómoda al hacerlo. Podés construir un imperio digital manejando absolutamente todo a través de chats de texto estructurados, guiones escritos y contenido pregrabado en fotos y videos.</p>
+<p>Es obvio y realista saber que las videollamadas y los audios directos son herramientas de monetización rápida que aumentan el valor del ticket y te hacen ganar más plata en menos tiempo. Pero de nada sirve ofrecerlos si vas a estar incómodo, nervioso o desconectado durante la sesión.</p>
+<p>Tu comodidad es tu principal activo de marketing. Cuando vos trabajas bajo tus propias reglas, en paz y disfrutando de tu autoridad, esa seguridad se refleja en la pantalla . Es justamente esa tranquilidad e integridad lo que te permite conectar de forma profunda y real con el sumiso, haciendo que él respete tus límites y se vuelva un cliente fiel a largo plazo.</p>
+<p>Tu negocio, tus reglas, tu comodidad.</p>`, orderNum: 11, contentType: 'text' },
+    { id: 'les-fet-16', moduleId: 'mod-fet-4', title: 'El Filtro Práctico: El Embudo de Conversión Rápida (Regla de los 3 Mensajes)', content: `<p>Olvidate de exigir un tributo obligatorio solo para que el cliente pueda abrir el chat; en el día a día de las plataformas, eso no funciona y congela tus ventas. El cliente necesita morder el anzuelo antes de sacar la billetera.</p>
+<p>Tu estrategia en el privado consiste en engancharlo rápido y cerrar la venta en un máximo de 3 mensajes , usando el fetiche del cliente a tu favor:</p>
+<p>Mensaje 1 (La Recepción y Filtro): Recibís al cliente manteniendo tu esencia y tu autoridad. Le preguntás directamente qué fetiche o contenido lo trajo a tu privado hoy.</p>
+<p>Mensaje 2 (El Enganche / Iniciar el Juego): Cuando te confiesa su fetiche, lo metés adentro del juego inmediatamente . Le respondés con una frase corta, sencilla y contundente usando ese fetiche, para que experimente tu poder en tiempo real y se quede enganchado.</p>
+<p>Mensaje 3 (La Oferta y Cierre): Ahora que ya está adentro del rol y con la cabeza volada, le ofrecés el servicio pago exacto que corresponde a su fetiche para que deje su dinero.</p>
+<p>Ejemplos Reales de Aplicación (Mensaje 2 y 3):</p>
+<p>Si te dice SPH (Humillación): * Mensaje 2: Le tirás una burla corta y sutil sobre su masculinidad.</p>
+<p>Mensaje 3: Le ofrecés calificarlo de forma oficial a cambio de su pago, o una tarea humillante.</p>
+<p>Si te dice Castidad: * Mensaje 2: Le recordás de forma firme que su placer ahora depende de vos.</p>
+<p>Mensaje 3: Le ofrecés el servicio de ser su Keyholder (Guardiana de la llave) bajo una tarifa fija.</p>
+<p>Si te dice Sissyficación (Feminización): * Mensaje 2: Le das una pequeña orden tratándolo en femenino.</p>
+<p>Mensaje 3: Le vendés una Orden de Humillación o un guion escrito premium para que comience su transformación.</p>
+<p>Si después del Mensaje 3 el tipo sigue dando vueltas o intentando charlar gratis, se terminó el juego y se corta la interacción. El tiempo es dinero.</p>`, orderNum: 1, contentType: 'text' },
+    { id: 'les-fet-17', moduleId: 'mod-fet-4', title: 'El Proceso de Cierre en 3 Pasos (Sin rogar, sin presionar)', content: `<p>Para vender contenido personalizado o packs temáticos de alto valor, tenés que mantener el control del ritmo de la venta. El proceso se estructura en tres pasos limpios:</p>
+<p>Paso A: Calificación (Detectar el fetiche y el presupuesto)</p>
+<p>No le ofrezcas todo tu menú de golpe. Hacé que él confiese qué es lo que busca. El sumiso disfruta de la vulnerabilidad de admitir su fetiche ante tu autoridad.</p>
+<p>Pregunta de Control: "¿Qué fantasía viniste a rendir ante mí hoy? Sé específico. Quiero saber exactamente qué te obsesiona."</p>
+<p>Paso B: La Propuesta de Elite (Crear valor antes de dar el precio)</p>
+<p>Cuando le des las opciones, no hables de "un video de 5 minutos". Hablá de la experiencia psicológica que va a vivir contigo. Vendé el control, la intensidad y tu presencia.</p>
+<p>Estructura de Venta: "Tengo preparado para vos un clip personalizado de JOI y SPH de 5 minutos, filmado en plano POV, donde voy a desarmar tu orgullo y marcarte el ritmo de forma implacable usando tu nombre. Te va a costar [X] dólares".</p>
+<p>Paso C: Cierre Inapelable</p>
+<p>Una vez que tirás el precio, te quedarás en silencio (o deja de escribir). El primero que habla, pierde. Si el cliente empieza a dar vueltas oa pedir rebajas, se le corta el acceso de inmediato. El valor de una Emperatriz no se negocia.</p>`, orderNum: 2, contentType: 'text' },
+    { id: 'les-fet-18', moduleId: 'mod-fet-4', title: 'El Fin del \"Roleplay Gratis\": Valoriza tu Tiempo', content: `<p>Muchos sumisos intentan camuflar una sesión de sexting o dominación verbal dentro de la charla del chat, enviándote mensajes largos describiendo lo que te harían o cómo se arrodillarían, esperando que vos les respondas en el mismo tono.</p>
+<p>Identificá la trampa: Si le respondes el juego de forma dominante por texto sin que haya pagado, ya le diste el estímulo que buscaba gratis. Se va a ir a dormir feliz sin dejarte un centavo.</p>
+<p>Cómo frenarlo y monetizarlo: Corta el roleplay en seco y lo transformás en una oferta de sesión paga.</p>
+<p>"Estás intentando disfrutar de mi autoridad de forma gratuita y eso es una falta de respeto a tu diosa. Si quieres mis órdenes en tiempo real, la tarifa es de $.... Enviá el tributo ahora o salí de mi vista."</p>`, orderNum: 3, contentType: 'text' },
+    { id: 'les-fet-19', moduleId: 'mod-fet-4', title: 'Gestión del Tiempo: Presencia y Velocidad de Respuesta ( La Venta en Caliente )', content: `<p>Olvidate del mito de que hacerte desear y tardar horas en responder te hace ver más importante frente a un cliente nuevo. En las plataformas, tiempo es dinero y la velocidad de respuesta factura .</p>
+<p>El momento es AHORA: El sumiso que entra a tu privado y te escribe está en su momento de máxima excitación y quiere interactuar ya. Si estás en línea y le respondés de inmediato, aprovechás ese impulso biológico para engancharlo con la regla de los 3 mensajes y cerrás la venta antes de que se enfríe. Si no estás vos para responderle, hay miles de creadoras más en línea dispuestas a sacar la plata.</p>
+<p>El castigo de la indiferencia es para los fieles: El juego psicológico de ignorar mensajes, tardar en responder o aplicar "silencios dominantes" es una estrategia avanzada que solo vas a usar con tus sumisos fidelizados . A ellos sí los podés hacer esperar porque ya están obsesionados con tu Alter Ego y esa espera les genera más sumisión. Al cliente que recién entra al embudo, se le responde rápido, se lo mete en el juego y se le cobra.</p>
+<p>Has llegado al final de este manual, pero este no es el destino; es apenas el punto de partida. Ahora tenés en tus manos la radiografía psicológica de los fetiches más lucrativos del mercado y la ingeniería de chat exacta que utiliza la élite digital para facturar a lo grande. El conocimiento ya es tuyo.</p>
+<p>Sin embargo, quiero que recuerdes algo fundamental: la información sin ejecución no genera billetes .</p>
+<p>El mercado está lleno de creadores que saben qué es un fetiche, pero muy pocos tienen la disciplina, la velocidad de respuesta y el carácter para cobrar lo que realmente vale su tiempo. La diferencia entre ellas y vos es que a partir de hoy, vos operas con mentalidad de empresaria. No vas a rogar, no vas a regalar interacciones gratis y no vas a dudar al poner tus precios.</p>
+<p>Tu personaje está listo, tu privacidad está ciega y el privado de tus plataformas es tu oficina de alta gama. Entrá con la espalda recta, hablá con la seguridad de quien se sabe dueña del juego y hacé valer cada segundo de tu presencia.</p>
+<p>El mercado de élite tiene el dinero listo. Salí ahí afuera, toma el control de sus fantasías y reclamará el trono que te pertenece.</p>`, orderNum: 4, contentType: 'text' },
   ]
 
   for (const l of lessonsData) {
@@ -1387,6 +1672,18 @@ const DEFAULT_PRICING: {
     binance_instructions: null,
     is_featured: 0,
     badge_text: null,
+  },
+  {
+    course: 'fetiches',
+    ars_amount: 25000,
+    ars_strike: 60000,
+    usd_amount: 35,
+    usd_strike: 90,
+    mp_link: null,
+    binance_id: null,
+    binance_instructions: null,
+    is_featured: 1,
+    badge_text: 'PREMIUM',
   },
 ]
 
